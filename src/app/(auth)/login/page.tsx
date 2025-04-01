@@ -1,0 +1,180 @@
+"use client";
+
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { loginFormSchema, LoginFormSchema } from "@/dtos/auth/login.dto";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { setCookie } from "cookies-next/client";
+import { LOCAL_STORAGE_KEYS } from "@/constants/local-storage-keys";
+
+export default function LoginScreen() {
+  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+
+  const form = useForm<LoginFormSchema>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: {
+      email: "test@test.com",
+      password: "12341234",
+      rememberMe: false,
+    },
+    mode: "onBlur",
+    criteriaMode: "all",
+  });
+
+  function onSubmit(data: LoginFormSchema) {
+    if (data.email === "test@test.com" && data.password === "12341234") {
+      setCookie(
+        LOCAL_STORAGE_KEYS.USER,
+        JSON.stringify({ email: data.email, password: data.password }),
+        { maxAge: 60 * 60 * 24, path: "/" }
+      );
+      toast("Login  successful", {
+        description: "You have been logged in successfully.",
+      });
+      router.push("/");
+    } else {
+      toast("Login failed", {
+        description: "Invalid username or password.",
+      });
+    }
+  }
+
+  // Helper function to determine if we should show an error
+  const shouldShowError = (fieldName: keyof LoginFormSchema) => {
+    return (
+      form.formState.touchedFields[fieldName] &&
+      form.formState.errors[fieldName]
+    );
+  };
+
+  console.log("login end");
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+      <Card className="w-full max-w-md shadow-lg">
+        <CardHeader className="space-y-2 pb-6">
+          <CardTitle className="text-2xl font-bold tracking-tight">
+            Sign in
+          </CardTitle>
+          <CardDescription>
+            Enter your email and password to access your account
+          </CardDescription>
+        </CardHeader>
+
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <CardContent className="space-y-6">
+            <div className="space-y-3">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="name@example.com"
+                className={`h-11 ${
+                  shouldShowError("email")
+                    ? "border-destructive focus-visible:ring-destructive"
+                    : ""
+                }`}
+                {...form.register("email")}
+                aria-invalid={!!form.formState.errors.email}
+              />
+              {shouldShowError("email") && (
+                <p className="text-sm font-medium text-destructive">
+                  {form.formState.errors.email?.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Button
+                  variant="link"
+                  className="h-auto p-0 text-xs font-normal text-muted-foreground"
+                >
+                  Forgot password?
+                </Button>
+              </div>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  className={`h-11 pr-10 ${
+                    shouldShowError("password")
+                      ? "border-destructive focus-visible:ring-destructive"
+                      : ""
+                  }`}
+                  {...form.register("password")}
+                  aria-invalid={!!form.formState.errors.password}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-0 h-11 w-11 text-muted-foreground"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOffIcon className="h-4 w-4" />
+                  ) : (
+                    <EyeIcon className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+              {shouldShowError("password") && (
+                <p className="text-sm font-medium text-destructive">
+                  {form.formState.errors.password?.message}
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center space-x-2 pt-2">
+              <Checkbox
+                id="rememberMe"
+                checked={form.watch("rememberMe")}
+                onCheckedChange={(checked) => {
+                  form.setValue("rememberMe", checked === true);
+                }}
+              />
+              <Label htmlFor="rememberMe" className="text-sm font-normal">
+                Remember me
+              </Label>
+            </div>
+          </CardContent>
+
+          <CardFooter className="flex flex-col space-y-4 pt-6">
+            <Button
+              type="submit"
+              className="w-full h-11"
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
+            </Button>
+            <div className="text-center text-sm text-muted-foreground">
+              Don't have an account?{" "}
+              <Button variant="link" className="h-auto p-0 text-sm font-normal">
+                Create account
+              </Button>
+            </div>
+          </CardFooter>
+        </form>
+      </Card>
+    </div>
+  );
+}
