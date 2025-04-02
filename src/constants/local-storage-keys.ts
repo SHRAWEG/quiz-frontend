@@ -1,3 +1,4 @@
-export const LOCAL_STORAGE_KEYS = {
+export const COOKIE_KEYS = {
   USER: "user",
+  TOKEN: "token",
 };

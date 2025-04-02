@@ -17,19 +17,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { loginDto, LoginDto } from "@/dtos/auth/login.dto";
+import { loginReqDto, LoginReqDto, LoginResDto } from "@/dtos/auth/login.dto";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { setCookie } from "cookies-next/client";
-import { LOCAL_STORAGE_KEYS } from "@/constants/local-storage-keys";
 import Link from "next/link";
+import { useLogin } from "@/hooks/api/useAuth";
+import { COOKIE_KEYS } from "@/constants/local-storage-keys";
+import { setCookie } from "cookies-next/client";
 
 export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const { mutate } = useLogin();
 
-  const form = useForm<LoginDto>({
-    resolver: zodResolver(loginDto),
+  const form = useForm<LoginReqDto>({
+    resolver: zodResolver(loginReqDto),
     defaultValues: {
       email: "test@test.com",
       password: "12341234",
@@ -39,26 +41,31 @@ export default function LoginScreen() {
     criteriaMode: "all",
   });
 
-  function onSubmit(data: LoginDto) {
-    if (data.email === "test@test.com" && data.password === "12341234") {
-      setCookie(
-        LOCAL_STORAGE_KEYS.USER,
-        JSON.stringify({ email: data.email, password: data.password }),
-        { maxAge: 60 * 60 * 24, path: "/" }
-      );
-      toast("Login  successful", {
-        description: "You have been logged in successfully.",
-      });
-      router.push("/");
-    } else {
-      toast("Login failed", {
-        description: "Invalid username or password.",
-      });
-    }
+  function onSubmit(data: LoginReqDto) {
+    mutate(data, {
+      onSuccess: (data: LoginResDto) => {
+        console.log(data);
+        setCookie(
+          COOKIE_KEYS.TOKEN,
+          JSON.stringify({ email: data.data.accessTsoken }),
+          { maxAge: 60 * 60 * 24, path: "/" }
+        );
+        toast("Login  successful", {
+          description: "You have been logged in successfully.",
+        });
+        router.push("/");
+      },
+      onError: (error: Error) => {
+        console.log(error);
+        toast("Login failed", {
+          description: "Invalid username or password.",
+        });
+      },
+    });
   }
 
   // Helper function to determine if we should show an error
-  const shouldShowError = (fieldName: keyof LoginDto) => {
+  const shouldShowError = (fieldName: keyof LoginReqDto) => {
     return (
       form.formState.touchedFields[fieldName] &&
       form.formState.errors[fieldName]

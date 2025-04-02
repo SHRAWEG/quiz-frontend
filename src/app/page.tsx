@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LOCAL_STORAGE_KEYS } from "@/constants/local-storage-keys";
+import { COOKIE_KEYS } from "@/constants/local-storage-keys";
 import { getCookie, deleteCookie } from "cookies-next/client";
 
 export default function HomePage() {
@@ -10,8 +10,8 @@ export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    const user = getCookie(LOCAL_STORAGE_KEYS.USER);
-    if (!user) {
+    const token = getCookie(COOKIE_KEYS.TOKEN);
+    if (!token) {
       router.push("/login");
     } else {
       setIsAuthenticated(true);
@@ -19,7 +19,7 @@ export default function HomePage() {
   }, [router]);
 
   const handleLogout = () => {
-    deleteCookie("user", { path: "/" });
+    deleteCookie("token", { path: "/" });
     router.push("/login");
   };
 
