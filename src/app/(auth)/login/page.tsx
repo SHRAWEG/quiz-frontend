@@ -44,7 +44,7 @@ export default function LoginScreen() {
   function onSubmit(data: LoginReqDto) {
     mutate(data, {
       onSuccess: (data: LoginResDto) => {
-        console.log(data);
+
         setCookie(
           COOKIE_KEYS.TOKEN,
           JSON.stringify({ email: data.data.accessTsoken }),

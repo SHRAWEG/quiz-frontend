@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const signUpDto = z
+export const signUpReqDto = z
   .object({
     firstName: z.string().min(1, { message: "First name is required" }),
     middleName: z.string().optional(),
@@ -9,6 +9,16 @@ export const signUpDto = z
       .string()
       .min(1, { message: "Email is required" })
       .email({ message: "Must be a valid email address" }),
+    phone: z
+      .string()
+      .min(1, { message: "Phone number is required" })
+      .refine(
+        (phone) =>
+          /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/im.test(
+            phone
+          ),
+        { message: "Please enter a valid phone number" }
+      ),
     password: z
       .string()
       .min(1, { message: "Password is required" })
@@ -22,10 +32,29 @@ export const signUpDto = z
     confirmPassword: z
       .string()
       .min(1, { message: "Please confirm your password" }),
+    roleId: z.number().min(1),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
 
-export type SignUpDto = z.infer<typeof signUpDto>;
+export const signUpResDto = z.object({
+  message: z.string(),
+  data: z.object({
+    id: z.string(),
+    firstName: z.string(),
+    middleName: z.string().optional(),
+    lastName: z.string(),
+    email: z.string(),
+    phone: z.string(),
+    isEmailVerified: z.boolean(),
+    isActive: z.boolean(),
+    lastActive: z.string(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+  }),
+});
+
+export type SignUpResDto = z.infer<typeof signUpResDto>;
+export type SignUpReqDto = z.infer<typeof signUpReqDto>;

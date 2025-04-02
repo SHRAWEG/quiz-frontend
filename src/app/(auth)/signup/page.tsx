@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,69 +18,70 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signUpDto, SignUpDto } from "@/dtos/auth/signUp.dto";
+import {
+  signUpReqDto,
+  SignUpReqDto,
+  SignUpResDto,
+} from "@/dtos/auth/signUp.dto";
 import { toast } from "sonner";
+import { useSignUp } from "@/hooks/api/useAuth";
 
 export default function SignupScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
+  const { mutate } = useSignUp();
 
   // Initialize the form with React Hook Form and Zod resolver
-  const form = useForm<SignUpDto>({
-    resolver: zodResolver(signUpDto),
-    defaultValues: {
+  const form = useForm<SignUpReqDto>({
+    resolver: zodResolver(signUpReqDto),
+    // defaultValues: {
+    //   firstName: "",
+    //   middleName: "",
+    //   lastName: "",
+    //   email: "",
+    //   password: "",
+    //   confirmPassword: "",
+    //   roleId: 3,
+    // },
+    mode: "onBlur",
+    criteriaMode: "all",
+  });
+
+  useEffect(() => {
+    form.reset({
       firstName: "",
       middleName: "",
       lastName: "",
       email: "",
       password: "",
       confirmPassword: "",
-    },
-    mode: "onBlur",
-    criteriaMode: "all",
-  });
+      roleId: 3,
+    });
+  }, []);
 
   // Handle form submission
-  async function onSubmit(data: SignUpDto) {
-    try {
-      // Call the signup API
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName: data.firstName,
-          middleName: data.middleName,
-          lastName: data.lastName,
-          email: data.email,
-          password: data.password,
-        }),
-      });
-
-      if (response.ok) {
-        toast("Signup  successful", {
-          description:
-            "Your account has been created successfully. Please log in.",
+  function onSubmit(data: SignUpReqDto) {
+    mutate(data, {
+      onSuccess: (data: SignUpResDto) => {
+        // ✅ Correct type
+        console.log(data);
+        toast("Signup successful", {
+          description: "You have been registered successfully.",
         });
         router.push("/login");
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Signup failed");
-      }
-    } catch (error) {
-      toast.error("Signup  failed", {
-        description:
-          error instanceof Error
-            ? error.message
-            : "An error occurred during signup. Please try again.",
-      });
-    }
+      },
+      onError: (error: Error) => {
+        console.log(error);
+        toast("Signup failed", {
+          description: error.message,
+        });
+      },
+    });
   }
 
   // Helper function to determine if we should show an error
-  const shouldShowError = (fieldName: keyof SignUpDto) => {
+  const shouldShowError = (fieldName: keyof SignUpReqDto) => {
     return (
       form.formState.touchedFields[fieldName] &&
       form.formState.errors[fieldName]
@@ -172,6 +173,28 @@ export default function SignupScreen() {
               {shouldShowError("email") && (
                 <p className="text-sm font-medium text-destructive">
                   {form.formState.errors.email?.message}
+                </p>
+              )}
+            </div>
+
+            {/* Phone Number Field */}
+            <div className="space-y-3">
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="(123) 456-7890"
+                className={`h-11 ${
+                  shouldShowError("phone")
+                    ? "border-destructive focus-visible:ring-destructive"
+                    : ""
+                }`}
+                {...form.register("phone")}
+                aria-invalid={!!form.formState.errors.phone}
+              />
+              {shouldShowError("phone") && (
+                <p className="text-sm font-medium text-destructive">
+                  {form.formState.errors.phone?.message}
                 </p>
               )}
             </div>
