@@ -17,18 +17,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { loginFormSchema, LoginFormSchema } from "@/dtos/auth/login.dto";
+import { loginDto, LoginDto } from "@/dtos/auth/login.dto";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { setCookie } from "cookies-next/client";
 import { LOCAL_STORAGE_KEYS } from "@/constants/local-storage-keys";
+import Link from "next/link";
 
 export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
-  const form = useForm<LoginFormSchema>({
-    resolver: zodResolver(loginFormSchema),
+  const form = useForm<LoginDto>({
+    resolver: zodResolver(loginDto),
     defaultValues: {
       email: "test@test.com",
       password: "12341234",
@@ -38,7 +39,7 @@ export default function LoginScreen() {
     criteriaMode: "all",
   });
 
-  function onSubmit(data: LoginFormSchema) {
+  function onSubmit(data: LoginDto) {
     if (data.email === "test@test.com" && data.password === "12341234") {
       setCookie(
         LOCAL_STORAGE_KEYS.USER,
@@ -57,7 +58,7 @@ export default function LoginScreen() {
   }
 
   // Helper function to determine if we should show an error
-  const shouldShowError = (fieldName: keyof LoginFormSchema) => {
+  const shouldShowError = (fieldName: keyof LoginDto) => {
     return (
       form.formState.touchedFields[fieldName] &&
       form.formState.errors[fieldName]
@@ -168,9 +169,12 @@ export default function LoginScreen() {
             </Button>
             <div className="text-center text-sm text-muted-foreground">
               Don't have an account?{" "}
-              <Button variant="link" className="h-auto p-0 text-sm font-normal">
+              <Link
+                href="/signup"
+                className="text-primary underline underline-offset-4 hover:text-primary/90"
+              >
                 Create account
-              </Button>
+              </Link>
             </div>
           </CardFooter>
         </form>
