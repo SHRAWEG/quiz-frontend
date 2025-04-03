@@ -22,13 +22,7 @@ export const signUpReqDto = z
     password: z
       .string()
       .min(1, { message: "Password is required" })
-      .min(8, { message: "Password must be at least 8 characters" })
-      .refine((password) => /[A-Z]/.test(password), {
-        message: "Password must contain at least one uppercase letter",
-      })
-      .refine((password) => /[0-9]/.test(password), {
-        message: "Password must contain at least one number",
-      }),
+      .min(8, { message: "Password must be at least 6 characters" }),
     confirmPassword: z
       .string()
       .min(1, { message: "Please confirm your password" }),

@@ -13,7 +13,10 @@ export const loginResDto = z.object({
   success: z.boolean(),
   message: z.string(),
   data: z.object({
-    accessTsoken: z.string(),
+    accessToken: z.string(),
+    role: z.string(),
+    email: z.string(),
+    name: z.string()
   })
 })
 

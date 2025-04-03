@@ -33,8 +33,8 @@ export default function LoginScreen() {
   const form = useForm<LoginReqDto>({
     resolver: zodResolver(loginReqDto),
     defaultValues: {
-      email: "test@test.com",
-      password: "12341234",
+      email: "",
+      password: "",
       rememberMe: false,
     },
     mode: "onBlur",
@@ -45,11 +45,11 @@ export default function LoginScreen() {
     mutate(data, {
       onSuccess: (data: LoginResDto) => {
 
-        setCookie(
-          COOKIE_KEYS.TOKEN,
-          JSON.stringify({ email: data.data.accessTsoken }),
-          { maxAge: 60 * 60 * 24, path: "/" }
-        );
+        setCookie(COOKIE_KEYS.TOKEN, data.data.accessToken, { maxAge: 60 * 60 * 24, path: "/" });
+        setCookie(COOKIE_KEYS.EMAIL, data.data.email, { maxAge: 60 * 60 * 24, path: "/" });
+        setCookie(COOKIE_KEYS.NAME, data.data.name, { maxAge: 60 * 60 * 24, path: "/" });
+        setCookie(COOKIE_KEYS.ROLE, data.data.role, { maxAge: 60 * 60 * 24, path: "/" });
+        
         toast("Login  successful", {
           description: "You have been logged in successfully.",
         });
@@ -109,16 +109,7 @@ export default function LoginScreen() {
             </div>
 
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
-                <Button
-                  variant="link"
-                  className="h-auto p-0 text-xs font-normal text-muted-foreground"
-                >
-                  Forgot password?
-                </Button>
-              </div>
-              <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -150,7 +141,15 @@ export default function LoginScreen() {
                   {form.formState.errors.password?.message}
                 </p>
               )}
-            </div>
+
+            {/* <div className="flex items-center justify-between">
+                <Button
+                  variant="link"
+                  className="h-auto p-0 text-xs font-normal text-muted-foreground"
+                >
+                  Forgot password?
+                </Button>
+              </div>
 
             <div className="flex items-center space-x-2 pt-2">
               <Checkbox
@@ -163,7 +162,7 @@ export default function LoginScreen() {
               <Label htmlFor="rememberMe" className="text-sm font-normal">
                 Remember me
               </Label>
-            </div>
+            </div> */}
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-4 pt-6">

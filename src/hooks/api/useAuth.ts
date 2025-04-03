@@ -1,7 +1,7 @@
 import { LoginReqDto, LoginResDto } from "@/dtos/auth/login.dto";
 import { SignUpReqDto, SignUpResDto } from "@/dtos/auth/signUp.dto";
 import { instance } from "@/lib/axios";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
 
 export const useLogin = () =>
   useMutation<LoginResDto, Error, LoginReqDto>({
@@ -23,3 +23,4 @@ export const useSignUp = () =>
       return response.data; // Extracting only the data
     },
   });
+

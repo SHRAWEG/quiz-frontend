@@ -56,7 +56,7 @@ export default function SignupScreen() {
       email: "",
       password: "",
       confirmPassword: "",
-      roleId: 3,
+      roleId: 0,
     });
   }, []);
 
@@ -102,6 +102,29 @@ export default function SignupScreen() {
 
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardContent className="space-y-6">
+            {/* Role Selection Field */}
+            <div className="space-y-3">
+                <Label htmlFor="roleId">What are you?</Label>
+                <select
+                  id="roleId"
+                  className={`h-11 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 ${
+                    shouldShowError("roleId")
+                      ? "border-destructive focus-visible:ring-destructive"
+                      : "border-gray-300 focus-visible:ring-primary"
+                  }`}
+                  {...form.register("roleId", { valueAsNumber: true })}
+                  aria-invalid={!!form.formState.errors.roleId}
+                >
+                  <option value={3}>Student</option>
+                  <option value={2}>Teacher</option>
+                </select>
+                {shouldShowError("roleId") && (
+                  <p className="text-sm font-medium text-destructive">
+                    {form.formState.errors.roleId?.message}
+                  </p>
+                )}
+              </div>
+
             {/* Name Fields */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-3">
