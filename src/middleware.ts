@@ -4,15 +4,15 @@ import { COOKIE_KEYS } from "./constants/local-storage-keys";
 export function middleware(req: NextRequest) {
   const token = req.cookies.get(COOKIE_KEYS.TOKEN);
 
-  const isAuthPage = ["/login", "/signup"].includes(req.nextUrl.pathname);
-  const isProtectedPage = ["/"].includes(req.nextUrl.pathname);
+  const isAuthPage = ["/login", "/register", "/"].includes(req.nextUrl.pathname);
+  const isProtectedPage = ["/dashboard"].includes(req.nextUrl.pathname);
 
   if (isAuthPage && token) {
-    return NextResponse.redirect(new URL("/", req.url));
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
   if (isProtectedPage && !token) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
   return NextResponse.next(); // Allow access

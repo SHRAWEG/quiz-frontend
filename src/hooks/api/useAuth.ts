@@ -1,5 +1,5 @@
 import { LoginReqDto, LoginResDto } from "@/dtos/auth/login.dto";
-import { SignUpReqDto, SignUpResDto } from "@/dtos/auth/signUp.dto";
+import { RegisterResDto, RegisterReqDto } from "@/dtos/auth/register.dto";
 import { instance } from "@/lib/axios";
 import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
 
@@ -12,11 +12,11 @@ export const useLogin = () =>
     },
   });
 
-export const useSignUp = () =>
-  useMutation<SignUpResDto, Error, SignUpReqDto>({
+export const useRegister = () =>
+  useMutation<RegisterResDto, Error, RegisterReqDto>({
     mutationKey: ["signup"],
-    mutationFn: async (data: SignUpReqDto) => {
-      const response = await instance.post<SignUpResDto>(
+    mutationFn: async (data: RegisterReqDto) => {
+      const response = await instance.post<RegisterResDto>(
         "/auth/register-user",
         data
       );

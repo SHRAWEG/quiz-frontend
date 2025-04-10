@@ -53,7 +53,7 @@ export default function LoginScreen() {
         toast("Login  successful", {
           description: "You have been logged in successfully.",
         });
-        router.push("/");
+        router.push("/dashboard");
       },
       onError: (error: Error) => {
         console.log(error);
