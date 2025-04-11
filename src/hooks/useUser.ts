@@ -33,7 +33,7 @@ export function useUser(requiredRole?: string) {
             isLoading: false
         })
 
-        if (!token) {
+        if (!token || !isValidRole) { 
             router.push('/login')
         }
 

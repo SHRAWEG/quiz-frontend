@@ -26,7 +26,7 @@ export const registerReqDto = z
     confirmPassword: z
       .string()
       .min(1, { message: "Please confirm your password" }),
-    roleId: z.number().min(1),
+    role: z.string().min(1, { message: "Role is required" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

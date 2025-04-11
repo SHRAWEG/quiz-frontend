@@ -1,7 +1,7 @@
 // app/dashboard/page.tsx
 'use client'
 
-import { useAuthContext } from '@/context/auth-context'
+import { useUser } from '@/hooks/useUser'
 import dynamic from 'next/dynamic'
 
 const AdminDashboard = dynamic(() => import('@/app/(admin)/components/dashboard'))
@@ -9,7 +9,7 @@ const TeacherDashboard = dynamic(() => import('@/app/(teacher)/components/dashbo
 const StudentDashboard = dynamic(() => import('@/app/(student)/components/dashboard'))
 
 export default function DashboardPage() {
-  const { role } = useAuthContext()
+  const { role } = useUser()
 
   switch (role) {
     case 'Admin': return <AdminDashboard />

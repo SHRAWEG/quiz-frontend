@@ -42,7 +42,7 @@ export default function SignupScreen() {
     //   email: "",
     //   password: "",
     //   confirmPassword: "",
-    //   roleId: 3,
+    //   role: 3,
     // },
     mode: "onBlur",
     criteriaMode: "all",
@@ -56,7 +56,7 @@ export default function SignupScreen() {
       email: "",
       password: "",
       confirmPassword: "",
-      roleId: 0,
+      role: "Student",
     });
   }, []);
 
@@ -104,23 +104,23 @@ export default function SignupScreen() {
           <CardContent className="space-y-6">
             {/* Role Selection Field */}
             <div className="space-y-3">
-                <Label htmlFor="roleId">What are you?</Label>
+                <Label htmlFor="role">What are you?</Label>
                 <select
-                  id="roleId"
+                  id="role"
                   className={`h-11 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 ${
-                    shouldShowError("roleId")
+                    shouldShowError("role")
                       ? "border-destructive focus-visible:ring-destructive"
                       : "border-gray-300 focus-visible:ring-primary"
                   }`}
-                  {...form.register("roleId", { valueAsNumber: true })}
-                  aria-invalid={!!form.formState.errors.roleId}
+                  {...form.register("role")}
+                  aria-invalid={!!form.formState.errors.role}
                 >
-                  <option value={3}>Student</option>
-                  <option value={2}>Teacher</option>
+                  <option value={"Student"}>Student</option>
+                  <option value={"Teacher"}>Teacher</option>
                 </select>
-                {shouldShowError("roleId") && (
+                {shouldShowError("role") && (
                   <p className="text-sm font-medium text-destructive">
-                    {form.formState.errors.roleId?.message}
+                    {form.formState.errors.role?.message}
                   </p>
                 )}
               </div>

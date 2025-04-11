@@ -1,18 +1,19 @@
+"use client"
+
 import { Home, FileQuestion, Book, BookText } from "lucide-react"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/layout/app-sidebar"
-import { useAuthContext } from "@/context/auth-context";
-import { useLogout } from "@/hooks/useUser";
+import { useLogout, useUser } from "@/hooks/useUser";
 
 export const items = [
   {
     title: "Dashboard",
-    url: "#",
+    url: "/dashboard",
     icon: Home,
   },
   {
     title: "Subject",
-    url: "#",
+    url: "/subjects",
     icon: Book,
   },
   {
@@ -32,21 +33,44 @@ export default function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  
-  const { name, email } = useAuthContext();
+  const { name, email } = useUser();
+  const logout = useLogout();
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen">
-        <AppSidebar items={items} user={{
-          name: name || "John Doe",
-          email: email || "john@example.com"
-        }}
-          onLogout={useLogout()} />
-        <div className="flex-1">
-          <SidebarTrigger />
+      <div className="flex h-screen bg-gray-50 w-full">
+        {/* Sidebar */}
+        <AppSidebar 
+          items={items} 
+          user={{
+            name: name || "John Doe",
+            email: email || "john@example.com"
+          }}
+          onLogout={logout} 
+        />
+        
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Header with sidebar trigger */}
+          <header className="bg-white shadow-sm z-10">
+            <div className="flex items-center h-16 px-4 sm:px-6 lg:px-8">
+              <SidebarTrigger />
+              <div className="ml-auto flex items-center space-x-4">
+                {/* You can add user dropdown or other header items here */}
+              </div>
+            </div>
+          </header>
+          
+          {/* Main content with proper padding */}
+          <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+            <div className="max-w-full mx-auto">
+              {/* Add a white container with shadow and rounded corners */}
+              <div className="bg-white shadow-sm rounded-lg p-4 sm:p-6">
+                {children}
+              </div>
+            </div>
+          </main>
         </div>
-        {children}
       </div>
     </SidebarProvider>
   );

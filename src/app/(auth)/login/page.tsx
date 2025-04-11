@@ -15,7 +15,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { loginReqDto, LoginReqDto, LoginResDto } from "@/dtos/auth/login.dto";
 import { toast } from "sonner";
@@ -53,6 +52,7 @@ export default function LoginScreen() {
         toast("Login  successful", {
           description: "You have been logged in successfully.",
         });
+
         router.push("/dashboard");
       },
       onError: (error: Error) => {
@@ -71,8 +71,6 @@ export default function LoginScreen() {
       form.formState.errors[fieldName]
     );
   };
-
-  console.log("login end");
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
       <Card className="w-full max-w-md shadow-lg">
@@ -176,7 +174,7 @@ export default function LoginScreen() {
             <div className="text-center text-sm text-muted-foreground">
               Don't have an account?{" "}
               <Link
-                href="/signup"
+                href="/register"
                 className="text-primary underline underline-offset-4 hover:text-primary/90"
               >
                 Create account

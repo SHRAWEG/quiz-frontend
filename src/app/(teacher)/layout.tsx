@@ -1,8 +1,7 @@
 import { Home, FileQuestion, Book, BookText } from "lucide-react"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/layout/app-sidebar"
-import { useAuthContext } from "@/context/auth-context";
-import { useLogout } from "@/hooks/useUser";
+import { useLogout, useUser } from "@/hooks/useUser";
 
 export const items = [
   {
@@ -23,7 +22,7 @@ export default function TeacherLayout({
   children: React.ReactNode;
 }>) {
   
-  const { name, email } = useAuthContext();
+  const { name, email } = useUser();
 
   return (
     <SidebarProvider>

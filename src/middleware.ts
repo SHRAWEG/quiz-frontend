@@ -12,7 +12,7 @@ export function middleware(req: NextRequest) {
   }
 
   if (isProtectedPage && !token) {
-    return NextResponse.redirect(new URL("/", req.url));
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   return NextResponse.next(); // Allow access

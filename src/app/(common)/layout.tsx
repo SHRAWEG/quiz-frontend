@@ -1,7 +1,6 @@
 // app/dashboard/layout.tsx
 'use client'
 
-import { AuthProvider, useAuthContext } from '@/context/auth-context'
 import AdminLayout from '@/app/(admin)/layout'
 import StudentLayout from '@/app/(student)/layout'
 import TeacherLayout from '@/app/(teacher)/layout'
@@ -25,8 +24,6 @@ export default function DashboardLayout({
   }[role as string] ?? (() => <FullPageLoader />)
 
   return (
-    <AuthProvider>
       <LayoutWrapper>{children}</LayoutWrapper>
-    </AuthProvider>
   )
 }
