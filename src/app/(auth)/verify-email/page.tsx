@@ -12,8 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
-import { instance } from "@/lib/axios";
+import { apiClient } from "@/lib/axios";
 
 export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
@@ -37,16 +36,15 @@ export default function VerifyEmailPage() {
       return;
     }
 
-    try 
-    {
-        const response = await instance.get("/auth/verify-email", { params: { token } });
-        toast.success("Email verified successfully!");
-        setIsSubmitting(false);
-        router.push("/login");
-      } catch (error) {
-        setIsSubmitting(false);
-        console.error('Verification failed:', error);
-      }
+    try {
+      const response = await apiClient.get("/auth/verify-email", { params: { token } });
+      toast.success("Email verified successfully!");
+      setIsSubmitting(false);
+      router.push("/login");
+    } catch (error) {
+      setIsSubmitting(false);
+      console.error('Verification failed:', error);
+    }
   };
 
   return (
