@@ -18,9 +18,9 @@ export default function DashboardLayout({
   if (isLoading) return <FullPageLoader />
 
   const LayoutWrapper = {
-    Admin: AdminLayout,
-    Teacher: TeacherLayout,
-    Student: StudentLayout,
+    admin: AdminLayout,
+    teacher: TeacherLayout,
+    student: StudentLayout,
   }[role as string] ?? (() => <FullPageLoader />)
 
   return (

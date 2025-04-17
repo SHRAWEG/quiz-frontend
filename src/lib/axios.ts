@@ -1,5 +1,6 @@
 // api.ts
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import { getCookie } from 'cookies-next/client';
 
 // Standard response format
 export interface ApiResponse<T = any> {
@@ -39,7 +40,7 @@ class ApiClient {
     // Request interceptor
     this.axiosInstance.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('authToken');
+        const token = getCookie('token');
         if (token) {
           config.headers = config.headers || {};
           config.headers.Authorization = `Bearer ${token}`;

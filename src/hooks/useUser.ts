@@ -24,7 +24,7 @@ export function useUser(requiredRole?: string) {
         const role = getCookie(COOKIE_KEYS.ROLE) as string | null
         const name = getCookie(COOKIE_KEYS.NAME) as string | null
         const email = getCookie(COOKIE_KEYS.EMAIL) as string | null
-        const isValidRole = role && ['Admin', 'Teacher', 'Student'].includes(role)
+        const isValidRole = role && ['admin', 'teacher', 'student'].includes(role)
 
         setAuthState({
             name: name,

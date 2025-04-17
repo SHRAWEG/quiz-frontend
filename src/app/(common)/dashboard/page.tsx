@@ -12,9 +12,9 @@ export default function DashboardPage() {
   const { role } = useUser()
 
   switch (role) {
-    case 'Admin': return <AdminDashboard />
-    case 'Teacher': return <TeacherDashboard />
-    case 'Student': return <StudentDashboard />
+    case 'admin': return <AdminDashboard />
+    case 'teacher': return <TeacherDashboard />
+    case 'student': return <StudentDashboard />
     default: return null // Redirect handled in context
   }
 }

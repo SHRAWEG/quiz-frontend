@@ -10,7 +10,7 @@ export const useGetSubSubjectDetail = (subSubjectId: string) => useQuery<SubSubj
 
 export const useGetAllSubSubjects = () => useQuery<SubSubject[]>({
   queryKey: ["allSubSubjects"],
-  queryFn: async () => await apiClient.get<SubSubject[]>(`${API_URLS.subSubject}`)
+  queryFn: async () => await apiClient.get<SubSubject[]>(`${API_URLS.subSubject}/search`)
 });
 
 export const useCreateSubSubject = () =>
@@ -22,7 +22,7 @@ export const useCreateSubSubject = () =>
 export const useUpdateSubSubject = () =>
   useMutation<SubSubject, Error, { subSubjectId: string; data: SubSubjectReqDto }>({
     mutationKey: ["updateSubSubject"],
-    mutationFn: async ({ subSubjectId, data }) => await apiClient.patch<SubSubject, SubSubjectReqDto>(`${API_URLS.subSubject}/${subSubjectId}`, data)
+    mutationFn: async ({ subSubjectId, data }) => await apiClient.put<SubSubject, SubSubjectReqDto>(`${API_URLS.subSubject}/${subSubjectId}`, data)
   });
 
 export const useDeleteSubSubject = () =>
