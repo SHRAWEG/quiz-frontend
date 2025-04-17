@@ -2,31 +2,32 @@
 "use client"
 
 import { PageHeader } from "@/components/layout/app-header";
-import { SubjectReqDto } from "@/types/subject"
-import { useGetAllSubjects, useGetSubjectDetail, useUpdateSubject } from "@/hooks/api/useSubject"
 import { useParams, useRouter } from "next/navigation"
-import { useState } from "react";
-import { SubjectForm } from "../../components/form";
 import FullPageLoader from "@/components/ui/full-page-loader";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { useGetAllSubSubjects, useGetSubSubjectDetail, useUpdateSubSubject } from "@/hooks/api/useSubSubject";
+import { useGetAllSubjects } from "@/hooks/api/useSubject";
+import { SubSubjectReqDto } from "@/types/subSubject";
+import { SubSubjectForm } from "../../components/form";
 
 export default function SubjectPage() {
     const router = useRouter();
 
     const params = useParams()
-    const subjectId = params.id as string
-    const { data, isFetching } = useGetSubjectDetail(subjectId);
-    const { mutate: updateSubject, isPending } = useUpdateSubject()
-    const { refetch } = useGetAllSubjects();
+    const subSubjectId = params.id as string
+    const { data, isFetching } = useGetSubSubjectDetail(subSubjectId);
+    const { mutate: updateSubject, isPending } = useUpdateSubSubject()
+    const { refetch } = useGetAllSubSubjects();
+    const { data: subjects, isFetching: isFetchingSubjects } = useGetAllSubjects();
 
-    const onSubmit = (data: SubjectReqDto) => {
-        updateSubject({ subjectId, data }, {
+    const onSubmit = (data: SubSubjectReqDto) => {
+        updateSubject({ subSubjectId, data }, {
             onSuccess: () => {
                 refetch();
 
-                router.push("/subjects");
+                router.push("/sub-subjects");
             },
 
             onError: (error: Error) => {
@@ -42,15 +43,15 @@ export default function SubjectPage() {
     return (
         <>
             <PageHeader
-                title={`Update Subject`}
-                description="Update the subject name below"
+                title={`Update Sub-Subject`}
+                description="Update the sub-subject name below"
                 breadcrumbs={[
                     { label: "Dashboard", href: "/" },
-                    { label: "Subjects", href: "/subjects" },
+                    { label: "Sub-Subjects", href: "/sub-subjects" },
                     { label: "Update" }
                 ]}
                 actions={
-                    <Button onClick={() => router.push("/subjects")}>
+                    <Button onClick={() => router.push("/sub-subjects")}>
                         <ChevronLeft className="mr-2 h-4 w-4" />
                         Back
                     </Button>
@@ -58,10 +59,14 @@ export default function SubjectPage() {
             />
             <Card>
 
-                <SubjectForm
+                <SubSubjectForm
                     isPending={isPending}
                     onSubmit={onSubmit}
-                    initialValues={{ name: data?.name || "" }}
+                    initialValues={{
+                        subjectId: data?.subject.id || "",
+                        name: data?.name || ""
+                    }}
+                    subjects={subjects || []}
                 />
             </Card>
         </>

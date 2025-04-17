@@ -22,7 +22,7 @@ import {
   registerReqDto,
   RegisterReqDto,
   RegisterResDto,
-} from "@/dtos/auth/register.dto";
+} from "@/types/auth/register.dto";
 import { toast } from "sonner";
 import { useRegister } from "@/hooks/api/useAuth";
 

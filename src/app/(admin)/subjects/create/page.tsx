@@ -1,15 +1,16 @@
 "use client";
 
-import { SubjectReqDto } from "@/dtos/master/subject.dto";
+import { SubjectReqDto } from "@/types/subject";
 import { useCreateSubject, useGetAllSubjects } from "@/hooks/api/useSubject";
 import { useRouter } from "next/navigation";
 import { SubjectForm } from "../components/form";
 import { PageHeader } from "@/components/layout/app-header";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 export default function Page() {
-    const { mutate: createSubject } = useCreateSubject();
+    const { mutate: createSubject, isPending } = useCreateSubject();
     const router = useRouter();
     const { refetch } = useGetAllSubjects();
 
@@ -44,8 +45,12 @@ export default function Page() {
                     </Button>
                 }
             />
-
-            <SubjectForm onSubmit={onSubmit} />
+            <Card>
+                <SubjectForm
+                 isPending={isPending}
+                 onSubmit={onSubmit} />
+            </Card>
         </>
+
     );
 }

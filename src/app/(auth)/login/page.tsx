@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { loginReqDto, LoginReqDto, LoginResDto } from "@/dtos/auth/login.dto";
+import { loginReqDto, LoginReqDto, LoginResDto } from "@/types/auth/login.dto";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -27,7 +27,7 @@ import { setCookie } from "cookies-next/client";
 export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const { mutate } = useLogin();
+  const { mutate, isPending } = useLogin();
 
   const form = useForm<LoginReqDto>({
     resolver: zodResolver(loginReqDto),
@@ -44,10 +44,10 @@ export default function LoginScreen() {
     mutate(data, {
       onSuccess: (data: LoginResDto) => {
 
-        setCookie(COOKIE_KEYS.TOKEN, data.data.accessToken, { maxAge: 60 * 60 * 24, path: "/" });
-        setCookie(COOKIE_KEYS.EMAIL, data.data.email, { maxAge: 60 * 60 * 24, path: "/" });
-        setCookie(COOKIE_KEYS.NAME, data.data.name, { maxAge: 60 * 60 * 24, path: "/" });
-        setCookie(COOKIE_KEYS.ROLE, data.data.role, { maxAge: 60 * 60 * 24, path: "/" });
+        setCookie(COOKIE_KEYS.TOKEN, data.accessToken, { maxAge: 60 * 60 * 24, path: "/" });
+        setCookie(COOKIE_KEYS.EMAIL, data.email, { maxAge: 60 * 60 * 24, path: "/" });
+        setCookie(COOKIE_KEYS.NAME, data.name, { maxAge: 60 * 60 * 24, path: "/" });
+        setCookie(COOKIE_KEYS.ROLE, data.role, { maxAge: 60 * 60 * 24, path: "/" });
         
         toast("Login  successful", {
           description: "You have been logged in successfully.",
@@ -167,9 +167,9 @@ export default function LoginScreen() {
             <Button
               type="submit"
               className="w-full h-11"
-              disabled={form.formState.isSubmitting}
+              disabled={isPending}
             >
-              {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
+              {isPending ? "Signing in..." : "Sign in"}
             </Button>
             <div className="text-center text-sm text-muted-foreground">
               Don't have an account?{" "}

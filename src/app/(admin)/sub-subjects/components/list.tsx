@@ -1,12 +1,17 @@
 "use client"
 
 import { ClientSideDataTable } from "@/components/shared/client-data-table/data-table"
-import { useDeleteSubject, useGetAllSubjects } from "@/hooks/api/useSubject"
+import { useDeleteSubSubject, useGetAllSubSubjects } from "@/hooks/api/useSubSubject";
 import { Subject } from "@/types/subject";
+import { SubSubject } from "@/types/subSubject";
 import { Edit, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const columns = [
+    {
+        accessorKey: "subject.name", 
+        header: "Subject"
+    },
     {
         accessorKey: "name",
         header: "Name"
@@ -15,17 +20,16 @@ const columns = [
 ]
 
 export default function List() {
-    const { data, isFetched } = useGetAllSubjects();
+    const { data, isFetched, refetch } = useGetAllSubSubjects();
     const router = useRouter();
-    const { mutate: deleteSubject, isPending } = useDeleteSubject();
-    const { refetch } = useGetAllSubjects();
+    const { mutate: deleteSubSubject } = useDeleteSubSubject();
 
     const handleDelete = (id: string) => {
-        deleteSubject({ subjectId: id }, {
+        deleteSubSubject({ subSubjectId: id }, {
             onSuccess: () => {
                 refetch();
 
-                router.push("/subjects");
+                router.push("/sub-subjects");
             },
 
             onError: (error: Error) => {
@@ -49,15 +53,15 @@ export default function List() {
                     id: "edit",
                     label: "Edit",
                     icon: Edit,
-                    action: (data: Subject) => {
-                        router.push(`/subjects/update/${data.id}`)
+                    action: (data: SubSubject) => {
+                        router.push(`/sub-subjects/update/${data.id}`)
                     }
                 },
                 {
                     id: "delete",
                     label: "Delete",
                     icon: Trash,
-                    action: (data: Subject) => {
+                    action: (data: SubSubject) => {
                         handleDelete(data.id)
                     },
                     variant: "destructive"

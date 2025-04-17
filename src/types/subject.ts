@@ -16,12 +16,5 @@ export const subjectResDto = z.object({
   data: subjectSchema
 })
 
-export const subjectResDtoArray = z.object({
-  success: z.boolean(),
-  message: z.string(),
-  data: z.array(subjectSchema)
-})
-
 export type SubjectReqDto = z.infer<typeof subjectReqDto>;
-export type SubjectResDto = z.infer<typeof subjectResDto>;
-export type SubjectResDtoArray = z.infer<typeof subjectResDtoArray>;
+export type Subject = z.infer<typeof subjectSchema>;

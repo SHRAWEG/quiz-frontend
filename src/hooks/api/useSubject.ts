@@ -1,34 +1,32 @@
-import { LoginReqDto, LoginResDto } from "@/dtos/auth/login.dto";
-import { SubjectReqDto, SubjectResDto, SubjectResDtoArray } from "@/dtos/master/subject.dto";
-import { instance } from "@/lib/axios";
-import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
+import { apiClient } from "@/lib/axios";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Subject, SubjectReqDto } from "@/types/subject";
+import { API_URLS } from "@/lib/constants/api-urls";
 
-export const useGetAllSubjects = () => useQuery<SubjectResDtoArray>({
+export const useGetSubjectDetail = (subjectId: string) => useQuery<Subject>({
+  queryKey: ["subject", subjectId],
+  queryFn: async () => await apiClient.get<Subject>(`${API_URLS.subject}/${subjectId}`),
+})
+
+export const useGetAllSubjects = () => useQuery<Subject[]>({
   queryKey: ["allSubjects"],
-  queryFn: async () => {
-    const response = await instance.get<SubjectResDtoArray>("/subjects");
-    return response.data; // Extracting only the data
-  },
+  queryFn: async () => await apiClient.get<Subject[]>(`${API_URLS.subject}`)
 });
 
 export const useCreateSubject = () =>
-  useMutation<SubjectResDto, Error, SubjectReqDto>({
+  useMutation<Subject, Error, SubjectReqDto>({
     mutationKey: ["createSubject"],
-    mutationFn: async (data: SubjectReqDto) => {
-      const response = await instance.post<SubjectResDto>("/subjects", data);
-      return response.data; // Extracting only the data
-    },
+    mutationFn: async (data: SubjectReqDto) => await apiClient.post<Subject, SubjectReqDto>(`${API_URLS.subject}`, data)
   });
 
-export const useUpdateSubject = (id: string) =>
-  useMutation<SubjectResDto, Error, SubjectReqDto>({
+export const useUpdateSubject = () =>
+  useMutation<Subject, Error, { subjectId: string; data: SubjectReqDto }>({
     mutationKey: ["updateSubject"],
-    mutationFn: async (data: SubjectReqDto) => {
-      const response = await instance.put<SubjectResDto>(
-        "/subjects/" + id,
-        data
-      );
-      return response.data; // Extracting only the data
-    },
+    mutationFn: async ({ subjectId, data }) => await apiClient.patch<Subject, SubjectReqDto>(`${API_URLS.subject}/${subjectId}`, data)
   });
 
+export const useDeleteSubject = () =>
+  useMutation<Subject, Error, { subjectId: string }>({
+    mutationKey: ["deleteSubject"],
+    mutationFn: async ({ subjectId }) => await apiClient.delete<Subject>(`${API_URLS.subject}/${subjectId}`)
+  })

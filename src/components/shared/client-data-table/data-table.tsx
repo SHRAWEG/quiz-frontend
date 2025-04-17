@@ -22,12 +22,13 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, SlidersHorizontal } from "lucide-react"
+import { useMemo, useState } from "react"
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Loader2, MoreHorizontal, SlidersHorizontal } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
@@ -38,10 +39,20 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+export type TableAction<TData> = {
+  id: string
+  label: string
+  icon: React.ComponentType<{ className?: string }>
+  action: (data: TData) => void
+  variant?: "default" | "destructive"
+}
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  actions?: TableAction<TData>[]
   // Optional features
+  isFetched: boolean
   enablePagination?: boolean
   enableSorting?: boolean
   enableFiltering?: boolean
@@ -53,19 +64,57 @@ interface DataTableProps<TData, TValue> {
 export function ClientSideDataTable<TData, TValue>({
   columns,
   data,
+  actions,
   enablePagination = true,
   enableSorting = true,
   enableFiltering = true,
   enableColumnVisibility = true,
   initialPageSize = 10,
+  isFetched,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState("")
 
+  const tableColumns = useMemo(() => {
+    if (!actions || actions.length === 0) return columns
+
+    return [
+      ...columns,
+      {
+        id: "actions",
+        cell: ({ row }) => {
+          const data = row.original
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {actions.map((action) => (
+                  <DropdownMenuItem
+                    key={action.id}
+                    onClick={() => action.action(data)}
+                    className={action.variant === "destructive" ? "text-red-600" : ""}
+                  >
+                    <action.icon className="mr-2 h-4 w-4" />
+                    {action.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )
+        },
+      },
+    ]
+  }, [columns, actions])
+
   const table = useReactTable({
     data,
-    columns,
+    columns: tableColumns,
     state: {
       ...(enableSorting && { sorting }),
       ...(enableFiltering && { columnFilters, globalFilter }),
@@ -93,7 +142,7 @@ export function ClientSideDataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       {(enableFiltering || enableColumnVisibility) && (
-        <div className="flex items-center justify-between">
+        <div className="flex mx-8 items-center justify-between">
           {enableFiltering && (
             <Input
               placeholder="Filter results..."
@@ -140,7 +189,7 @@ export function ClientSideDataTable<TData, TValue>({
         </div>
       )}
 
-      <div className="rounded-md border">
+      <div className="border">
         <Table className="w-full">
           <TableHeader className="bg-blue-50">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -148,7 +197,7 @@ export function ClientSideDataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="px-6 py-3 text-blue-800 font-semibold text-left"
+                    className={`px-6 py-3 text-blue-800 font-semibold text-left`}
                   >
                     {flexRender(
                       header.column.columnDef.header,
@@ -160,38 +209,40 @@ export function ClientSideDataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className="hover:bg-gray-50 even:bg-gray-50/50"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="px-6 py-4 whitespace-nowrap">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
+            {isFetched ?
+              table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className="hover:bg-gray-50 even:bg-gray-50/50"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="px-6 py-4 whitespace-nowrap">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                    No results.
+                  </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="flex h-24 items-center justify-center">
+                    <Loader2 className="animate-spin" />
+                  </TableCell>
+                </TableRow>
+              )}
           </TableBody>
         </Table>
       </div>
 
       {enablePagination && (
-        <div className="flex items-center justify-between px-2">
-          <div className="flex-1 text-sm text-muted-foreground">
-            Showing {table.getRowModel().rows.length} of{' '}
-            {table.getFilteredRowModel().rows.length} row(s)
-          </div>
-
+        <div className="flex items-center justify-end px-2">
           <div className="flex items-center space-x-6 lg:space-x-8">
             <div className="flex items-center space-x-2">
               <p className="text-sm font-medium">Rows per page</p>

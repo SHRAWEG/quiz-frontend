@@ -14,16 +14,16 @@ export default function Page() {
         <>
 
             <PageHeader
-                title="Subjects"
-                description="Manage your subjects here"
+                title="Sub-Subjects"
+                description="Manage your sub-subjects here"
                 breadcrumbs={[
                     { label: "Dashboard", href: "/" },
-                    { label: "Subjects" }
+                    { label: "Sub-Subjects" }
                 ]}
                 actions={
-                    <Button onClick={() => router.push("/subjects/create")}>
+                    <Button onClick={() => router.push("/sub-subjects/create")}>
                         <Plus className="mr-2 h-4 w-4" />
-                        Add Subject
+                        Add Sub-Subject
                     </Button>
                 }
             />

@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { subjectReqDto, SubjectReqDto } from "@/dtos/master/subject.dto";
+import { subjectReqDto, SubjectReqDto } from "@/types/subject";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 interface FormProps {
     onSubmit: (data: SubjectReqDto) => void;
+    isPending: boolean;
     initialValues?: SubjectReqDto;
 }
 
@@ -31,7 +32,7 @@ export function SubjectForm(props: FormProps) {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(props.onSubmit)} className="w-full max-w-sm space-y-6">
+            <form onSubmit={form.handleSubmit(props.onSubmit)} className="w-full max-w-sm space-y-6 mx-8">
                 <FormField
                     control={form.control}
                     name="name"
@@ -45,7 +46,12 @@ export function SubjectForm(props: FormProps) {
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Submit</Button>
+                <Button
+                    type="submit"
+                    disabled={props.isPending}
+                >
+                    {props.isPending ? "Submitting..." : "Submit"}
+                </Button>
             </form>
         </Form>
     )

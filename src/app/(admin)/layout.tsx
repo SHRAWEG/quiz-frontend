@@ -18,7 +18,7 @@ export const items = [
   },
   {
     title: "Sub Subject",
-    url: "#",
+    url: "/sub-subjects",
     icon: BookText,
   },
   {
@@ -38,17 +38,17 @@ export default function AdminLayout({
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen bg-gray-50 w-full">
+      <div className="flex bg-gray-50 w-full">
         {/* Sidebar */}
-        <AppSidebar 
-          items={items} 
+        <AppSidebar
+          items={items}
           user={{
             name: name || "John Doe",
             email: email || "john@example.com"
           }}
-          onLogout={logout} 
+          onLogout={logout}
         />
-        
+
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Header with sidebar trigger */}
@@ -60,15 +60,10 @@ export default function AdminLayout({
               </div>
             </div>
           </header>
-          
+
           {/* Main content with proper padding */}
           <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-            <div className="max-w-full mx-auto">
-              {/* Add a white container with shadow and rounded corners */}
-              <div className="bg-white shadow-sm rounded-lg p-4 sm:p-6">
-                {children}
-              </div>
-            </div>
+            {children}
           </main>
         </div>
       </div>
