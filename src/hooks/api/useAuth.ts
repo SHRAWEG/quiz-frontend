@@ -12,6 +12,6 @@ export const useLogin = () =>
 export const useRegister = () =>
   useMutation<RegisterResDto, Error, RegisterReqDto>({
     mutationKey: ["signup"],
-    mutationFn: async (data: RegisterReqDto) => await apiClient.post<RegisterResDto, RegisterReqDto>("/auth/register", data)
+    mutationFn: async (data: RegisterReqDto) => await apiClient.post<RegisterResDto, RegisterReqDto>("/auth/register-user", data)
   });
 

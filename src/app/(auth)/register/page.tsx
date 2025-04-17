@@ -115,8 +115,8 @@ export default function SignupScreen() {
                   {...form.register("role")}
                   aria-invalid={!!form.formState.errors.role}
                 >
-                  <option value={"Student"}>Student</option>
-                  <option value={"Teacher"}>Teacher</option>
+                  <option value={"student"}>Student</option>
+                  <option value={"teacher"}>Teacher</option>
                 </select>
                 {shouldShowError("role") && (
                   <p className="text-sm font-medium text-destructive">
