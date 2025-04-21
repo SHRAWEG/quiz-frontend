@@ -10,11 +10,5 @@ export const subjectReqDto = z.object({
   name: z.string().min(1, { message: "Name is required" })
 })
 
-export const subjectResDto = z.object({
-  success: z.boolean(),
-  message: z.string(),
-  data: subjectSchema
-})
-
 export type SubjectReqDto = z.infer<typeof subjectReqDto>;
 export type Subject = z.infer<typeof subjectSchema>;

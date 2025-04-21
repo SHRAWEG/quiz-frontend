@@ -21,7 +21,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLogin } from "@/hooks/api/useAuth";
-import { COOKIE_KEYS } from "@/constants/local-storage-keys";
+import { COOKIE_KEYS } from "@/constants/cookie-keys";
 import { setCookie } from "cookies-next/client";
 
 export default function LoginScreen() {
@@ -33,8 +33,7 @@ export default function LoginScreen() {
     resolver: zodResolver(loginReqDto),
     defaultValues: {
       email: "",
-      password: "",
-      rememberMe: false,
+      password: ""
     },
     mode: "onBlur",
     criteriaMode: "all",
@@ -48,7 +47,7 @@ export default function LoginScreen() {
         setCookie(COOKIE_KEYS.EMAIL, data.email, { maxAge: 60 * 60 * 24, path: "/" });
         setCookie(COOKIE_KEYS.NAME, data.name, { maxAge: 60 * 60 * 24, path: "/" });
         setCookie(COOKIE_KEYS.ROLE, data.role, { maxAge: 60 * 60 * 24, path: "/" });
-        
+
         toast("Login  successful", {
           description: "You have been logged in successfully.",
         });
@@ -91,11 +90,10 @@ export default function LoginScreen() {
                 id="email"
                 type="email"
                 placeholder="name@example.com"
-                className={`h-11 ${
-                  shouldShowError("email")
+                className={`h-11 ${shouldShowError("email")
                     ? "border-destructive focus-visible:ring-destructive"
                     : ""
-                }`}
+                  }`}
                 {...form.register("email")}
                 aria-invalid={!!form.formState.errors.email}
               />
@@ -107,38 +105,37 @@ export default function LoginScreen() {
             </div>
 
             <div className="space-y-3">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  className={`h-11 pr-10 ${
-                    shouldShowError("password")
-                      ? "border-destructive focus-visible:ring-destructive"
-                      : ""
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                className={`h-11 pr-10 ${shouldShowError("password")
+                    ? "border-destructive focus-visible:ring-destructive"
+                    : ""
                   }`}
-                  {...form.register("password")}
-                  aria-invalid={!!form.formState.errors.password}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-11 w-11 text-muted-foreground"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOffIcon className="h-4 w-4" />
-                  ) : (
-                    <EyeIcon className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-              {shouldShowError("password") && (
-                <p className="text-sm font-medium text-destructive">
-                  {form.formState.errors.password?.message}
-                </p>
-              )}
+                {...form.register("password")}
+                aria-invalid={!!form.formState.errors.password}
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-0 top-0 h-11 w-11 text-muted-foreground"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <EyeOffIcon className="h-4 w-4" />
+                ) : (
+                  <EyeIcon className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+            {shouldShowError("password") && (
+              <p className="text-sm font-medium text-destructive">
+                {form.formState.errors.password?.message}
+              </p>
+            )}
 
             {/* <div className="flex items-center justify-between">
                 <Button

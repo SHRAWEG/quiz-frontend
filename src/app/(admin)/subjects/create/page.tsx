@@ -29,7 +29,7 @@ export default function Page() {
     }
 
     return (
-        <>
+        <Card className="p-4">
             <PageHeader
                 title="Create Subject"
                 description="Create your subjects here"
@@ -45,12 +45,10 @@ export default function Page() {
                     </Button>
                 }
             />
-            <Card>
-                <SubjectForm
-                 isPending={isPending}
-                 onSubmit={onSubmit} />
-            </Card>
-        </>
+            <SubjectForm
+                isPending={isPending}
+                onSubmit={onSubmit} />
+        </Card>
 
     );
 }

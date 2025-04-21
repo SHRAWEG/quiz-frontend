@@ -1,6 +1,6 @@
 "use client";
 
-import { COOKIE_KEYS } from '@/constants/local-storage-keys';
+import { COOKIE_KEYS } from '@/constants/cookie-keys';
 import { deleteCookie, getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';

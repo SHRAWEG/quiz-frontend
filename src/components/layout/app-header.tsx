@@ -24,7 +24,7 @@ export function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <div className={cn("mb-6", className)}>
+    <div className={cn("mb-4 border-b-2", className)}>
       {breadcrumbs && breadcrumbs.length > 0 && (
         <Breadcrumb className="mb-4">
           <BreadcrumbList>

@@ -13,11 +13,5 @@ export const subSubjectReqDto = z.object({
   name: z.string().min(1, { message: "Name is required" })
 })
 
-export const subSubjectResDto = z.object({
-  success: z.boolean(),
-  message: z.string(),
-  data: subSubjectSchema
-})
-
 export type SubSubjectReqDto = z.infer<typeof subSubjectReqDto>;
 export type SubSubject = z.infer<typeof subSubjectSchema>;

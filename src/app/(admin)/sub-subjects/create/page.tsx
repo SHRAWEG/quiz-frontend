@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useCreateSubSubject, useGetAllSubSubjects } from "@/hooks/api/useSubSubject";
-import { SubSubjectReqDto } from "@/types/subSubject";
+import { SubSubjectReqDto } from "@/types/sub-subject";
 import { SubSubjectForm } from "../components/form";
 import { useGetAllSubjects } from "@/hooks/api/useSubject";
 
@@ -35,7 +35,7 @@ export default function Page() {
     }
 
     return (
-        <>
+        <><Card className="p-4">
             <PageHeader
                 title="Create Sub-Subject"
                 description="Create your sub-subjects here"
@@ -51,13 +51,13 @@ export default function Page() {
                     </Button>
                 }
             />
-            <Card>
-                <SubSubjectForm
-                    isPending={isPending}
-                    onSubmit={onSubmit}
-                    subjects={subjects || []}
-                />
-            </Card>
+
+            <SubSubjectForm
+                isPending={isPending}
+                onSubmit={onSubmit}
+                subjects={subjects || []}
+            />
+        </Card>
         </>
 
     );

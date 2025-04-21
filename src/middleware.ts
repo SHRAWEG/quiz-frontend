@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { COOKIE_KEYS } from "./constants/local-storage-keys";
+import { COOKIE_KEYS } from "./constants/cookie-keys";
 
 export function middleware(req: NextRequest) {
   const token = req.cookies.get(COOKIE_KEYS.TOKEN);

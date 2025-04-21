@@ -23,7 +23,7 @@ export const items = [
   },
   {
     title: "Question",
-    url: "#",
+    url: "/questions",
     icon: FileQuestion,
   }
 ]
@@ -33,7 +33,7 @@ export default function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { name, email } = useUser();
+  const { name, email } = useUser('admin');
   const logout = useLogout();
 
   return (

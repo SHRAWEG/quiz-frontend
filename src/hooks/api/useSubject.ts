@@ -1,16 +1,22 @@
-import { apiClient } from "@/lib/axios";
+import { apiClient, ApiResponse } from "@/lib/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Subject, SubjectReqDto } from "@/types/subject";
 import { API_URLS } from "@/lib/constants/api-urls";
 
 export const useGetSubjectDetail = (subjectId: string) => useQuery<Subject>({
   queryKey: ["subject", subjectId],
-  queryFn: async () => await apiClient.get<Subject>(`${API_URLS.subject}/${subjectId}`),
+  queryFn: async () => {
+    const response = await apiClient.get<ApiResponse<Subject>>(`${API_URLS.subject}/${subjectId}`)
+    return response.data;
+  }
 })
 
 export const useGetAllSubjects = () => useQuery<Subject[]>({
   queryKey: ["allSubjects"],
-  queryFn: async () => await apiClient.get<Subject[]>(`${API_URLS.subject}/search`)
+  queryFn: async () => {
+    const response = await apiClient.get<ApiResponse<Subject[]>>(`${API_URLS.subject}/search`)
+    return response.data;
+  }
 });
 
 export const useCreateSubject = () =>

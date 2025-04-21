@@ -1,3 +1,5 @@
+"use client"
+
 import { Home, FileQuestion, Book, BookText } from "lucide-react"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/layout/app-sidebar"
@@ -22,7 +24,7 @@ export default function StudentLayout({
   children: React.ReactNode;
 }>) {
   
-  const { name, email } = useUser();
+  const { name, email } = useUser('student');
 
   return (
     <SidebarProvider>

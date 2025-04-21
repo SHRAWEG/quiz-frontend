@@ -142,7 +142,7 @@ export function ClientSideDataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       {(enableFiltering || enableColumnVisibility) && (
-        <div className="flex mx-8 items-center justify-between">
+        <div className="flex mx-4 items-center justify-between">
           {enableFiltering && (
             <Input
               placeholder="Filter results..."
@@ -189,7 +189,7 @@ export function ClientSideDataTable<TData, TValue>({
         </div>
       )}
 
-      <div className="border">
+      <div className="border rounded-md overflow-auto">
         <Table className="w-full">
           <TableHeader className="bg-blue-50">
             {table.getHeaderGroups().map((headerGroup) => (

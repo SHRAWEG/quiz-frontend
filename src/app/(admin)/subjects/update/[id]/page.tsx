@@ -40,7 +40,7 @@ export default function SubjectPage() {
     }
 
     return (
-        <>
+        <Card className="p-4">
             <PageHeader
                 title={`Update Subject`}
                 description="Update the subject name below"
@@ -56,14 +56,11 @@ export default function SubjectPage() {
                     </Button>
                 }
             />
-            <Card>
-
-                <SubjectForm
-                    isPending={isPending}
-                    onSubmit={onSubmit}
-                    initialValues={{ name: data?.name || "" }}
-                />
-            </Card>
-        </>
+            <SubjectForm
+                isPending={isPending}
+                onSubmit={onSubmit}
+                initialValues={{ name: data?.name || "" }}
+            />
+        </Card>
     )
 }

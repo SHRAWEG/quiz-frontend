@@ -2,21 +2,19 @@
 
 import { ClientSideDataTable } from "@/components/shared/client-data-table/data-table"
 import { useDeleteSubSubject, useGetAllSubSubjects } from "@/hooks/api/useSubSubject";
-import { Subject } from "@/types/subject";
-import { SubSubject } from "@/types/subSubject";
+import { SubSubject } from "@/types/sub-subject";
 import { Edit, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const columns = [
     {
-        accessorKey: "subject.name", 
-        header: "Subject"
-    },
-    {
         accessorKey: "name",
         header: "Name"
+    },
+    {
+        accessorKey: "subject.name",
+        header: "Subject"
     }
-
 ]
 
 export default function List() {

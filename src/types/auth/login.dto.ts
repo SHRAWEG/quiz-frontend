@@ -6,7 +6,7 @@ export const loginReqDto = z.object({
     .string()
     .min(1, { message: "Password is required" })
     .min(8, { message: "Password must be at least 8 characters" }),
-  rememberMe: z.boolean().optional(),
+  // rememberMe: z.boolean().optional(),
 })
 
 export const loginResDto = z.object({

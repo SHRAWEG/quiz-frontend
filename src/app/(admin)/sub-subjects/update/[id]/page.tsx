@@ -9,7 +9,7 @@ import { ChevronLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useGetAllSubSubjects, useGetSubSubjectDetail, useUpdateSubSubject } from "@/hooks/api/useSubSubject";
 import { useGetAllSubjects } from "@/hooks/api/useSubject";
-import { SubSubjectReqDto } from "@/types/subSubject";
+import { SubSubjectReqDto } from "@/types/sub-subject";
 import { SubSubjectForm } from "../../components/form";
 
 export default function SubjectPage() {
@@ -41,7 +41,7 @@ export default function SubjectPage() {
     }
 
     return (
-        <>
+        <Card className="p-4">
             <PageHeader
                 title={`Update Sub-Subject`}
                 description="Update the sub-subject name below"
@@ -57,18 +57,15 @@ export default function SubjectPage() {
                     </Button>
                 }
             />
-            <Card>
-
-                <SubSubjectForm
-                    isPending={isPending}
-                    onSubmit={onSubmit}
-                    initialValues={{
-                        subjectId: data?.subject.id || "",
-                        name: data?.name || ""
-                    }}
-                    subjects={subjects || []}
-                />
-            </Card>
-        </>
+            <SubSubjectForm
+                isPending={isPending}
+                onSubmit={onSubmit}
+                initialValues={{
+                    subjectId: data?.subject.id || "",
+                    name: data?.name || ""
+                }}
+                subjects={subjects || []}
+            />
+        </Card>
     )
 }

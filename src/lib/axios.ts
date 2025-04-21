@@ -6,7 +6,7 @@ import { getCookie } from 'cookies-next/client';
 export interface ApiResponse<T = any> {
   data: T;
   status: number;
-  statusText: string;
+  message: string;
 }
 
 // Custom error class with typed error data
@@ -52,7 +52,7 @@ class ApiClient {
 
     // Response interceptor
     this.axiosInstance.interceptors.response.use(
-      (response: AxiosResponse) => response.data.data,
+      (response: AxiosResponse) => response.data,
       (error: AxiosError) => {
         if (error.response) {
           return Promise.reject(

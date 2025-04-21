@@ -11,8 +11,7 @@ export default function Page() {
     const router = useRouter()
 
     return (
-        <>
-
+        <Card className="p-4">
             <PageHeader
                 title="Subjects"
                 description="Manage your subjects here"
@@ -27,11 +26,7 @@ export default function Page() {
                     </Button>
                 }
             />
-            <Card>
-                <List />
-            </Card>
-
-        </>
-
+            <List />
+        </Card>
     )
 }

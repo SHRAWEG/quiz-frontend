@@ -1,12 +1,15 @@
 import { LoginReqDto, LoginResDto } from "@/types/auth/login.dto";
 import { RegisterResDto, RegisterReqDto } from "@/types/auth/register.dto";
-import { apiClient } from "@/lib/axios";
+import { apiClient, ApiResponse } from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
 
 export const useLogin = () =>
   useMutation<LoginResDto, Error, LoginReqDto>({
     mutationKey: ["login"],
-    mutationFn: async (data: LoginReqDto) => await apiClient.post<LoginResDto, LoginReqDto>("/auth/login", data)
+    mutationFn: async (data: LoginReqDto) => {
+      const response = await apiClient.post<ApiResponse<LoginResDto>, LoginReqDto>("/auth/login", data)
+      return response.data;
+    }
   });
 
 export const useRegister = () =>
