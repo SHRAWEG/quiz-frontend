@@ -20,14 +20,20 @@ import { loginReqDto, LoginReqDto, LoginResDto } from "@/types/auth/login.dto";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useLogin } from "@/hooks/api/useAuth";
+import { useLogin, useResendVerification } from "@/hooks/api/useAuth";
 import { COOKIE_KEYS } from "@/constants/cookie-keys";
 import { setCookie } from "cookies-next/client";
+import { ApiError } from "@/lib/axios";
 
 export default function LoginScreen() {
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+
   const { mutate, isPending } = useLogin();
+  const { mutate: resendVerify } = useResendVerification();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [resendVerifyLink, setResendVerifyLink] = useState(false);
 
   const form = useForm<LoginReqDto>({
     resolver: zodResolver(loginReqDto),
@@ -48,16 +54,35 @@ export default function LoginScreen() {
         setCookie(COOKIE_KEYS.NAME, data.name, { maxAge: 60 * 60 * 24, path: "/" });
         setCookie(COOKIE_KEYS.ROLE, data.role, { maxAge: 60 * 60 * 24, path: "/" });
 
-        toast("Login  successful", {
+        toast.success("Login  successful", {
           description: "You have been logged in successfully.",
         });
 
         router.push("/dashboard");
       },
-      onError: (error: Error) => {
-        console.log(error);
-        toast("Login failed", {
-          description: "Invalid username or password.",
+      onError: (error: ApiError) => {
+        if (error.status === 401) {
+          setError(error.data.message);
+        }
+
+        if (error.status === 403) {
+          setError(error.data.message);
+          setResendVerifyLink(true);
+        }
+      },
+    });
+  }
+
+  function handleResendVerification() {
+    resendVerify({ email: form.getValues("email") }, {
+      onSuccess: () => {
+        toast("Verification link sent successfully", {
+          description: "Please check your email for the verification link.",
+        });
+      },
+      onError: (error: ApiError) => {
+        toast.error("Error sending verification link", {
+          description: error.data.message,
         });
       },
     });
@@ -91,10 +116,16 @@ export default function LoginScreen() {
                 type="email"
                 placeholder="name@example.com"
                 className={`h-11 ${shouldShowError("email")
-                    ? "border-destructive focus-visible:ring-destructive"
-                    : ""
+                  ? "border-destructive focus-visible:ring-destructive"
+                  : ""
                   }`}
                 {...form.register("email")}
+                onChange={(e) => {
+                  form.setValue("email", e.target.value.trim());
+                  setError("");
+                  setResendVerifyLink(false);
+                  form.clearErrors("email");
+                }}
                 aria-invalid={!!form.formState.errors.email}
               />
               {shouldShowError("email") && (
@@ -111,10 +142,16 @@ export default function LoginScreen() {
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 className={`h-11 pr-10 ${shouldShowError("password")
-                    ? "border-destructive focus-visible:ring-destructive"
-                    : ""
+                  ? "border-destructive focus-visible:ring-destructive"
+                  : ""
                   }`}
                 {...form.register("password")}
+                onChange={(e) => {
+                  form.setValue("password", e.target.value.trim());
+                  setError("");
+                  setResendVerifyLink(false);
+                  form.clearErrors("password");
+                }}
                 aria-invalid={!!form.formState.errors.password}
               />
               <Button
@@ -135,6 +172,18 @@ export default function LoginScreen() {
               <p className="text-sm font-medium text-destructive">
                 {form.formState.errors.password?.message}
               </p>
+            )}
+
+            {error && (
+              <p className="text-sm font-medium text-destructive">
+                {error}
+              </p>
+            )}
+
+            {resendVerifyLink && (
+              <a onClick={handleResendVerification} className="text-sm font-medium text-muted-foreground cursor-pointer hover:text-primary underline underline-offset-4">
+                Resend verify link to your email address.
+              </a>
             )}
 
             {/* <div className="flex items-center justify-between">

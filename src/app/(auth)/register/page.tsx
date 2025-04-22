@@ -25,6 +25,7 @@ import {
 } from "@/types/auth/register.dto";
 import { toast } from "sonner";
 import { useRegister } from "@/hooks/api/useAuth";
+import { ApiError } from "@/lib/axios";
 
 export default function SignupScreen() {
   const [showPassword, setShowPassword] = useState(false);
@@ -64,17 +65,23 @@ export default function SignupScreen() {
   function onSubmit(data: RegisterReqDto) {
     mutate(data, {
       onSuccess: (data: RegisterResDto) => {
-        // ✅ Correct type
-        console.log(data);
-        toast("Signup successful", {
+        toast.success("Signup successful", {
           description: "You have been registered successfully.",
         });
         router.push("/login");
       },
-      onError: (error: Error) => {
-        console.log(error);
-        toast("Signup failed", {
-          description: error.message,
+      onError: (error: ApiError) => {
+        if (error.status === 400 && error.data.errors) {
+          Object.entries(error.data.errors).forEach(([field, messages]) => {
+            form.setError(field as keyof RegisterReqDto, {
+              type: "manual",
+              message: (messages as string[]).join(", "),
+            });
+          });
+        }
+
+        toast.error("Signup failed", {
+          description: error.data.message,
         });
       },
     });
@@ -104,26 +111,25 @@ export default function SignupScreen() {
           <CardContent className="space-y-6">
             {/* Role Selection Field */}
             <div className="space-y-3">
-                <Label htmlFor="role">What are you?</Label>
-                <select
-                  id="role"
-                  className={`h-11 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 ${
-                    shouldShowError("role")
-                      ? "border-destructive focus-visible:ring-destructive"
-                      : "border-gray-300 focus-visible:ring-primary"
+              <Label htmlFor="role">What are you?</Label>
+              <select
+                id="role"
+                className={`h-11 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 ${shouldShowError("role")
+                    ? "border-destructive focus-visible:ring-destructive"
+                    : "border-gray-300 focus-visible:ring-primary"
                   }`}
-                  {...form.register("role")}
-                  aria-invalid={!!form.formState.errors.role}
-                >
-                  <option value={"student"}>Student</option>
-                  <option value={"teacher"}>Teacher</option>
-                </select>
-                {shouldShowError("role") && (
-                  <p className="text-sm font-medium text-destructive">
-                    {form.formState.errors.role?.message}
-                  </p>
-                )}
-              </div>
+                {...form.register("role")}
+                aria-invalid={!!form.formState.errors.role}
+              >
+                <option value={"student"}>Student</option>
+                <option value={"teacher"}>Teacher</option>
+              </select>
+              {shouldShowError("role") && (
+                <p className="text-sm font-medium text-destructive">
+                  {form.formState.errors.role?.message}
+                </p>
+              )}
+            </div>
 
             {/* Name Fields */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -132,11 +138,10 @@ export default function SignupScreen() {
                 <Input
                   id="firstName"
                   placeholder="John"
-                  className={`h-11 ${
-                    shouldShowError("firstName")
+                  className={`h-11 ${shouldShowError("firstName")
                       ? "border-destructive focus-visible:ring-destructive"
                       : ""
-                  }`}
+                    }`}
                   {...form.register("firstName")}
                   aria-invalid={!!form.formState.errors.firstName}
                 />
@@ -162,11 +167,10 @@ export default function SignupScreen() {
                 <Input
                   id="lastName"
                   placeholder="Doe"
-                  className={`h-11 ${
-                    shouldShowError("lastName")
+                  className={`h-11 ${shouldShowError("lastName")
                       ? "border-destructive focus-visible:ring-destructive"
                       : ""
-                  }`}
+                    }`}
                   {...form.register("lastName")}
                   aria-invalid={!!form.formState.errors.lastName}
                 />
@@ -185,11 +189,10 @@ export default function SignupScreen() {
                 id="email"
                 type="email"
                 placeholder="john.doe@example.com"
-                className={`h-11 ${
-                  shouldShowError("email")
+                className={`h-11 ${shouldShowError("email")
                     ? "border-destructive focus-visible:ring-destructive"
                     : ""
-                }`}
+                  }`}
                 {...form.register("email")}
                 aria-invalid={!!form.formState.errors.email}
               />
@@ -207,11 +210,10 @@ export default function SignupScreen() {
                 id="phone"
                 type="tel"
                 placeholder="(123) 456-7890"
-                className={`h-11 ${
-                  shouldShowError("phone")
+                className={`h-11 ${shouldShowError("phone")
                     ? "border-destructive focus-visible:ring-destructive"
                     : ""
-                }`}
+                  }`}
                 {...form.register("phone")}
                 aria-invalid={!!form.formState.errors.phone}
               />
@@ -230,11 +232,10 @@ export default function SignupScreen() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className={`h-11 pr-10 ${
-                    shouldShowError("password")
+                  className={`h-11 pr-10 ${shouldShowError("password")
                       ? "border-destructive focus-visible:ring-destructive"
                       : ""
-                  }`}
+                    }`}
                   {...form.register("password")}
                   aria-invalid={!!form.formState.errors.password}
                 />
@@ -267,11 +268,10 @@ export default function SignupScreen() {
                   id="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className={`h-11 pr-10 ${
-                    shouldShowError("confirmPassword")
+                  className={`h-11 pr-10 ${shouldShowError("confirmPassword")
                       ? "border-destructive focus-visible:ring-destructive"
                       : ""
-                  }`}
+                    }`}
                   {...form.register("confirmPassword")}
                   aria-invalid={!!form.formState.errors.confirmPassword}
                 />

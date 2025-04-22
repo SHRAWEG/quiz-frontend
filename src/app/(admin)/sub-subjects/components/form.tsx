@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Subject } from "@/types/subject";
 import { subSubjectReqDto, SubSubjectReqDto } from "@/types/sub-subject";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, UseFormReturn } from "react-hook-form";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { InfoIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -13,25 +13,16 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 interface FormProps {
     onSubmit: (data: SubSubjectReqDto) => void;
     isPending: boolean;
-    initialValues?: SubSubjectReqDto;
     subjects: Subject[];
+    form: UseFormReturn<SubSubjectReqDto>;
 }
 
-export function SubSubjectForm(props: FormProps) {
-    const form = useForm<SubSubjectReqDto>({
-        resolver: zodResolver(subSubjectReqDto),
-        defaultValues: {
-            subjectId: props.initialValues?.subjectId || "",
-            name: props.initialValues?.name || "",
-        },
-        mode: "onBlur",
-    });
-
+export function SubSubjectForm({onSubmit, isPending, subjects, form}: FormProps) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column - Form */}
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(props.onSubmit)} className="space-y-6">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <FormField
                         control={form.control}
                         name="subjectId"
@@ -47,7 +38,7 @@ export function SubSubjectForm(props: FormProps) {
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        {props.subjects.map((subject) => (
+                                        {subjects.map((subject) => (
                                             <SelectItem key={subject.id} value={subject.id}>
                                                 {subject.name}
                                             </SelectItem>
@@ -81,10 +72,10 @@ export function SubSubjectForm(props: FormProps) {
                     <CardFooter className="flex justify-end px-0 pb-0">
                         <Button
                             type="submit"
-                            disabled={props.isPending}
+                            disabled={isPending}
                             className="min-w-[120px]"
                         >
-                            {props.isPending ? "Saving..." : "Save Sub-Subject"}
+                            {isPending ? "Saving..." : "Save Sub-Subject"}
                         </Button>
                     </CardFooter>
                 </form>
@@ -130,7 +121,7 @@ export function SubSubjectForm(props: FormProps) {
                         {form.watch("name") ? (
                             <div className="space-y-1">
                                 <p className="font-medium">{form.watch("subjectId")
-                                    ? props.subjects.find(s => s.id === form.watch("subjectId"))?.name
+                                    ? subjects.find(s => s.id === form.watch("subjectId"))?.name
                                     : "[Subject]"}</p>
                                 <p className="text-muted-foreground">→ {form.watch("name")}</p>
                             </div>

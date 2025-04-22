@@ -10,12 +10,16 @@ interface QuestionAccordionItemProps {
   question: Question;
   isExpanded: boolean;
   onToggle: () => void;
+  handleApprove?: (questionId: string) => void;
+  handleReject?: (questionId: string) => void;
 }
 
 export function QuestionAccordionItem({
   question,
   isExpanded,
   onToggle,
+  handleApprove,
+  handleReject
 }: QuestionAccordionItemProps) {
   return (
     <div className="border-4 rounded-lg overflow-hidden">
@@ -50,7 +54,7 @@ export function QuestionAccordionItem({
       {isExpanded && (
         <div className="p-4 pt-0 border-t">
           <QuestionContent question={question} />
-          <QuestionFooter question={question} />
+          <QuestionFooter handleApprove={handleApprove} handleReject={handleReject} question={question} />
         </div>
       )}
     </div>

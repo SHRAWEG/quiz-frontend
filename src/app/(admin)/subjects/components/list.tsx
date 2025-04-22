@@ -5,6 +5,7 @@ import { useDeleteSubject, useGetAllSubjects } from "@/hooks/api/useSubject"
 import { Subject } from "@/types/subject";
 import { Edit, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const columns = [
     {
@@ -24,12 +25,11 @@ export default function List() {
         deleteSubject({ subjectId: id }, {
             onSuccess: () => {
                 refetch();
-
-                router.push("/subjects");
+                toast.success("Subject deleted successfully");
             },
 
             onError: (error: Error) => {
-                console.log(error);
+                toast.error(error.message);
             }
         });
 

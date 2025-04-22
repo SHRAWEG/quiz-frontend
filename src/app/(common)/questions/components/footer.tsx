@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { useApproveQuestion, useGetQuestions, useRejectQuestion } from "@/hooks/api/useQuestion";
 import { useUser } from "@/hooks/useUser";
@@ -6,55 +8,35 @@ import Link from "next/link";
 
 interface QuestionFooterProps {
   question: Question;
+  handleApprove?: (questionId: string) => void;
+  handleReject?: (questionId: string) => void;
 }
 
-export default function QuestionFooter({ question }: QuestionFooterProps) {
+
+export default function QuestionFooter({ question, handleApprove, handleReject }: QuestionFooterProps) {
   const { role } = useUser();
+  const fullName: string = `${question.createdBy.firstName} ${question.createdBy.middleName} ${question.createdBy.lastName}`;
 
-  // const { refetch } = useGetQuestions();
-
-  // const {mutate: approveQuestion} = useApproveQuestion();
-  // const {mutate: rejectQuestion} = useRejectQuestion();
-
-  // const handleApprove = () => {
-  //   approveQuestion({ questionId: question.id}, {
-  //     onSuccess: () => {
-  //       refetch();
-  //     },
-  //     onError: (error) => {
-  //       console.log(error);
-  //     }
-  //   })    
-  // }
-
-  // const handleReject = () => {
-  //   rejectQuestion({ questionId: question.id}, {
-  //     onSuccess: () => {
-  //       refetch();
-  //     },
-  //     onError: (error) => {
-  //       console.log(error);
-  //     }
-  //   })    
-  // }
-  
   return (
     <div className="flex justify-between items-center mt-4">
       <p className="text-sm text-muted-foreground space-x-4">
-        <span>Created: {new Date(question.createdAt).toLocaleDateString()}</span>
+        <span>Created at: {new Date(question.createdAt).toLocaleDateString()}</span>
+      </p>
+      <p className="text-sm text-muted-foreground font-bold">
+        <span>Created by: {fullName} | {question.createdBy.email} </span>
       </p>
       <div className="space-x-2">
         {
           role === "admin" && (
             <>
-              <Button variant="default" size="sm">Approve</Button>
-              <Button variant="destructive" size="sm">Reject</Button>
+              <Button variant="default" onClick={(): void => handleApprove?.(question.id)} size="sm">Approve</Button>
+              <Button variant="destructive" onClick={(): void => handleReject?.(question.id)} size="sm">Reject</Button>
             </>
           )
         }
         {
           role === "teacher" && (
-            <Link href={`/questions//update/${question.id}`}>
+            <Link href={`/questions/update/${question.id}`}>
               <Button variant="outline" size="sm">Edit</Button>
             </Link>
           )

@@ -5,6 +5,7 @@ import { useDeleteSubSubject, useGetAllSubSubjects } from "@/hooks/api/useSubSub
 import { SubSubject } from "@/types/sub-subject";
 import { Edit, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const columns = [
     {
@@ -27,11 +28,11 @@ export default function List() {
             onSuccess: () => {
                 refetch();
 
-                router.push("/sub-subjects");
+                toast.success("Sub Subject deleted successfully!");
             },
 
             onError: (error: Error) => {
-                console.log(error);
+                toast.error(error.message);
             }
         });
 

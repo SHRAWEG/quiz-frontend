@@ -1,4 +1,4 @@
-import { apiClient, ApiResponse } from "@/lib/axios";
+import { apiClient, ApiError, ApiResponse } from "@/lib/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { API_URLS } from "@/lib/constants/api-urls";
 import { SubSubject, SubSubjectReqDto } from "@/types/sub-subject";
@@ -20,19 +20,19 @@ export const useGetAllSubSubjects = (subjectId?: string) => useQuery<SubSubject[
 });
 
 export const useCreateSubSubject = () =>
-  useMutation<SubSubject, Error, SubSubjectReqDto>({
+  useMutation<SubSubject, ApiError, SubSubjectReqDto>({
     mutationKey: ["createSubSubject"],
     mutationFn: async (data: SubSubjectReqDto) => await apiClient.post<SubSubject, SubSubjectReqDto>(`${API_URLS.subSubject}`, data)
   });
 
 export const useUpdateSubSubject = () =>
-  useMutation<SubSubject, Error, { subSubjectId: string; data: SubSubjectReqDto }>({
+  useMutation<SubSubject, ApiError, { subSubjectId: string; data: SubSubjectReqDto }>({
     mutationKey: ["updateSubSubject"],
     mutationFn: async ({ subSubjectId, data }) => await apiClient.put<SubSubject, SubSubjectReqDto>(`${API_URLS.subSubject}/${subSubjectId}`, data)
   });
 
 export const useDeleteSubSubject = () =>
-  useMutation<SubSubject, Error, { subSubjectId: string }>({
+  useMutation<SubSubject, ApiError, { subSubjectId: string }>({
     mutationKey: ["deleteSubSubject"],
     mutationFn: async ({ subSubjectId }) => await apiClient.delete<SubSubject>(`${API_URLS.subSubject}/${subSubjectId}`)
   })

@@ -5,13 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { QuestionAccordionItem } from "@/app/(common)/questions/components/accordion-item";
-import { useGetQuestions } from "@/hooks/api/useQuestion";
+import { useApproveQuestion, useGetQuestions, useRejectQuestion } from "@/hooks/api/useQuestion";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/layout/app-header";
 import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useGetAllSubjects } from "@/hooks/api/useSubject";
 import { Subject } from "@/types/subject";
+import { toast } from "sonner";
 
 type Params = {
   page: number;
@@ -58,6 +59,37 @@ export default function QuestionsList() {
     refetch();
   };
 
+  const { mutate: approveQuestion } = useApproveQuestion();
+  const { mutate: rejectQuestion } = useRejectQuestion();
+
+  const handleApprove = (questionId: string) => {
+    approveQuestion({ questionId: questionId }, {
+      onSuccess: () => {
+        toast.success("Question approved successfully")
+      },
+      onError: (error: Error) => {
+        toast.error(error.message);
+      }
+    })
+
+    refetch();
+  }
+
+  const handleReject = (questionId: string) => {
+    {
+      rejectQuestion({ questionId: questionId }, {
+        onSuccess: () => {
+          toast.success("Question rejected successfully")
+        },
+        onError: (error: Error) => {
+          toast.error(error.message);
+        }
+      })
+
+      refetch();
+    }
+  }
+
   const toggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
   };
@@ -95,6 +127,8 @@ export default function QuestionsList() {
               question={question}
               isExpanded={expandedId === question.id}
               onToggle={() => toggleExpand(question.id)}
+              handleApprove={handleApprove}
+              handleReject={handleReject}
             />
           ))
         ) : (

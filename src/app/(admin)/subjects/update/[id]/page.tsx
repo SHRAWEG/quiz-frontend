@@ -2,15 +2,19 @@
 "use client"
 
 import { PageHeader } from "@/components/layout/app-header";
-import { SubjectReqDto } from "@/types/subject"
+import { subjectReqDto, SubjectReqDto } from "@/types/subject"
 import { useGetAllSubjects, useGetSubjectDetail, useUpdateSubject } from "@/hooks/api/useSubject"
 import { useParams, useRouter } from "next/navigation"
-import { useState } from "react";
 import { SubjectForm } from "../../components/form";
 import FullPageLoader from "@/components/ui/full-page-loader";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { ApiError } from "@/lib/axios";
+import { useEffect } from "react";
 
 export default function SubjectPage() {
     const router = useRouter();
@@ -21,20 +25,43 @@ export default function SubjectPage() {
     const { mutate: updateSubject, isPending } = useUpdateSubject()
     const { refetch } = useGetAllSubjects();
 
+    const form = useForm<SubjectReqDto>({
+        resolver: zodResolver(subjectReqDto),
+        defaultValues: {
+            name: "",
+        },
+        mode: "onBlur",
+    });
+
+    useEffect(() => {
+        if (data) {
+            form.reset({
+                name: data.name || "",
+            });
+        }
+    }, [data, form]);
+
     const onSubmit = (data: SubjectReqDto) => {
         updateSubject({ subjectId, data }, {
             onSuccess: () => {
                 refetch();
+                toast.success("Subject updated successfully");
 
                 router.push("/subjects");
             },
 
-            onError: (error: Error) => {
-                console.log(error);
+            onError: (error: ApiError) => {
+                if (error.status === 400 && error.data.errors) {
+                    Object.entries(error.data.errors).forEach(([field, messages]) => {
+                        form.setError(field as keyof SubjectReqDto, {
+                            type: "manual",
+                            message: (messages as string[]).join(", "),
+                        });
+                    });
+                }
             }
         });
     }
-
     if (isFetching) {
         return <FullPageLoader />
     }
@@ -59,7 +86,7 @@ export default function SubjectPage() {
             <SubjectForm
                 isPending={isPending}
                 onSubmit={onSubmit}
-                initialValues={{ name: data?.name || "" }}
+                form={form}
             />
         </Card>
     )

@@ -8,35 +8,95 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useGetAllSubSubjects } from "@/hooks/api/useSubSubject";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCreateQuestion, useGetAllQuestions, useGetQuestionDetail, useGetQuestions, useUpdateQuestion } from "@/hooks/api/useQuestion";
-import { QuestionReqDto } from "@/types/question";
+import { questionReqDto, QuestionReqDto } from "@/types/question";
 import FullPageLoader from "@/components/ui/full-page-loader";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
+import { ApiError } from "@/lib/axios";
+
+// Create a schema for the subjectId field
+const subjectIdSchema = z.object({
+    subjectId: z.string().min(1, "Subject is required"),
+});
+
+// Merge the original schema with our new field
+const formSchema = z.intersection(
+    questionReqDto,
+    subjectIdSchema
+);
+
+// Define the type for our form data
+export type QuestionFormData = QuestionReqDto & { subjectId: string };
 
 export default function Page() {
     const router = useRouter();
 
     const params = useParams()
     const questionId = params.id as string
-    const { data, isFetching } = useGetQuestionDetail(questionId);
+    const { data, isFetching: isQuestionFetching } = useGetQuestionDetail(questionId);
     const { mutate: updateQuestion, isPending } = useUpdateQuestion();
     const { refetch } = useGetQuestions();
-    const { data: subjects = [] } = useGetAllSubjects();
+    const { data: subjects = [], isFetching: isSubjectFetching } = useGetAllSubjects();
     const [subSubjectId, setSubSubjectId] = useState<string>();
-    const { data: subSubjects = [] } = useGetAllSubSubjects(subSubjectId);
+    const { data: subSubjects = [], isFetching: isSubSubjectFetching } = useGetAllSubSubjects(subSubjectId);
+
+    const form = useForm<QuestionFormData>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            type: "mcq",
+            subjectId: "",
+            subSubjectId: "",
+            question: "",
+            options: [
+                { option: "", isCorrect: false },
+                { option: "", isCorrect: false },
+                { option: "", isCorrect: false },
+                { option: "", isCorrect: false }
+            ],
+            difficulty: 3,
+        },
+        mode: "onBlur",
+    });
+
+    useEffect(() => {
+        if (data) {
+            form.reset({
+                type: data.type,
+                subjectId: data.subject.id,
+                subSubjectId: data.subSubject.id,
+                question: data.question,
+                options: data.options.map(x => ({ option: x.option, isCorrect: x.isCorrect })) || [],
+                difficulty: data.difficulty,
+            });
+        }
+        form.watch();
+    }, [data]);
 
     const onSubmit = (data: QuestionReqDto) => {
         updateQuestion({ questionId, data }, {
             onSuccess: () => {
-                refetch();
+                toast.success("Question updated successfully");
 
                 router.push("/questions");
             },
 
-            onError: (error: Error) => {
-                console.log(error);
+            onError: (error: ApiError) => {
+                if (error.status === 400 && error.data.errors) {
+                    Object.entries(error.data.errors).forEach(([field, messages]) => {
+                        form.setError(field as keyof QuestionReqDto, {
+                            type: "manual",
+                            message: (messages as string[]).join(", "),
+                        });
+                    })
+                }
             }
         })
+
+        refetch();
     }
 
     const subjectChange = (subjectId: string) => {
@@ -45,7 +105,7 @@ export default function Page() {
 
     console.log(subSubjects);
 
-    if (isFetching) {
+    if (isQuestionFetching || isSubjectFetching || isSubSubjectFetching) {
         return <FullPageLoader />
     }
 
@@ -72,14 +132,7 @@ export default function Page() {
                 subjects={subjects}
                 subSubjects={subSubjects}
                 subjectChange={subjectChange}
-                initialValues={{
-                    type: data?.type || "",
-                    subjectId: data?.subject?.id || "",
-                    subSubjectId: data?.subSubject?.id || "",
-                    question: data?.question || "",
-                    difficulty: data?.difficulty || 3,
-                    options: data?.options?.map(x => ({option: x.option, isCorrect: x.isCorrect})) || [],
-                }}
+                form={form}
             />
         </Card>
 

@@ -9,8 +9,13 @@ import { ChevronLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useGetAllSubSubjects, useGetSubSubjectDetail, useUpdateSubSubject } from "@/hooks/api/useSubSubject";
 import { useGetAllSubjects } from "@/hooks/api/useSubject";
-import { SubSubjectReqDto } from "@/types/sub-subject";
+import { subSubjectReqDto, SubSubjectReqDto } from "@/types/sub-subject";
 import { SubSubjectForm } from "../../components/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { toast } from "sonner";
+import { ApiError } from "@/lib/axios";
 
 export default function SubjectPage() {
     const router = useRouter();
@@ -20,23 +25,50 @@ export default function SubjectPage() {
     const { data, isFetching } = useGetSubSubjectDetail(subSubjectId);
     const { mutate: updateSubject, isPending } = useUpdateSubSubject()
     const { refetch } = useGetAllSubSubjects();
-    const { data: subjects, isFetching: isFetchingSubjects } = useGetAllSubjects();
+    const { data: subjects, isFetching: isSubjectFetching } = useGetAllSubjects();
+
+    const form = useForm<SubSubjectReqDto>({
+        resolver: zodResolver(subSubjectReqDto),
+        defaultValues: {
+            subjectId: "",
+            name: ""
+        },
+        mode: "onBlur",
+    });
+
+    useEffect(() => {
+        if (data) {
+            form.reset({
+                subjectId: data.subject.id || "",
+                name: data.name || "",
+            });
+        }
+    }, [data]);
 
     const onSubmit = (data: SubSubjectReqDto) => {
         updateSubject({ subSubjectId, data }, {
             onSuccess: () => {
-                refetch();
+                toast.success("Sub-Subject updated successfully");
 
                 router.push("/sub-subjects");
             },
 
-            onError: (error: Error) => {
-                console.log(error);
+            onError: (error: ApiError) => {
+                if (error.status === 400 && error.data.errors) {
+                    Object.entries(error.data.errors).forEach(([field, messages]) => {
+                        form.setError(field as keyof SubSubjectReqDto, {
+                            type: "manual",
+                            message: (messages as string[]).join(", "),
+                        });
+                    });
+                }
             }
         });
+
+        refetch();
     }
 
-    if (isFetching) {
+    if (isFetching || isSubjectFetching) {
         return <FullPageLoader />
     }
 
@@ -60,11 +92,8 @@ export default function SubjectPage() {
             <SubSubjectForm
                 isPending={isPending}
                 onSubmit={onSubmit}
-                initialValues={{
-                    subjectId: data?.subject.id || "",
-                    name: data?.name || ""
-                }}
                 subjects={subjects || []}
+                form={form}
             />
         </Card>
     )

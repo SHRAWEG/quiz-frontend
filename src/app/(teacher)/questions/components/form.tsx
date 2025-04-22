@@ -3,16 +3,15 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import { CardFooter } from "@/components/ui/card";
 import { InfoIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Subject } from "@/types/subject";
 import { SubSubject } from "@/types/sub-subject";
-import { questionReqDto, QuestionReqDto } from "@/types/question";
-import { difficultyLevels, questionTypes } from "@/enums/questions";
-import { z } from "zod";
+import { QuestionReqDto } from "@/types/question";
+import { questionTypes } from "@/enums/questions";
+import { QuestionFormData } from "../create/page";
 
 interface QuestionFormProps {
     onSubmit: (data: QuestionReqDto) => void;
@@ -21,50 +20,27 @@ interface QuestionFormProps {
     initialValues?: Partial<QuestionReqDto & { subjectId: string }>;
     subjects: Subject[];
     subSubjects: SubSubject[];
+    form: UseFormReturn<QuestionFormData>;
 }
-
-// Create a schema for the subjectId field
-const subjectIdSchema = z.object({
-    subjectId: z.string().min(1, "Subject is required"),
-});
-
-// Merge the original schema with our new field
-const formSchema = z.intersection(
-    questionReqDto,
-    subjectIdSchema
-);
-
-// Define the type for our form data
-type QuestionFormData = QuestionReqDto & { subjectId: string };
 
 export function QuestionForm({
     onSubmit,
     subjectChange,
     isPending,
-    initialValues,
     subjects,
-    subSubjects
+    subSubjects,
+    form
 }: QuestionFormProps) {
-    const form = useForm<QuestionFormData>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            type: initialValues?.type || "mcq",
-            subjectId: initialValues?.subjectId || "",
-            subSubjectId: initialValues?.subSubjectId || "",
-            question: initialValues?.question || "",
-            options: initialValues?.options || [
-                { option: "", isCorrect: false },
-                { option: "", isCorrect: false },
-                { option: "", isCorrect: false },
-                { option: "", isCorrect: false }
-            ],
-            difficulty: initialValues?.difficulty || 3,
-        },
-        mode: "onBlur",
-    });
 
     const questionType = form.watch("type");
     const currentSubjectId = form.watch("subjectId");
+
+    const shouldShowError = (fieldName: keyof QuestionFormData) => {
+        return (
+            form.formState.touchedFields[fieldName] &&
+            form.formState.errors[fieldName]
+        );
+    };
 
     console.log(form.getValues());
 
@@ -95,28 +71,32 @@ export function QuestionForm({
                                 <div className="flex items-center gap-2">
                                     <FormLabel className="text-sm font-medium">Question Type</FormLabel>
                                 </div>
-                                <Select onValueChange={(value) => {
-                                    field.onChange(value);
-                                    if (value === "mcq") {
-                                        form.setValue("options", [
-                                            { option: "", isCorrect: false },
-                                            { option: "", isCorrect: false },
-                                            { option: "", isCorrect: false },
-                                            { option: "", isCorrect: false }
-                                        ]);
-                                    } else if (value === "true-false") {
-                                        form.setValue("options", [
-                                            { option: "", isCorrect: false },
-                                            { option: "", isCorrect: false }
-                                        ]);
-                                    } else {
-                                        form.setValue("options", []);
-                                    }
-                                }}
+                                <Select
+                                    onValueChange={(value) => {
+                                        field.onChange(value);
+                                        if (value === "mcq") {
+                                            form.setValue("options", [
+                                                { option: "", isCorrect: false },
+                                                { option: "", isCorrect: false },
+                                                { option: "", isCorrect: false },
+                                                { option: "", isCorrect: false }
+                                            ]);
+                                        } else if (value === "true-false") {
+                                            form.setValue("options", [
+                                                { option: "", isCorrect: false },
+                                                { option: "", isCorrect: false }
+                                            ]);
+                                        } else {
+                                            form.setValue("options", []);
+                                        }
+                                    }}
                                     defaultValue={field.value}
                                 >
                                     <FormControl>
-                                        <SelectTrigger className="w-full">
+                                        <SelectTrigger className={`h-11 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 ${shouldShowError("type")
+                                            ? "border-destructive focus-visible:ring-destructive"
+                                            : "border-gray-300 focus-visible:ring-primary"
+                                            }`}>
                                             <SelectValue placeholder="Select question type" />
                                         </SelectTrigger>
                                     </FormControl>
@@ -129,6 +109,11 @@ export function QuestionForm({
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
+                                {shouldShowError("type") && (
+                                    <FormMessage className="text-red-500">
+                                        {form.formState.errors.type?.message}
+                                    </FormMessage>
+                                )}
                             </FormItem>
                         )}
                     />
@@ -149,9 +134,13 @@ export function QuestionForm({
                                         form.resetField("subSubjectId");
                                     }}
                                     defaultValue={field.value}
+
                                 >
                                     <FormControl>
-                                        <SelectTrigger className="w-full">
+                                        <SelectTrigger className={`h-11 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 ${shouldShowError("subjectId")
+                                            ? "border-destructive focus-visible:ring-destructive"
+                                            : "border-gray-300 focus-visible:ring-primary"
+                                            }`}>
                                             <SelectValue placeholder="Select a subject" />
                                         </SelectTrigger>
                                     </FormControl>
@@ -164,6 +153,11 @@ export function QuestionForm({
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
+                                {shouldShowError("subjectId") && (
+                                    <FormMessage className="text-red-500">
+                                        {form.formState.errors.subjectId?.message}
+                                    </FormMessage>
+                                )}
                             </FormItem>
                         )}
                     />
@@ -183,7 +177,10 @@ export function QuestionForm({
                                     disabled={!currentSubjectId}
                                 >
                                     <FormControl>
-                                        <SelectTrigger className="w-full">
+                                        <SelectTrigger className={`h-11 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 ${shouldShowError("subSubjectId")
+                                            ? "border-destructive focus-visible:ring-destructive"
+                                            : "border-gray-300 focus-visible:ring-primary"
+                                            }`}>
                                             <SelectValue placeholder="Select a sub-subject" />
                                         </SelectTrigger>
                                     </FormControl>
@@ -197,6 +194,11 @@ export function QuestionForm({
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
+                                {shouldShowError("subSubjectId") && (
+                                    <FormMessage className="text-red-500">
+                                        {form.formState.errors.subSubjectId?.message}
+                                    </FormMessage>
+                                )}
                             </FormItem>
                         )}
                     />
@@ -213,11 +215,19 @@ export function QuestionForm({
                                 <FormControl>
                                     <Textarea
                                         placeholder="Enter your question here..."
-                                        className="min-h-[120px]"
+                                        className={`h-11 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 ${shouldShowError("question")
+                                            ? "border-destructive focus-visible:ring-destructive"
+                                            : "border-gray-300 focus-visible:ring-primary"
+                                            }`}
                                         {...field}
                                     />
                                 </FormControl>
                                 <FormMessage />
+                                {shouldShowError("question") && (
+                                    <FormMessage className="text-red-500">
+                                        {form.formState.errors.question?.message}
+                                    </FormMessage>
+                                )}
                             </FormItem>
                         )}
                     />
@@ -260,10 +270,19 @@ export function QuestionForm({
                                                 <FormControl>
                                                     <Input
                                                         placeholder={`Option ${index + 1}`}
+                                                        className={`h-11 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 ${shouldShowError("options")
+                                                            ? "border-destructive focus-visible:ring-destructive"
+                                                            : "border-gray-300 focus-visible:ring-primary"
+                                                            }`}
                                                         {...field}
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
+                                                {shouldShowError("options") && (
+                                                    <FormMessage className="text-red-500">
+                                                        {form.formState.errors.options?.message}
+                                                    </FormMessage>
+                                                )}
                                             </FormItem>
                                         )}
                                     />
@@ -302,6 +321,11 @@ export function QuestionForm({
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
+                                    {shouldShowError("options") && (
+                                        <FormMessage className="text-red-500">
+                                            {form.formState.errors.options?.message}
+                                        </FormMessage>
+                                    )}
                                 </FormItem>
                             )}
                         />
@@ -325,12 +349,20 @@ export function QuestionForm({
                                             max="5"
                                             value={field.value}
                                             onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                            className="w-full"
+                                            className={`h-11 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 ${shouldShowError("difficulty")
+                                                ? "border-destructive focus-visible:ring-destructive"
+                                                : "border-gray-300 focus-visible:ring-primary"
+                                                }`}
                                         />
                                     </FormControl>
                                     <span className="text-sm font-medium">{field.value}/5</span>
                                 </div>
                                 <FormMessage />
+                                {shouldShowError("difficulty") && (
+                                    <FormMessage className="text-red-500">
+                                        {form.formState.errors.difficulty?.message}
+                                    </FormMessage>
+                                )}
                             </FormItem>
                         )}
                     />

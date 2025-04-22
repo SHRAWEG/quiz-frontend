@@ -9,29 +9,75 @@ import { ChevronLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useGetAllSubSubjects } from "@/hooks/api/useSubSubject";
 import { useState } from "react";
-import { useCreateQuestion, useGetAllQuestions } from "@/hooks/api/useQuestion";
-import { QuestionReqDto } from "@/types/question";
+import { useCreateQuestion, useGetAllQuestions, useGetQuestions } from "@/hooks/api/useQuestion";
+import { questionReqDto, QuestionReqDto } from "@/types/question";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { ApiError } from "@/lib/axios";
+
+// Create a schema for the subjectId field
+const subjectIdSchema = z.object({
+    subjectId: z.string().min(1, "Subject is required"),
+});
+
+// Merge the original schema with our new field
+const formSchema = z.intersection(
+    questionReqDto,
+    subjectIdSchema
+);
+
+// Define the type for our form data
+export type QuestionFormData = QuestionReqDto & { subjectId: string };
 
 export default function Page() {
     const router = useRouter();
     const { mutate: createQuestion, isPending } = useCreateQuestion();
-    const { refetch } = useGetAllQuestions();
+    const { refetch } = useGetQuestions();
     const { data: subjects = [] } = useGetAllSubjects();
     const [subSubjectId, setSubSubjectId] = useState<string>();
     const { data: subSubjects = [] } = useGetAllSubSubjects(subSubjectId);
 
+    const form = useForm<QuestionFormData>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            type: "mcq",
+            subjectId: "",
+            subSubjectId: "",
+            question: "",
+            options: [
+                { option: "", isCorrect: false },
+                { option: "", isCorrect: false },
+                { option: "", isCorrect: false },
+                { option: "", isCorrect: false }
+            ],
+            difficulty: 3,
+        },
+        mode: "onBlur",
+    });
+
     const onSubmit = (data: QuestionReqDto) => {
         createQuestion(data, {
             onSuccess: () => {
-                refetch();
+                toast.success("Question created successfully");
 
                 router.push("/questions");
             },
 
-            onError: (error: Error) => {
-                console.log(error);
+            onError: (error: ApiError) => {
+                if (error.status === 400 && error.data.errors) {
+                    Object.entries(error.data.errors).forEach(([field, messages]) => {
+                        form.setError(field as keyof QuestionReqDto, {
+                            type: "manual",
+                            message: (messages as string[]).join(", "),
+                        });
+                    })
+                }
             }
         })
+
+        refetch();
     }
 
     const subjectChange = (subjectId: string) => {
@@ -63,6 +109,7 @@ export default function Page() {
                 subjects={subjects}
                 subSubjects={subSubjects}
                 subjectChange={subjectChange}
+                form={form}
             />
         </Card>
 

@@ -16,5 +16,10 @@ export const loginResDto = z.object({
   name: z.string()
 })
 
+export const resendVerificationDto = z.object({
+  email: z.string().min(1, { message: "Email is required" }).email({ message: "Must be a valid email address" }),
+})
+
 export type LoginReqDto = z.infer<typeof loginReqDto>;
 export type LoginResDto = z.infer<typeof loginResDto>;
+export type ResendVerificationDto = z.infer<typeof resendVerificationDto>;

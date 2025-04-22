@@ -3,7 +3,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { subjectReqDto, SubjectReqDto } from "@/types/subject";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, UseFormReturn } from "react-hook-form";
 import { CardFooter } from "@/components/ui/card";
 import { InfoIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -11,23 +11,15 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 interface FormProps {
     onSubmit: (data: SubjectReqDto) => void;
     isPending: boolean;
-    initialValues?: SubjectReqDto;
+    form: UseFormReturn<SubjectReqDto>;
 }
 
-export function SubjectForm(props: FormProps) {
-    const form = useForm<SubjectReqDto>({
-        resolver: zodResolver(subjectReqDto),
-        defaultValues: {
-            name: props.initialValues?.name || "",
-        },
-        mode: "onBlur",
-    });
-
+export function SubjectForm({ onSubmit, isPending, form }: FormProps) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column - Form */}
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(props.onSubmit)} className="space-y-6">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <FormField
                         control={form.control}
                         name="name"
@@ -50,10 +42,10 @@ export function SubjectForm(props: FormProps) {
                     <CardFooter className="flex justify-end px-0 pb-0">
                         <Button
                             type="submit"
-                            disabled={props.isPending}
+                            disabled={isPending}
                             className="min-w-[120px]"
                         >
-                            {props.isPending ? "Saving..." : "Save Subject"}
+                            {isPending ? "Saving..." : "Save Subject"}
                         </Button>
                     </CardFooter>
                 </form>
