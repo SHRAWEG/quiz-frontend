@@ -4,7 +4,7 @@ import Link from "next/link";
 
 // Shadcn UI components
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function HomePage() {
   return (
@@ -36,7 +36,7 @@ export default function HomePage() {
               Test Your Knowledge with <span className="text-primary">QuizMaster</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-              Challenge yourself with thousands of quizzes across various categories. 
+              Challenge yourself with thousands of quizzes across various categories.
               Learn, compete, and have fun!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -54,7 +54,7 @@ export default function HomePage() {
         <section className="py-16 bg-background">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-12">Popular Quiz Categories</h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Quiz Card 1 */}
               <Card>
@@ -117,7 +117,7 @@ export default function HomePage() {
         <section className="py-16 bg-muted">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-12">Why Choose QuizMaster?</h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="bg-card p-6 rounded-lg shadow-sm text-center">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -128,7 +128,7 @@ export default function HomePage() {
                 <h3 className="text-xl font-semibold mb-2">Fast-Paced Learning</h3>
                 <p className="text-muted-foreground">Our quizzes are designed to make learning fun and efficient.</p>
               </div>
-              
+
               <div className="bg-card p-6 rounded-lg shadow-sm text-center">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -138,7 +138,7 @@ export default function HomePage() {
                 <h3 className="text-xl font-semibold mb-2">Compete with Friends</h3>
                 <p className="text-muted-foreground">Challenge your friends and see who scores the highest.</p>
               </div>
-              
+
               <div className="bg-card p-6 rounded-lg shadow-sm text-center">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">

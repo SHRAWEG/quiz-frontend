@@ -43,7 +43,7 @@ export default function SubjectPage() {
                 name: data.name || "",
             });
         }
-    }, [data]);
+    }, [data, form]);
 
     const onSubmit = (data: SubSubjectReqDto) => {
         updateSubject({ subSubjectId, data }, {

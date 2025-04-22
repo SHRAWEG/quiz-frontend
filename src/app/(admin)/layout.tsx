@@ -5,7 +5,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/layout/app-sidebar"
 import { useLogout, useUser } from "@/hooks/useUser";
 
-export const items = [
+const items = [
   {
     title: "Dashboard",
     url: "/dashboard",

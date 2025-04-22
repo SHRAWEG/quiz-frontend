@@ -40,7 +40,7 @@ export function useUser(requiredRole?: string) {
         if (!isValidRole || (requiredRole && role !== requiredRole)) {
             router.push('/unauthorized')
         }
-    }, [router]);
+    }, [router, requiredRole]);
 
     return authState;
 }

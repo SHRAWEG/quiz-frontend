@@ -3,7 +3,14 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { API_URLS } from "@/lib/constants/api-urls";
 import { Question, QuestionList, QuestionReqDto } from "@/types/question";
 
-export const useGetQuestions = (params?: any) => useQuery<QuestionList>({
+export type QuestionParams = {
+  page: number;
+  limit: number;
+  search: string;
+  subjectId: string;
+}
+
+export const useGetQuestions = (params?: QuestionParams) => useQuery<QuestionList>({
   queryKey: ["questions"],
   queryFn: async () => await apiClient.get<QuestionList>(`${API_URLS.question}`, { params })
 });

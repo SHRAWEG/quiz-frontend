@@ -1,11 +1,11 @@
 "use client"
 
-import { Home, FileQuestion, Book, BookText } from "lucide-react"
+import { Home, FileQuestion } from "lucide-react"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/layout/app-sidebar"
 import { useLogout, useUser } from "@/hooks/useUser";
 
-export const items = [
+const items = [
   {
     title: "Dashboard",
     url: "#",

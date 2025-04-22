@@ -1,28 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { QuestionAccordionItem } from "@/app/(common)/questions/components/accordion-item";
-import { useApproveQuestion, useGetQuestions, useRejectQuestion } from "@/hooks/api/useQuestion";
+import { QuestionParams, useApproveQuestion, useGetQuestions, useRejectQuestion } from "@/hooks/api/useQuestion";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/layout/app-header";
-import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useGetAllSubjects } from "@/hooks/api/useSubject";
 import { Subject } from "@/types/subject";
 import { toast } from "sonner";
 
-type Params = {
-  page: number;
-  limit: number;
-  search: string;
-  subjectId: string;
-}
-
 export default function QuestionsList() {
-  const router = useRouter();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const [searchParam, setSearch] = useState("");
@@ -31,7 +22,7 @@ export default function QuestionsList() {
   const [limitParam, setLimit] = useState(10);
 
   // Create params object for API call
-  const params: Params = {
+  const params: QuestionParams = {
     page: pageParam,
     limit: limitParam,
     search: searchParam,

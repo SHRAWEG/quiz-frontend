@@ -18,7 +18,7 @@ const columns = [
 export default function List() {
     const { data, isFetched } = useGetAllSubjects();
     const router = useRouter();
-    const { mutate: deleteSubject, isPending } = useDeleteSubject();
+    const { mutate: deleteSubject } = useDeleteSubject();
     const { refetch } = useGetAllSubjects();
 
     const handleDelete = (id: string) => {

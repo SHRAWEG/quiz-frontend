@@ -20,8 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   registerReqDto,
-  RegisterReqDto,
-  RegisterResDto,
+  RegisterReqDto
 } from "@/types/auth/register.dto";
 import { toast } from "sonner";
 import { useRegister } from "@/hooks/api/useAuth";
@@ -59,12 +58,12 @@ export default function SignupScreen() {
       confirmPassword: "",
       role: "Student",
     });
-  }, []);
+  }, [form]);
 
   // Handle form submission
   function onSubmit(data: RegisterReqDto) {
     mutate(data, {
-      onSuccess: (data: RegisterResDto) => {
+      onSuccess: () => {
         toast.success("Signup successful", {
           description: "You have been registered successfully.",
         });

@@ -3,10 +3,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Subject } from "@/types/subject";
-import { subSubjectReqDto, SubSubjectReqDto } from "@/types/sub-subject";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, UseFormReturn } from "react-hook-form";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { SubSubjectReqDto } from "@/types/sub-subject";
+import { UseFormReturn } from "react-hook-form";
+import { CardFooter } from "@/components/ui/card";
 import { InfoIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -17,7 +16,7 @@ interface FormProps {
     form: UseFormReturn<SubSubjectReqDto>;
 }
 
-export function SubSubjectForm({onSubmit, isPending, subjects, form}: FormProps) {
+export function SubSubjectForm({ onSubmit, isPending, subjects, form }: FormProps) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column - Form */}

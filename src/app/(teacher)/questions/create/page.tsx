@@ -9,7 +9,7 @@ import { ChevronLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useGetAllSubSubjects } from "@/hooks/api/useSubSubject";
 import { useState } from "react";
-import { useCreateQuestion, useGetAllQuestions, useGetQuestions } from "@/hooks/api/useQuestion";
+import { useCreateQuestion, useGetQuestions } from "@/hooks/api/useQuestion";
 import { questionReqDto, QuestionReqDto } from "@/types/question";
 import { useForm } from "react-hook-form";
 import { z } from "zod";

@@ -9,7 +9,7 @@ import { ChevronLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useGetAllSubSubjects } from "@/hooks/api/useSubSubject";
 import { useEffect, useState } from "react";
-import { useCreateQuestion, useGetAllQuestions, useGetQuestionDetail, useGetQuestions, useUpdateQuestion } from "@/hooks/api/useQuestion";
+import { useGetQuestionDetail, useGetQuestions, useUpdateQuestion } from "@/hooks/api/useQuestion";
 import { questionReqDto, QuestionReqDto } from "@/types/question";
 import FullPageLoader from "@/components/ui/full-page-loader";
 import { useForm } from "react-hook-form";
@@ -74,7 +74,7 @@ export default function Page() {
             });
         }
         form.watch();
-    }, [data]);
+    }, [data, form]);
 
     const onSubmit = (data: QuestionReqDto) => {
         updateQuestion({ questionId, data }, {

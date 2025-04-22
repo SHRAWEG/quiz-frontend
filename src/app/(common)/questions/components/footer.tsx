@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useApproveQuestion, useGetQuestions, useRejectQuestion } from "@/hooks/api/useQuestion";
 import { useUser } from "@/hooks/useUser";
 import { Question } from "@/types/question";
 import Link from "next/link";
