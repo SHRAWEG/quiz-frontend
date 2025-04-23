@@ -32,6 +32,8 @@ export default function Page() {
     const onSubmit = (data: SubSubjectReqDto) => {
         CreateSubSubject(data, {
             onSuccess: () => {
+                refetch();
+
                 toast.success("Sub-Subject created successfully");
 
                 router.push("/sub-subjects");
@@ -48,8 +50,6 @@ export default function Page() {
                 }
             }
         });
-
-        refetch();
     }
 
     if (isFetching) {

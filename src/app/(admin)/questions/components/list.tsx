@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -56,20 +56,21 @@ export default function QuestionsList() {
   const handleApprove = (questionId: string) => {
     approveQuestion({ questionId: questionId }, {
       onSuccess: () => {
+        refetch();
+
         toast.success("Question approved successfully")
       },
       onError: (error: Error) => {
         toast.error(error.message);
       }
     })
-
-    refetch();
   }
 
   const handleReject = (questionId: string) => {
     {
       rejectQuestion({ questionId: questionId }, {
         onSuccess: () => {
+          refetch();
           toast.success("Question rejected successfully")
         },
         onError: (error: Error) => {
@@ -77,13 +78,16 @@ export default function QuestionsList() {
         }
       })
 
-      refetch();
     }
   }
 
   const toggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
   };
+
+  useEffect(() => {
+    refetch();
+  }, [pageParam, limitParam]);
 
   if (isFetching) {
     return <div>Loading...</div>;

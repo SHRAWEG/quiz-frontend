@@ -30,7 +30,7 @@ export default function SignupScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
-  const { mutate } = useRegister();
+  const { mutate, isPending } = useRegister();
 
   // Initialize the form with React Hook Form and Zod resolver
   const form = useForm<RegisterReqDto>({
@@ -300,9 +300,9 @@ export default function SignupScreen() {
             <Button
               type="submit"
               className="w-full h-11"
-              disabled={form.formState.isSubmitting}
+              disabled={isPending}
             >
-              {form.formState.isSubmitting
+              {isPending
                 ? "Creating account..."
                 : "Create account"}
             </Button>

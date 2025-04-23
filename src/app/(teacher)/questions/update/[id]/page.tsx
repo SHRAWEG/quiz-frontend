@@ -79,6 +79,8 @@ export default function Page() {
     const onSubmit = (data: QuestionReqDto) => {
         updateQuestion({ questionId, data }, {
             onSuccess: () => {
+                refetch();
+
                 toast.success("Question updated successfully");
 
                 router.push("/questions");
@@ -95,8 +97,6 @@ export default function Page() {
                 }
             }
         })
-
-        refetch();
     }
 
     const subjectChange = (subjectId: string) => {

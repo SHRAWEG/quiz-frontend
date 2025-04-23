@@ -48,6 +48,8 @@ export default function SubjectPage() {
     const onSubmit = (data: SubSubjectReqDto) => {
         updateSubject({ subSubjectId, data }, {
             onSuccess: () => {
+                refetch();
+
                 toast.success("Sub-Subject updated successfully");
 
                 router.push("/sub-subjects");
@@ -64,8 +66,6 @@ export default function SubjectPage() {
                 }
             }
         });
-
-        refetch();
     }
 
     if (isFetching || isSubjectFetching) {

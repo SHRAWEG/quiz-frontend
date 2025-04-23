@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -50,6 +50,11 @@ export default function QuestionsList() {
     setPage(1);
     refetch();
   };
+
+  useEffect(() => {
+    refetch();
+  }, [pageParam, limitParam]);
+
 
   const toggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id);

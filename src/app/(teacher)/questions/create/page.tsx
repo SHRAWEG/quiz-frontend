@@ -60,6 +60,8 @@ export default function Page() {
     const onSubmit = (data: QuestionReqDto) => {
         createQuestion(data, {
             onSuccess: () => {
+                refetch();
+
                 toast.success("Question created successfully");
 
                 router.push("/questions");
@@ -76,8 +78,6 @@ export default function Page() {
                 }
             }
         })
-
-        refetch();
     }
 
     const subjectChange = (subjectId: string) => {
