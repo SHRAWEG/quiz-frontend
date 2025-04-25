@@ -42,8 +42,6 @@ export function QuestionForm({
         );
     };
 
-    console.log(form.getValues());
-
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column - Form */}
@@ -133,7 +131,7 @@ export function QuestionForm({
                                         subjectChange(value);
                                         form.resetField("subSubjectId");
                                     }}
-                                    defaultValue={field.value}
+                                    value={field.value}
 
                                 >
                                     <FormControl>
@@ -173,7 +171,7 @@ export function QuestionForm({
                                 </div>
                                 <Select
                                     onValueChange={field.onChange}
-                                    defaultValue={field.value}
+                                    value={field.value}
                                     disabled={!currentSubjectId}
                                 >
                                     <FormControl>
@@ -223,11 +221,6 @@ export function QuestionForm({
                                     />
                                 </FormControl>
                                 <FormMessage />
-                                {shouldShowError("question") && (
-                                    <FormMessage className="text-red-500">
-                                        {form.formState.errors.question?.message}
-                                    </FormMessage>
-                                )}
                             </FormItem>
                         )}
                     />
@@ -278,11 +271,6 @@ export function QuestionForm({
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
-                                                {shouldShowError("options") && (
-                                                    <FormMessage className="text-red-500">
-                                                        {form.formState.errors.options?.message}
-                                                    </FormMessage>
-                                                )}
                                             </FormItem>
                                         )}
                                     />

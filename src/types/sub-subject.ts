@@ -5,6 +5,7 @@ import { subjectSchema } from "./subject";
 export const subSubjectSchema = z.object({
   id: z.string(),
   name: z.string(),
+  subjectId: z.string(),
   subject: subjectSchema
 });
 

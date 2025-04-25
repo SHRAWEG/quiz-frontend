@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { apiClient } from "@/lib/axios";
+import axios from "axios";
 
 function VerifyEmailContent() {
   const searchParams = useSearchParams();
@@ -39,14 +39,21 @@ function VerifyEmailContent() {
     }
 
     try {
-      await apiClient.get("/auth/verify-email", { params: { token } });
+      // Use axios for the GET request
+      await axios.get(`${process.env.NEXT_PUBLIC_API_URL}auth/verify-email`, {
+        params: { token },
+      });
+
       toast.success("Email verified successfully!");
       setVerificationStatus("success");
       setTimeout(() => router.push("/login"), 2000);
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Verification failed. Please try again.");
+      console.error("Error object:", error);
+
+      // Handle error message from the response
+      const errorMessage = error.response?.data?.message || "Verification failed. Please try again.";
+      toast.error(errorMessage);
       setVerificationStatus("error");
-      console.error('Verification failed:', error);
     } finally {
       setIsSubmitting(false);
     }

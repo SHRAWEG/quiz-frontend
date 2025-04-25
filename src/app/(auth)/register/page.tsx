@@ -23,14 +23,15 @@ import {
   RegisterReqDto
 } from "@/types/auth/register.dto";
 import { toast } from "sonner";
-import { useRegister } from "@/hooks/api/useAuth";
+import { useRegister, useResendVerification } from "@/hooks/api/useAuth";
 import { ApiError } from "@/lib/axios";
 
 export default function SignupScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
-  const { mutate, isPending } = useRegister();
+  const { mutate, isPending, isSuccess } = useRegister();
+  const { mutate: resendVerification, isPending: isResendPending } = useResendVerification();
 
   // Initialize the form with React Hook Form and Zod resolver
   const form = useForm<RegisterReqDto>({
@@ -67,8 +68,8 @@ export default function SignupScreen() {
         toast.success("Signup successful", {
           description: "You have been registered successfully.",
         });
-        router.push("/login");
       },
+
       onError: (error: ApiError) => {
         if (error.status === 400 && error.data.errors) {
           Object.entries(error.data.errors).forEach(([field, messages]) => {
@@ -86,6 +87,25 @@ export default function SignupScreen() {
     });
   }
 
+  const handleResendVerification = () => {
+    const email = form.getValues("email");
+    if (!email) {
+      toast.error("Please enter your email address to resend verification.");
+      return;
+    }
+
+    resendVerification({ email }, {
+      onSuccess: () => {
+        toast.success("Verification email resent successfully.");
+      },
+      onError: (error: ApiError) => {
+        toast.error("Failed to resend verification email", {
+          description: error.data.message,
+        });
+      },
+    });
+  }
+
   // Helper function to determine if we should show an error
   const shouldShowError = (fieldName: keyof RegisterReqDto) => {
     return (
@@ -93,6 +113,44 @@ export default function SignupScreen() {
       form.formState.errors[fieldName]
     );
   };
+
+  if (isSuccess) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+
+        <Card className="w-full max-w-md shadow-lg">
+          <CardHeader className="space-y-2 pb-6">
+            <CardTitle className="text-2xl font-bold tracking-tight text-center">
+              Registration Successful!
+            </CardTitle>
+            <CardDescription className="text-center">
+              <p>We've sent a verification email to {form.getValues('email')}.</p>
+              <p>Please check your inbox and click the verification link.</p>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col space-y-6 items-center">
+            <div>
+              <Button variant="secondary" className="cursor-pointer" onClick={() => router.push('/login')}>Go to Login</Button>
+            </div>
+            <div className="flex flex-col space-y-2 items-center">
+              <p>Didn't receive the email?</p>
+              <Button
+                variant={"default"}
+                className="cursor-pointer"
+                onClick={handleResendVerification}
+                disabled={isResendPending}
+              >
+                {isResendPending ? "Resending..." : "Resend Verification Email"}
+              </Button>
+            </div>
+          </CardContent>
+          <CardFooter className="text-center text-sm text-muted-foreground">
+            Need help? Contact support.
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
@@ -114,8 +172,8 @@ export default function SignupScreen() {
               <select
                 id="role"
                 className={`h-11 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 ${shouldShowError("role")
-                    ? "border-destructive focus-visible:ring-destructive"
-                    : "border-gray-300 focus-visible:ring-primary"
+                  ? "border-destructive focus-visible:ring-destructive"
+                  : "border-gray-300 focus-visible:ring-primary"
                   }`}
                 {...form.register("role")}
                 aria-invalid={!!form.formState.errors.role}
@@ -138,8 +196,8 @@ export default function SignupScreen() {
                   id="firstName"
                   placeholder="John"
                   className={`h-11 ${shouldShowError("firstName")
-                      ? "border-destructive focus-visible:ring-destructive"
-                      : ""
+                    ? "border-destructive focus-visible:ring-destructive"
+                    : ""
                     }`}
                   {...form.register("firstName")}
                   aria-invalid={!!form.formState.errors.firstName}
@@ -167,8 +225,8 @@ export default function SignupScreen() {
                   id="lastName"
                   placeholder="Doe"
                   className={`h-11 ${shouldShowError("lastName")
-                      ? "border-destructive focus-visible:ring-destructive"
-                      : ""
+                    ? "border-destructive focus-visible:ring-destructive"
+                    : ""
                     }`}
                   {...form.register("lastName")}
                   aria-invalid={!!form.formState.errors.lastName}
@@ -189,8 +247,8 @@ export default function SignupScreen() {
                 type="email"
                 placeholder="john.doe@example.com"
                 className={`h-11 ${shouldShowError("email")
-                    ? "border-destructive focus-visible:ring-destructive"
-                    : ""
+                  ? "border-destructive focus-visible:ring-destructive"
+                  : ""
                   }`}
                 {...form.register("email")}
                 aria-invalid={!!form.formState.errors.email}
@@ -210,8 +268,8 @@ export default function SignupScreen() {
                 type="tel"
                 placeholder="(123) 456-7890"
                 className={`h-11 ${shouldShowError("phone")
-                    ? "border-destructive focus-visible:ring-destructive"
-                    : ""
+                  ? "border-destructive focus-visible:ring-destructive"
+                  : ""
                   }`}
                 {...form.register("phone")}
                 aria-invalid={!!form.formState.errors.phone}
@@ -232,8 +290,8 @@ export default function SignupScreen() {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   className={`h-11 pr-10 ${shouldShowError("password")
-                      ? "border-destructive focus-visible:ring-destructive"
-                      : ""
+                    ? "border-destructive focus-visible:ring-destructive"
+                    : ""
                     }`}
                   {...form.register("password")}
                   aria-invalid={!!form.formState.errors.password}
@@ -268,8 +326,8 @@ export default function SignupScreen() {
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="••••••••"
                   className={`h-11 pr-10 ${shouldShowError("confirmPassword")
-                      ? "border-destructive focus-visible:ring-destructive"
-                      : ""
+                    ? "border-destructive focus-visible:ring-destructive"
+                    : ""
                     }`}
                   {...form.register("confirmPassword")}
                   aria-invalid={!!form.formState.errors.confirmPassword}

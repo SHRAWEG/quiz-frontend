@@ -87,6 +87,7 @@ export default function SubjectPage() {
                 isPending={isPending}
                 onSubmit={onSubmit}
                 form={form}
+                isUpdate={true}
             />
         </Card>
     )

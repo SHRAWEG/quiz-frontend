@@ -39,9 +39,10 @@ export default function SubjectPage() {
     useEffect(() => {
         if (data) {
             form.reset({
-                subjectId: data.subject.id || "",
+                subjectId: data.subject.id,
                 name: data.name || "",
             });
+            form.setValue("subjectId", data.subjectId);
         }
     }, [data, form]);
 
@@ -51,8 +52,6 @@ export default function SubjectPage() {
                 refetch();
 
                 toast.success("Sub-Subject updated successfully");
-
-                router.push("/sub-subjects");
             },
 
             onError: (error: ApiError) => {
@@ -94,6 +93,7 @@ export default function SubjectPage() {
                 onSubmit={onSubmit}
                 subjects={subjects || []}
                 form={form}
+                isUpdate={true}
             />
         </Card>
     )

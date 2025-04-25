@@ -84,8 +84,6 @@ export default function Page() {
         setSubSubjectId(subjectId);
     }
 
-    console.log(subSubjects);
-
     return (
         <Card className="p-4">
             <PageHeader

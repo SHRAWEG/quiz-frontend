@@ -26,14 +26,18 @@ export default function Page() {
         mode: "onBlur",
     });
 
-    const onSubmit = (data: SubjectReqDto) => {
+    const onSubmit = (data: SubjectReqDto, redirect: boolean) => {
         createSubject(data, {
             onSuccess: () => {
                 refetch();
 
                 toast.success("Subject created successfully");
 
-                router.push("/subjects");
+                if (redirect) {
+                    router.push("/subjects");
+                } else {
+                    form.reset();
+                }
             },
 
             onError: (error: ApiError) => {

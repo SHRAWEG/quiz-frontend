@@ -9,7 +9,9 @@ import { userSchema } from "./user";
 export const questionSchema = z.object({
   id: z.string(),
   type: z.enum(questionTypes.map(type => type.value) as [string, ...string[]]),
+  subjectId: z.string(),
   subject: subjectSchema,
+  subSubjectId: z.string(),
   subSubject: subSubjectSchema,
   question: z.string(),
   options: z.array(optionSchema),

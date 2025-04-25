@@ -10,18 +10,28 @@ import { InfoIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface FormProps {
-    onSubmit: (data: SubSubjectReqDto) => void;
+    onSubmit: (data: SubSubjectReqDto, redirect: boolean) => void;
     isPending: boolean;
     subjects: Subject[];
     form: UseFormReturn<SubSubjectReqDto>;
+    isUpdate?: boolean;
 }
 
-export function SubSubjectForm({ onSubmit, isPending, subjects, form }: FormProps) {
+export function SubSubjectForm({ onSubmit, isPending, subjects, form, isUpdate }: FormProps) {
+    const handleSaveAndAddMore = () => {
+        onSubmit(form.getValues(), false); // Call the onSubmit function with the current form values
+        form.reset();
+    };
+
+    const handleSaveAndRedirect = () => {
+        onSubmit(form.getValues(), true); // Call the onSubmit function with the current form values
+    };
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column - Form */}
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={form.handleSubmit(handleSaveAndRedirect)} className="space-y-6">
                     <FormField
                         control={form.control}
                         name="subjectId"
@@ -30,7 +40,7 @@ export function SubSubjectForm({ onSubmit, isPending, subjects, form }: FormProp
                                 <div className="flex items-center gap-2">
                                     <FormLabel className="text-sm font-medium">Subject</FormLabel>
                                 </div>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select onValueChange={field.onChange} value={field.value || ""}>
                                     <FormControl>
                                         <SelectTrigger className="w-full">
                                             <SelectValue placeholder="Select parent subject" />
@@ -68,14 +78,32 @@ export function SubSubjectForm({ onSubmit, isPending, subjects, form }: FormProp
                         )}
                     />
 
-                    <CardFooter className="flex justify-end px-0 pb-0">
-                        <Button
+                    <CardFooter className="flex justify-end px-0 pb-0 space-x-4">
+                        {isUpdate ? <Button
                             type="submit"
                             disabled={isPending}
                             className="min-w-[120px]"
                         >
-                            {isPending ? "Saving..." : "Save Sub-Subject"}
-                        </Button>
+                            {isPending ? "Saving..." : "Save"}
+                        </Button> :
+                            <>
+                                <Button
+                                    type="submit"
+                                    disabled={isPending}
+                                    className="min-w-[120px]"
+                                >
+                                    {isPending ? "Saving..." : "Save & Redirect"}
+                                </Button>
+                                <Button
+                                    type="button"
+                                    disabled={isPending}
+                                    onClick={handleSaveAndAddMore}
+                                    className="min-w-[120px]"
+                                >
+                                    {isPending ? "Saving..." : "Save & Add More"}
+                                </Button>
+                            </>
+                        }
                     </CardFooter>
                 </form>
             </Form>

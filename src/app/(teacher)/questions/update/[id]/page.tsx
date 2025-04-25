@@ -66,12 +66,15 @@ export default function Page() {
         if (data) {
             form.reset({
                 type: data.type,
-                subjectId: data.subject.id,
-                subSubjectId: data.subSubject.id,
+                subjectId: data.subjectId,
+                subSubjectId: data.subSubjectId,
                 question: data.question,
                 options: data.options.map(x => ({ option: x.option, isCorrect: x.isCorrect })) || [],
                 difficulty: data.difficulty,
             });
+            form.setValue("subjectId", data.subjectId);
+            form.setValue("subSubjectId", data.subSubjectId);
+            setSubSubjectId(data.subjectId);
         }
         form.watch();
     }, [data, form]);
@@ -102,8 +105,6 @@ export default function Page() {
     const subjectChange = (subjectId: string) => {
         setSubSubjectId(subjectId);
     }
-
-    console.log(subSubjects);
 
     if (isQuestionFetching || isSubjectFetching || isSubSubjectFetching) {
         return <FullPageLoader />

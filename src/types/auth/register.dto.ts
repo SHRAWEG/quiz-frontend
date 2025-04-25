@@ -34,20 +34,17 @@ export const registerReqDto = z
   });
 
 export const registerResDto = z.object({
-  message: z.string(),
-  data: z.object({
-    id: z.string(),
-    firstName: z.string(),
-    middleName: z.string().optional(),
-    lastName: z.string(),
-    email: z.string(),
-    phone: z.string(),
-    isEmailVerified: z.boolean(),
-    isActive: z.boolean(),
-    lastActive: z.string(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
-  }),
+  id: z.string(),
+  firstName: z.string(),
+  middleName: z.string().optional(),
+  lastName: z.string(),
+  email: z.string(),
+  phone: z.string(),
+  isEmailVerified: z.boolean(),
+  isActive: z.boolean(),
+  lastActive: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string()
 });
 
 export type RegisterResDto = z.infer<typeof registerResDto>;
