@@ -5,6 +5,7 @@ import { ReactNode, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "../styles/globals.css";
 import { Toaster } from "sonner";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const font = Inter({
   variable: "--font-inter",
@@ -29,7 +30,9 @@ export default function RootLayout({
       >
         <Toaster position="top-right" richColors />
         <QueryClientProvider client={queryClient}>
-          <main>{children}</main>
+          <AuthProvider>
+            <main>{children}</main>
+          </AuthProvider>
         </QueryClientProvider>
       </body>
     </html>

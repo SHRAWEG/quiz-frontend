@@ -13,7 +13,7 @@
 
 // StatusBadge.tsx
 import { Badge } from "@/components/ui/badge";
-import { statuses } from "@/enums/status";
+import { questionStatuses } from "@/enums/questionStatus";
 
 export type Status = "approved" | "pending" | "rejected";
 
@@ -26,7 +26,7 @@ const statusColors = {
 export function StatusBadge({ status }: { status: Status }) {
   return (
     <Badge className={`${statusColors[status]} hover:${statusColors[status]}`}>
-      {statuses.find((s) => s.value === status)?.label}
+      {questionStatuses.find((s) => s.value === status)?.label}
     </Badge>
   );
 }

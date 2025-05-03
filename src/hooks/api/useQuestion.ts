@@ -8,6 +8,9 @@ export type QuestionParams = {
   limit: number;
   search: string;
   subjectId: string;
+  subSubjectId: string;
+  questionType: string;
+  status: string;
 }
 
 export const useGetQuestions = (params?: QuestionParams) => useQuery<QuestionList>({

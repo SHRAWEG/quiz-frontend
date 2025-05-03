@@ -3,6 +3,7 @@ interface AppSidebarProps {
     title: string
     url: string
     icon: React.ComponentType
+    role?: string[]
   }[]
   user?: {
     name: string
@@ -10,6 +11,7 @@ interface AppSidebarProps {
     avatar?: string
   }
   onLogout?: () => void
+  role: string
 }
 
 import {
@@ -24,17 +26,18 @@ import {
   SidebarHeader
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
 import { LogOut, User, Settings, ChevronDown } from "lucide-react"
+import Link from "next/link"
 
 export function AppSidebar(props: AppSidebarProps) {
-  const { user, onLogout } = props
+  const { user, onLogout, role } = props
 
   return (
     <Sidebar>
@@ -65,8 +68,8 @@ export function AppSidebar(props: AppSidebarProps) {
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                onClick={onLogout} 
+              <DropdownMenuItem
+                onClick={onLogout}
                 className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground focus:bg-destructive focus:text-destructive-foreground py-2"
               >
                 <LogOut className="mr-2 h-4 w-4" />
@@ -82,15 +85,17 @@ export function AppSidebar(props: AppSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu>
               {props.items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+                // Check if the user's role matches the item's role requirement
+                (!item.role || item.role.includes(role)) && (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <Link href={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
