@@ -31,17 +31,17 @@ export const useGetAllQuestionSets = (subjectId?: string) => useQuery<QuestionSe
 export const usePublishQuestionSet = () =>
   useMutation<QuestionSet, ApiError, { questionSetId: string }>({
     mutationKey: ["publishQuestionSet"],
-    mutationFn: async ({ questionSetId }) => await apiClient.patch(`${API_URLS.questionSet}/publish/${questionSetId}`)
+    mutationFn: async ({ questionSetId }) => await apiClient.post(`${API_URLS.questionSet}/publish/${questionSetId}`)
   });
 
 export const useDraftQuestionSet = () =>
   useMutation<QuestionSet, ApiError, { questionSetId: string }>({
     mutationKey: ["draftQuestionSet"],
-    mutationFn: async ({ questionSetId }) => await apiClient.patch(`${API_URLS.questionSet}/draft/${questionSetId}`)
+    mutationFn: async ({ questionSetId }) => await apiClient.post(`${API_URLS.questionSet}/draft/${questionSetId}`)
   });
 
 export const useCreateQuestionSet = () =>
-  useMutation<QuestionSet, ApiError, QuestionSetReqDto>({
+  useMutation<ApiResponse<QuestionSet>, ApiError, QuestionSetReqDto>({
     mutationKey: ["createQuestionSet",],
     mutationFn: async (data: QuestionSetReqDto) => await apiClient.post(`${API_URLS.questionSet}`, data)
   });

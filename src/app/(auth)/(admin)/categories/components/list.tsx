@@ -2,6 +2,7 @@
 
 import { ClientSideDataTable } from "@/components/shared/client-data-table/data-table"
 import { useDeleteCategory, useGetAllCategories } from "@/hooks/api/useCategory"
+import { ApiError } from "@/lib/axios";
 import { Category } from "@/types/category";
 import { Edit, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -28,8 +29,8 @@ export default function List() {
                 toast.success("Category deleted successfully");
             },
 
-            onError: (error: Error) => {
-                toast.error(error.message);
+            onError: (error: ApiError) => {
+                toast.error(error.data.message);
             }
         });
 

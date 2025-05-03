@@ -6,8 +6,6 @@ import { Category } from "@/types/category";
 import { QuestionSetReqDto } from "@/types/question-set";
 import { UseFormReturn } from "react-hook-form";
 import { CardFooter } from "@/components/ui/card";
-import { InfoIcon } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface FormProps {
@@ -109,7 +107,7 @@ export function QuestionSetForm({ onSubmit, isPending, categories, form, isUpdat
             disabled={isPending}
             className="min-w-[120px]"
           >
-            {isPending ? "Saving..." : "Save"}
+            {isPending ? "Saving..." : isUpdate ? "Save" : "Next"}
           </Button>
         </CardFooter>
       </form>

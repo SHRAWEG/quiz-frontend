@@ -5,13 +5,13 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/layout/app-sidebar"
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Suspense, useEffect } from "react";
-import PageLoader from "@/components/ui/full-page-loader"
 
 const items = [
   {
     title: "Dashboard",
     url: "/dashboard",
     icon: Home,
+    role: ['admin', 'teacher', 'student']
   },
   {
     title: "Subject",

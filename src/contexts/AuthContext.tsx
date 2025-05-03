@@ -2,130 +2,143 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
-import Cookies from 'cookies-next'
+import { toast } from 'sonner'
 import { COOKIE_KEYS } from '@/constants/cookie-keys'
 import { LoginResDto } from '@/types/auth/login.dto'
-import { toast } from 'sonner'
 
 type User = {
-    email: string
-    name: string
-    role: string
+  email: string
+  name: string
+  role: string
 }
 
 type AuthContextType = {
-    user: User | null
-    token: string | null
-    isAuthenticated: boolean
-    isLoading: boolean
-    login: (data: LoginResDto) => Promise<void>
-    logout: () => void
+  user: User | null
+  token: string | null
+  isAuthenticated: boolean
+  isLoading: boolean
+  login: (data: LoginResDto) => Promise<void>
+  logout: () => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+// Client-side cookie helpers
+const getClientCookie = (name: string): string | null => {
+  if (typeof window === 'undefined') return null
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop()?.split(';').shift() || null
+  return null
+}
+
+const setClientCookie = (
+  name: string,
+  value: string,
+  options: { maxAge: number; path: string }
+) => {
+  if (typeof window === 'undefined') return
+  document.cookie = `${name}=${value}; max-age=${options.maxAge}; path=${options.path}`
+}
+
+const deleteClientCookie = (name: string) => {
+  if (typeof window === 'undefined') return
+  document.cookie = `${name}=; max-age=0; path=/`
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<User | null>(null)
-    const [token, setToken] = useState<string | null>(null)
-    const [isLoading, setIsLoading] = useState(true)
-    const router = useRouter()
+  const [user, setUser] = useState<User | null>(null)
+  const [token, setToken] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const router = useRouter()
 
-    console.log('AuthProvider initialized')
+  // Initialize auth state
+  useEffect(() => {
+    const initializeAuth = () => {
+      try {
+        const storedToken = getClientCookie(COOKIE_KEYS.TOKEN)
+        const storedRole = getClientCookie(COOKIE_KEYS.ROLE)
+        const storedEmail = getClientCookie(COOKIE_KEYS.EMAIL)
+        const storedName = getClientCookie(COOKIE_KEYS.NAME)
 
-    // Initialize auth state
-    useEffect(() => {
-        const initializeAuth = async () => {
-            try {
-                const storedToken = Cookies.getCookie(COOKIE_KEYS.TOKEN) as string | null
-                const storedRole = Cookies.getCookie(COOKIE_KEYS.ROLE) as string | null
-                const storedEmail = Cookies.getCookie(COOKIE_KEYS.EMAIL) as string | null
-                const storedName = Cookies.getCookie(COOKIE_KEYS.NAME) as string | null
-
-                const userCookie: User = {
-                    email: storedEmail || '',
-                    name: storedName || '',
-                    role: storedRole || ''
-                }
-
-                if (storedToken) {
-                    setToken(storedToken)
-                    setUser(userCookie)
-                }
-            } catch (error) {
-                toast.error('Failed to initialize authentication state.')
-                clearAuth()
-            } finally {
-                setIsLoading(false)
-            }
+        if (storedToken) {
+          setToken(storedToken)
+          setUser({
+            email: storedEmail || '',
+            name: storedName || '',
+            role: storedRole || ''
+          })
         }
-
-        initializeAuth()
-    }, [])
-
-    const login = async (data: LoginResDto) => {
-        setIsLoading(true)
-        try {
-            const { accessToken, role, name, email } = data
-            Cookies.setCookie(COOKIE_KEYS.TOKEN, accessToken, { maxAge: 60 * 60 * 24, path: '/' })
-            Cookies.setCookie(COOKIE_KEYS.EMAIL, email, { maxAge: 60 * 60 * 24, path: '/' })
-            Cookies.setCookie(COOKIE_KEYS.NAME, name, { maxAge: 60 * 60 * 24, path: '/' })
-            Cookies.setCookie(COOKIE_KEYS.ROLE, role, { maxAge: 60 * 60 * 24, path: '/' })
-
-            const userResponse: User = {
-                email,
-                name,
-                role
-            }
-
-            setToken(accessToken)
-            setUser(userResponse)
-
-            router.push('/dashboard')
-        } catch (error) {
-            toast.error('Failed to login.')
-            clearAuth()
-        } finally {
-            setIsLoading(false)
-        }
+      } catch (error) {
+        console.error('Auth initialization error:', error)
+        toast.error('Failed to initialize authentication state.')
+        clearAuth()
+      } finally {
+        setIsLoading(false)
+      }
     }
 
-    const logout = () => {
-        Cookies.deleteCookie(COOKIE_KEYS.TOKEN);
-        Cookies.deleteCookie(COOKIE_KEYS.ROLE);
-        Cookies.deleteCookie(COOKIE_KEYS.EMAIL);
-        Cookies.deleteCookie(COOKIE_KEYS.NAME);
+    initializeAuth()
+  }, [])
 
-        setToken(null)
-        setUser(null)
-        router.push('/login')
+  const login = async (data: LoginResDto) => {
+    setIsLoading(true)
+    try {
+      const { accessToken, role, name, email } = data
+      setClientCookie(COOKIE_KEYS.TOKEN, accessToken, { maxAge: 60 * 60 * 24, path: '/' })
+      setClientCookie(COOKIE_KEYS.EMAIL, email, { maxAge: 60 * 60 * 24, path: '/' })
+      setClientCookie(COOKIE_KEYS.NAME, name, { maxAge: 60 * 60 * 24, path: '/' })
+      setClientCookie(COOKIE_KEYS.ROLE, role, { maxAge: 60 * 60 * 24, path: '/' })
+
+      setToken(accessToken)
+      setUser({ email, name, role })
+      router.push('/dashboard')
+    } catch (error) {
+      console.error('Login error:', error)
+      toast.error('Failed to login.')
+      clearAuth()
+    } finally {
+      setIsLoading(false)
     }
+  }
 
-    const clearAuth = () => {
-        Cookies.deleteCookie(COOKIE_KEYS.TOKEN);
-        Cookies.deleteCookie(COOKIE_KEYS.ROLE);
-        Cookies.deleteCookie(COOKIE_KEYS.EMAIL);
-        Cookies.deleteCookie(COOKIE_KEYS.NAME);
+  const logout = () => {
+    deleteClientCookie(COOKIE_KEYS.TOKEN)
+    deleteClientCookie(COOKIE_KEYS.ROLE)
+    deleteClientCookie(COOKIE_KEYS.EMAIL)
+    deleteClientCookie(COOKIE_KEYS.NAME)
 
-        setToken(null)
-        setUser(null)
-    }
+    setToken(null)
+    setUser(null)
+    router.push('/login')
+  }
 
-    const value = {
-        user,
-        token,
-        isAuthenticated: !!token,
-        isLoading,
-        login,
-        logout
-    }
+  const clearAuth = () => {
+    deleteClientCookie(COOKIE_KEYS.TOKEN)
+    deleteClientCookie(COOKIE_KEYS.ROLE)
+    deleteClientCookie(COOKIE_KEYS.EMAIL)
+    deleteClientCookie(COOKIE_KEYS.NAME)
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+    setToken(null)
+    setUser(null)
+  }
+
+  const value = {
+    user,
+    token,
+    isAuthenticated: !!token,
+    isLoading,
+    login,
+    logout
+  }
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 export const useAuthContext = () => {
-    const context = useContext(AuthContext)
-    if (context === undefined) {
-        throw new Error('useAuth must be used within an AuthProvider')
-    }
-    return context
+  const context = useContext(AuthContext)
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+  return context
 }

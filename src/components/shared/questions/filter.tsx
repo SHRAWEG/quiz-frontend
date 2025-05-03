@@ -44,7 +44,7 @@ export default function QuestionFilters({
 
   const handleFilter = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setPage && setPage(1);
+    setPage?.(1);
     refetch();
   };
 
@@ -88,7 +88,7 @@ export default function QuestionFilters({
             <Select
               onValueChange={(value) => {
                 setSubjectId(value === "all" ? "" : value)
-                setSubSubjectId && setSubSubjectId("")
+                setSubSubjectId?.("")
               }}
               value={subjectId}
             >

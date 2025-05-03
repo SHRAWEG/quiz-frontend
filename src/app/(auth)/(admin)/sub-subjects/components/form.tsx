@@ -106,7 +106,7 @@ export function SubSubjectForm({ onSubmit, isPending, subjects, form, isUpdate }
                                     disabled={isPending}
                                     className="min-w-[120px]"
                                 >
-                                    {isPending ? "Saving..." : "Save & Redirect"}
+                                    {isPending ? "Saving..." : "Save"}
                                 </Button>
                                 <Button
                                     type="button"

@@ -11,7 +11,7 @@ import { getColumns } from "./columns";
 
 export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [categoryId, setCategoryId] = useState("");
+  // const [categoryId, setCategoryId] = useState("");
   const [tableState, setTableState] = useState({
     pagination: { pageIndex: 0, pageSize: 10 },
     sorting: [] as { id: string; desc: boolean }[],
@@ -21,7 +21,7 @@ export default function UsersPage() {
     page: tableState.pagination.pageIndex + 1,
     limit: tableState.pagination.pageSize,
     search: searchTerm,
-    categoryId: categoryId
+    categoryId: ""
   }
 
   // const { data: categories } = useGetAllCategories();
@@ -56,7 +56,7 @@ export default function UsersPage() {
         toast.success("Deleted successfully.");
       },
       onError: (error: ApiError) => {
-        toast.error(error.message);
+        toast.error(error.data.message);
       }
     })
   }

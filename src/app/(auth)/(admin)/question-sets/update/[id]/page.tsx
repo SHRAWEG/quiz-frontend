@@ -7,7 +7,7 @@ import FullPageLoader from "@/components/ui/full-page-loader";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { useGetQuestionSets, useGetQuestionSetDetail, useUpdateQuestionSet, useAddQuestionToSet, useRemoveQuestionFromSet } from "@/hooks/api/useQuestionSet";
+import { useGetQuestionSetDetail, useUpdateQuestionSet, useAddQuestionToSet, useRemoveQuestionFromSet } from "@/hooks/api/useQuestionSet";
 import { useGetAllCategories } from "@/hooks/api/useCategory";
 import { questionSetReqDto, QuestionSetReqDto } from "@/types/question-set";
 import { QuestionSetForm } from "../../components/form";
@@ -25,8 +25,7 @@ export default function SubjectPage() {
     const questionSetId = params.id as string
     const { data, isFetching, refetch: refetchDetail } = useGetQuestionSetDetail(questionSetId);
     const { mutate: updateQuestionSet, isPending } = useUpdateQuestionSet()
-    const { refetch } = useGetQuestionSets();
-    const { data: categories, isFetching: isCategoryFetching } = useGetAllCategories();
+    const { data: categories } = useGetAllCategories();
     const { mutate: addQuestionToSet } = useAddQuestionToSet()
     const { mutate: removeQuestionFromSet } = useRemoveQuestionFromSet()
 
@@ -118,7 +117,7 @@ export default function SubjectPage() {
                 actions={
                     <Button onClick={() => router.push("/question-sets")}>
                         <ChevronLeft className="mr-2 h-4 w-4" />
-                        Back
+                        Back to list
                     </Button>
                 }
             />

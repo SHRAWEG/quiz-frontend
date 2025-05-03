@@ -7,8 +7,8 @@ import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import QuestionSetDetail from "../../components/question-set-detail";
 
-export default function page() {
-  const router = useRouter();
+export default function ViewPage() {
+  const router = useRouter()
 
   return (
     <Card className="p-4">

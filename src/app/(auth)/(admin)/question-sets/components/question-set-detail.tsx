@@ -3,8 +3,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { questionTypes } from "@/enums/questions";
 import { useGetQuestionSetDetail } from "@/hooks/api/useQuestionSet";
-import { Question } from "@/types/question";
-import { CheckCircleIcon, ChevronDown, Edit, Eye, FileText, Loader2, Share2, Star, Trash2 } from "lucide-react";
+import { CheckCircleIcon, Edit, Loader2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
 
@@ -20,11 +19,11 @@ export default function QuestionSetDetail() {
 
   const filteredQuestions = data?.questions.filter((question) => {
     if (!search) return true;
-    
+
     const query = search.toLowerCase();
-    
+
     return (
-      question.question.toLowerCase().includes(query) 
+      question.question.toLowerCase().includes(query)
       // question.subject.name.toLowerCase().includes(query) ||
       // question.subSubject.name.toLowerCase().includes(query)
     );
@@ -39,13 +38,17 @@ export default function QuestionSetDetail() {
   return (
     <div className="container mx-auto px-4">
       {/* Header Section */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold flex items-center gap-2 mb-2">
-          <span className="bg-primary/10 p-2 rounded-lg">
-            <span className="text-primary">🏷️</span>
-          </span>
-          {data?.name}
-        </h1>
+      <div className="mb-4">
+        <div className="flex flex-wrap justify-between items-center">
+          <h1 className="text-3xl font-bold flex items-center gap-2 mb-2">
+            <span className="bg-primary/10 p-2 rounded-lg">
+              <span className="text-primary">🏷️</span>
+            </span>
+            {data?.name}
+          </h1>
+          <Button variant="outline" size="sm" onClick={() => router.push(`/question-sets/update/${questionSetId}`)}><Edit />Edit</Button>
+        </div>
+
 
         <div className="flex flex-wrap gap-4 mb-4">
           <span className="inline-flex items-center px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-sm">
@@ -59,7 +62,12 @@ export default function QuestionSetDetail() {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="flex flex-col gap-2">
+            <span className="text-sm text-neutral-700 font-bold">Created by: {`${data?.createdBy?.firstName ?? "Admin"} ${data?.createdBy?.middleName ?? "Quiz"} ${data?.createdBy?.lastName ?? "User"}`} • {data?.createdBy?.email ?? "admin@quizit.com"}</span>
+            <span className="text-sm text-neutral-700 font-bold">Created at: {data?.createdAt?.toString() ?? '2025-05-03 11:34:58'}</span>
+        </div>
+
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <Card>
             <CardContent>
               <div className="space-y-2">
@@ -85,13 +93,13 @@ export default function QuestionSetDetail() {
                   <span className="text-sm text-neutral-700">Created by: {`${data?.createdBy?.firstName ?? "Admin"} ${data?.createdBy?.middleName ?? "Quiz"} ${data?.createdBy?.lastName ?? "User"}`} • {data?.createdBy?.email ?? "admin@quizit.com"}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-neutral-700">Created at: {data?.createdAt?.toDateString() ?? '2025-05-03 11:34:58'}</span>
+                  <span className="text-sm text-neutral-700">Created at: {data?.createdAt?.toString() ?? '2025-05-03 11:34:58'}</span>
                 </div>
                 <Button variant="outline" size="sm" onClick={() => router.push(`/question-sets/update/${questionSetId}`)}><Edit />Edit</Button>
               </div>
             </CardContent>
           </Card>
-        </div>
+        </div> */}
       </div>
 
       {/* Questions Section */}
@@ -109,14 +117,11 @@ export default function QuestionSetDetail() {
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <h3 className="font-medium text-lg">{index + 1}. {question.question}</h3>
-                    <Button variant="ghost" size="sm" className="text-muted-foreground">
-                      <Trash2 className="h-4 w-4 text-red-600" />
-                    </Button>
                   </div>
 
                   <div className="flex flex-wrap gap-4">
                     <span className="text-sm text-muted-foreground">• {questionTypes.find(x => x.value == question.type)?.label}</span>
-                    <span className="text-sm text-muted-foreground">• Science → Physics</span>
+                    <span className="text-sm text-muted-foreground">• {question.subject.name} → {question.subSubject.name} </span>
                     <span className="text-sm text-muted-foreground">• Difficulty: {question.difficulty}</span>
                   </div>
                 </CardHeader>

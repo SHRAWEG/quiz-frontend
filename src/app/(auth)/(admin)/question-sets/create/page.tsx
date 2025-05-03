@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/layout/app-header";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, Loader2, PlusIcon, TrashIcon } from "lucide-react";
+import { ChevronLeft, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useCreateQuestionSet, useGetQuestionSets } from "@/hooks/api/useQuestionSet";
 import { questionSetReqDto, QuestionSetReqDto } from "@/types/question-set";
@@ -13,8 +13,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { ApiError } from "@/lib/axios";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@radix-ui/react-select";
 
 export default function Page() {
   const { mutate: CreateQuestionSet, isPending } = useCreateQuestionSet();
@@ -34,10 +32,12 @@ export default function Page() {
 
   const onSubmit = (data: QuestionSetReqDto) => {
     CreateQuestionSet(data, {
-      onSuccess: () => {
+      onSuccess: (res) => {
         refetch();
 
         toast.success("Question-set created successfully");
+        
+        router.push(`/question-sets/update/${res.data.id}`)
       },
 
       onError: (error: ApiError) => {

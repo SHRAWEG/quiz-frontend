@@ -18,7 +18,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginReqDto, LoginReqDto, LoginResDto } from "@/types/auth/login.dto";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLogin, useResendVerification } from "@/hooks/api/useAuth";
 import { COOKIE_KEYS } from "@/constants/cookie-keys";
@@ -27,7 +26,6 @@ import { ApiError } from "@/lib/axios";
 import { useAuthContext } from "@/contexts/AuthContext";
 
 export default function LoginScreen() {
-  const router = useRouter();
 
   const { mutate, isPending } = useLogin();
   const { mutate: resendVerify } = useResendVerification();

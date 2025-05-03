@@ -2,6 +2,7 @@
 
 import { ClientSideDataTable } from "@/components/shared/client-data-table/data-table"
 import { useDeleteSubject, useGetAllSubjects } from "@/hooks/api/useSubject"
+import { ApiError } from "@/lib/axios";
 import { Subject } from "@/types/subject";
 import { Edit, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -28,8 +29,8 @@ export default function List() {
                 toast.success("Subject deleted successfully");
             },
 
-            onError: (error: Error) => {
-                toast.error(error.message);
+            onError: (error: ApiError) => {
+                toast.error(error.data.message);
             }
         });
 

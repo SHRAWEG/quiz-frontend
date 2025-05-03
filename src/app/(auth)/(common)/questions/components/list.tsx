@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { QuestionAccordionItem } from "@/components/shared/questions/accordion-item";
@@ -8,6 +8,7 @@ import { QuestionParams, useApproveQuestion, useGetQuestions, useRejectQuestion 
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import QuestionFilters from "@/components/shared/questions/filter";
+import { ApiError } from "@/lib/axios";
 
 export default function QuestionsList() {
     const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -43,8 +44,8 @@ export default function QuestionsList() {
 
                 toast.success("Question approved successfully")
             },
-            onError: (error: Error) => {
-                toast.error(error.message);
+            onError: (error: ApiError) => {
+                toast.error(error.data.message);
             }
         })
     }
@@ -56,8 +57,8 @@ export default function QuestionsList() {
                     refetch();
                     toast.success("Question rejected successfully")
                 },
-                onError: (error: Error) => {
-                    toast.error(error.message);
+                onError: (error: ApiError) => {
+                    toast.error(error.data.message);
                 }
             })
 
@@ -67,10 +68,6 @@ export default function QuestionsList() {
     const toggleExpand = (id: string) => {
         setExpandedId(expandedId === id ? null : id);
     };
-
-    useEffect(() => {
-        refetch();
-    }, [pageParam, limitParam]);
 
     return (
         <>

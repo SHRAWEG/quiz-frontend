@@ -1,11 +1,8 @@
+import QuestionFilters from "@/components/shared/questions/filter";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { QuestionParams, useGetQuestions } from "@/hooks/api/useQuestion";
-import { useGetAllSubjects } from "@/hooks/api/useSubject";
-import { useGetAllSubSubjects } from "@/hooks/api/useSubSubject";
 import { Question } from "@/types/question";
-import { Filter, Loader2, PlusIcon, TrashIcon } from "lucide-react";
+import { Loader2, TrashIcon } from "lucide-react";
 import { useState } from "react";
 
 type QuestionManagementProps = {
@@ -20,46 +17,22 @@ export default function QuestionManagement({
   removeQuestion,
 }: QuestionManagementProps
 ) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [subjectId, setSubjectId] = useState<string | null>(null);
-  const [subSubjectId, setSubSubjectId] = useState<string | null>(null);
-  const [questionType, setQuestionType] = useState<string | null>(null);
-
-  const { data: subjects } = useGetAllSubjects();
-  const { data: subSubjects } = useGetAllSubSubjects(subjectId || "");
-
+  const [search, setSearch] = useState("");
+  const [subjectId, setSubjectId] = useState("");
+  const [subSubjectId, setSubSubjectId] = useState("");
+  const [questionType, setQuestionType] = useState("");
 
   const params: QuestionParams = {
     page: 1,
     limit: 10,
-    search: searchTerm,
+    search: search,
     subjectId: subjectId || "",
     subSubjectId: subSubjectId || "",
     questionType: questionType || "",
+    status: "approved"
   }
 
   const { data, refetch, isFetching } = useGetQuestions(params)
-
-  const handleSubjectChange = (value: string) => {
-    if (value == "all") {
-      setSubjectId("");
-    } else {
-      setSubjectId(value);
-    }
-  }
-
-  const handleSubSubjectChange = (value: string) => {
-    if (value == "all") {
-      setSubSubjectId("");
-    } else {
-      setSubSubjectId(value);
-    }
-  }
-
-  const handleFilter = (e: React.ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    refetch();
-  }
 
   return (
     <div className="container mx-auto">
@@ -103,41 +76,17 @@ export default function QuestionManagement({
         <div className="border rounded-lg p-4 flex flex-col">
           <div className="mb-4">
             <h3 className="font-semibold text-lg mb-3">Add Questions</h3>
-            <form onSubmit={handleFilter} className="flex flex-wrap gap-8">
-              <Input
-                placeholder="Search questions..."
-                className="w-[400px]"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <Select onValueChange={handleSubjectChange} value={subjectId ?? ""}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by Subject" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Subjects</SelectItem>
-                  {subjects?.map((subject) => (
-                    <SelectItem key={subject.id} value={subject.id}>
-                      {subject.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select onValueChange={handleSubSubjectChange} value={subSubjectId ?? ""} disabled={!subjectId}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by Subject" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Sub subjects</SelectItem>
-                  {subSubjects?.map((subSubject) => (
-                    <SelectItem key={subSubject.id} value={subSubject.id}>
-                      {subSubject.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button variant="default" type="submit"><Filter />Filter</Button>
-            </form>
+            <QuestionFilters
+              refetch={refetch}
+              search={search}
+              setSearch={setSearch}
+              subjectId={subjectId}
+              setSubjectId={setSubjectId}
+              subSubjectId={subSubjectId}
+              setSubSubjectId={setSubSubjectId}
+              questionType={questionType}
+              setQuestionType={setQuestionType}
+            />
           </div>
 
           <div className="flex-grow overflow-y-auto space-y-3">
