@@ -23,9 +23,9 @@ import {
     TrendingUp,
     CheckCircle
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
+// import { Button } from '@/components/ui/button';
+// import { Badge } from '@/components/ui/badge';
+// import Link from 'next/link';
 
 export default function StudentDashboard() {
     const [stats, setStats] = useState({
@@ -48,35 +48,35 @@ export default function StudentDashboard() {
     }, []);
 
     // Mock quiz data
-    const availableQuizzes = [
-        {
-            id: '1',
-            title: 'Math Fundamentals',
-            subject: 'Mathematics',
-            difficulty: 'Beginner',
-            questions: 10,
-            duration: 20,
-            dueDate: '2023-12-15'
-        },
-        {
-            id: '2',
-            title: 'Science Challenge',
-            subject: 'Science',
-            difficulty: 'Intermediate',
-            questions: 15,
-            duration: 30,
-            dueDate: '2023-12-20'
-        },
-        {
-            id: '3',
-            title: 'History Trivia',
-            subject: 'History',
-            difficulty: 'Advanced',
-            questions: 12,
-            duration: 25,
-            dueDate: '2023-12-18'
-        }
-    ];
+    // const availableQuizzes = [
+    //     {
+    //         id: '1',
+    //         title: 'Math Fundamentals',
+    //         subject: 'Mathematics',
+    //         difficulty: 'Beginner',
+    //         questions: 10,
+    //         duration: 20,
+    //         dueDate: '2023-12-15'
+    //     },
+    //     {
+    //         id: '2',
+    //         title: 'Science Challenge',
+    //         subject: 'Science',
+    //         difficulty: 'Intermediate',
+    //         questions: 15,
+    //         duration: 30,
+    //         dueDate: '2023-12-20'
+    //     },
+    //     {
+    //         id: '3',
+    //         title: 'History Trivia',
+    //         subject: 'History',
+    //         difficulty: 'Advanced',
+    //         questions: 12,
+    //         duration: 25,
+    //         dueDate: '2023-12-18'
+    //     }
+    // ];
 
     const completedQuizzes = [
         {
@@ -149,14 +149,13 @@ export default function StudentDashboard() {
             </div>
 
             {/* Tabs for different dashboard sections */}
-            <Tabs defaultValue="quizzes" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 md:w-auto">
-                    <TabsTrigger value="quizzes">Available Quizzes</TabsTrigger>
+            <Tabs defaultValue="completed" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 md:w-auto">
                     <TabsTrigger value="completed">Completed Quizzes</TabsTrigger>
                     <TabsTrigger value="progress">My Progress</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="quizzes" className="space-y-4">
+                {/* <TabsContent value="quizzes" className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {availableQuizzes.map((quiz) => (
                             <Card key={quiz.id} className="hover:shadow-lg transition-shadow">
@@ -189,7 +188,7 @@ export default function StudentDashboard() {
                             </Card>
                         ))}
                     </div>
-                </TabsContent>
+                </TabsContent> */}
 
                 <TabsContent value="completed" className="space-y-4">
                     <Card>
@@ -209,12 +208,12 @@ export default function StudentDashboard() {
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <span className={`text-lg font-bold ${quiz.score >= 80 ? 'text-green-500' :
-                                                    quiz.score >= 60 ? 'text-yellow-500' : 'text-red-500'
+                                                quiz.score >= 60 ? 'text-yellow-500' : 'text-red-500'
                                                 }`}>
                                                 {quiz.score}%
                                             </span>
                                             <CheckCircle className={`h-5 w-5 ${quiz.score >= 80 ? 'text-green-500' :
-                                                    quiz.score >= 60 ? 'text-yellow-500' : 'text-red-500'
+                                                quiz.score >= 60 ? 'text-yellow-500' : 'text-red-500'
                                                 }`} />
                                         </div>
                                     </div>

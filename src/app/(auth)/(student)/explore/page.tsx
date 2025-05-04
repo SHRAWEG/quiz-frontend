@@ -100,7 +100,7 @@ export default function ExplorePage() {
                   <p className="text-sm text-gray-600">
                     {quiz.questions?.length || 0} Questions
                   </p>
-                  <Button className="mt-4 w-full">Start Quiz</Button>
+                  <Button className="mt-4 w-full" disabled>Start Quiz</Button>
                 </div>
               </CardContent>
             </Card>
