@@ -15,6 +15,11 @@ export const useGetQuestionSets = (params?: QuestionSetParams) => useQuery<Quest
   queryFn: async () => await apiClient.get<QuestionSetList>(`${API_URLS.questionSet}`, { params })
 });
 
+export const useGetQuizzes = (params?: QuestionSetParams) => useQuery<QuestionSetList>({
+  queryKey: ["quizzes"],
+  queryFn: async () => await apiClient.get<QuestionSetList>(`${API_URLS.quizzes}`, { params })
+})
+
 export const useGetQuestionSetDetail = (questionSetId: string) => useQuery<QuestionSet>({
   queryKey: ["questionSet", questionSetId],
   queryFn: async () => {

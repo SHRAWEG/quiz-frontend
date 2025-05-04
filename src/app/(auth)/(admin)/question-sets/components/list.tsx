@@ -25,7 +25,6 @@ export default function UsersPage() {
   }
 
   // const { data: categories } = useGetAllCategories();
-
   const { data, refetch, isFetching } = useGetQuestionSets(params);
   const { mutate: deleteQuestionSet } = useDeleteQuestionSet();
   const { mutate: publishQuestionSet } = usePublishQuestionSet();

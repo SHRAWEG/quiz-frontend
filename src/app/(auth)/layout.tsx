@@ -1,6 +1,6 @@
 "use client"
 
-import { Home, FileQuestion, Book, BookText, Loader2 } from "lucide-react"
+import { Home, FileQuestion, Book, BookText, Loader2, LayoutList } from "lucide-react"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/layout/app-sidebar"
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -42,6 +42,12 @@ const items = [
     url: "/question-sets",
     icon: FileQuestion,
     role: ["admin"]
+  },
+  {
+    title: "Explore Quizzes",
+    url: "/explore",
+    icon: LayoutList,
+    role: ["student"]
   }
 ]
 

@@ -23,9 +23,9 @@ export default function QuestionSetDetail() {
     const query = search.toLowerCase();
 
     return (
-      question.question.toLowerCase().includes(query)
-      // question.subject.name.toLowerCase().includes(query) ||
-      // question.subSubject.name.toLowerCase().includes(query)
+      question.question.toLowerCase().includes(query) ||
+      question.subject.name.toLowerCase().includes(query) ||
+      question.subSubject.name.toLowerCase().includes(query)
     );
   });
 
