@@ -1,9 +1,10 @@
 import QuestionFilters from "@/components/shared/questions/filter";
 import { Button } from "@/components/ui/button";
+import Pagination from "@/components/ui/pagination";
 import { QuestionParams, useGetQuestions } from "@/hooks/api/useQuestion";
 import { Question } from "@/types/question";
 import { Loader2, TrashIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type QuestionManagementProps = {
   addedQuestions: Question[];
@@ -17,14 +18,16 @@ export default function QuestionManagement({
   removeQuestion,
 }: QuestionManagementProps
 ) {
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10)
   const [search, setSearch] = useState("");
   const [subjectId, setSubjectId] = useState("");
   const [subSubjectId, setSubSubjectId] = useState("");
   const [questionType, setQuestionType] = useState("");
 
   const params: QuestionParams = {
-    page: 1,
-    limit: 10,
+    page: page,
+    limit: limit,
     search: search,
     subjectId: subjectId || "",
     subSubjectId: subSubjectId || "",
@@ -33,6 +36,10 @@ export default function QuestionManagement({
   }
 
   const { data, refetch, isFetching } = useGetQuestions(params)
+
+  useEffect(() => {
+    refetch()
+  }, [page, limit, refetch])
 
   return (
     <div className="container mx-auto">
@@ -113,7 +120,17 @@ export default function QuestionManagement({
               ))
             )
             }
+
+            <Pagination
+              limit={limit}
+              totalPages={data?.totalPages ?? 0}
+              currentPage={data?.currentPage ?? 0}
+              onLimitChange={setLimit}
+              onPageChange={setPage}
+            />
           </div>
+
+
         </div>
       </div>
     </div>

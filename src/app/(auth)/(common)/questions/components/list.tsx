@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { QuestionAccordionItem } from "@/components/shared/questions/accordion-item";
@@ -68,6 +68,10 @@ export default function QuestionsList() {
     const toggleExpand = (id: string) => {
         setExpandedId(expandedId === id ? null : id);
     };
+
+    useEffect(() => {
+        refetch();
+    }, [pageParam, limitParam, refetch])
 
     return (
         <>

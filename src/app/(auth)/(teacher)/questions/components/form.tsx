@@ -46,6 +46,8 @@ export function QuestionForm({
         );
     };
 
+    console.log(form.formState.errors)
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column - Form */}
@@ -282,7 +284,11 @@ export function QuestionForm({
                                                         {...field}
                                                     />
                                                 </FormControl>
-                                                <FormMessage />
+                                                {shouldShowError("options") && (
+                                                    <FormMessage className="text-red-500">
+                                                        {form.formState.errors.options?.message}
+                                                    </FormMessage>
+                                                )}
                                             </FormItem>
                                         )}
                                     />
@@ -320,7 +326,6 @@ export function QuestionForm({
                                             <SelectItem value="false">False</SelectItem>
                                         </SelectContent>
                                     </Select>
-                                    <FormMessage />
                                     {shouldShowError("options") && (
                                         <FormMessage className="text-red-500">
                                             {form.formState.errors.options?.message}

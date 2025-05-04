@@ -57,7 +57,9 @@ export default function QuestionFilters({
               placeholder="Search questions..."
               className="max-w-md"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value)
+              }}
             />
           )
         }
