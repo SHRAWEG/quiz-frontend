@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Eye, Pencil, Trash, EyeOff } from "lucide-react";
+import { MoreHorizontal, Eye, Pencil, Trash, EyeOff, EyeIcon, Edit } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { QuestionSet } from "@/types/question-set";
 import Link from "next/link";
@@ -59,49 +59,70 @@ export const getColumns = (
         const questionSet = row.original;
 
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <MoreHorizontal className="h-4 w-4" />
-                <span className="sr-only">Open menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <Link href={`/question-sets/view/${questionSet.id}`} passHref>
-                <DropdownMenuItem>
-                  <Eye className="mr-2 h-4 w-4" /> View
-                </DropdownMenuItem>
-              </Link>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="default"
+              className="bg-cyan-500"
+            >
+              <Eye />
+            </Button>
+            <Button
+              variant="secondary"
+              className="bg-pink-300"
+            >
+              <Pencil />
+            </Button>
+            <Button
+              variant="destructive"
+              className="bg-red-500"
+            >
+              <Trash />
+            </Button>
 
-              <Link href={`/question-sets/update/${questionSet.id}`} passHref>
-                <DropdownMenuItem>
-                  <Pencil className="mr-2 h-4 w-4" /> Edit
-                </DropdownMenuItem>
-              </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <MoreHorizontal className="h-4 w-4" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <Link href={`/question-sets/view/${questionSet.id}`} passHref>
+                  <DropdownMenuItem>
+                    <Eye className="mr-2 h-4 w-4" /> View
+                  </DropdownMenuItem>
+                </Link>
 
-              <DropdownMenuItem
-                onClick={() => handleDelete(questionSet.id)}
-                className="text-red-600 focus:text-red-600"
-              >
-                <Trash className="mr-2 h-4 w-4" /> Delete
-              </DropdownMenuItem>
-              {
-                questionSet.status === "published" ? (
-                  <DropdownMenuItem
-                    onClick={() => handleDraftQuestionSet(questionSet.id)}
-                  >
-                    <EyeOff className="mr-2 h-4 w-4" /> Unpublish
+                <Link href={`/question-sets/update/${questionSet.id}`} passHref>
+                  <DropdownMenuItem>
+                    <Pencil className="mr-2 h-4 w-4" /> Edit
                   </DropdownMenuItem>
-                ) : (
-                  <DropdownMenuItem
-                    onClick={() => handlePublishQuestionSet(questionSet.id)}
-                  >
-                    <Eye className="mr-2 h-4 w-4" /> Publish
-                  </DropdownMenuItem>
-                )
-              }
-            </DropdownMenuContent>
-          </DropdownMenu>
+                </Link>
+
+                <DropdownMenuItem
+                  onClick={() => handleDelete(questionSet.id)}
+                  className="text-red-600 focus:text-red-600"
+                >
+                  <Trash className="mr-2 h-4 w-4" /> Delete
+                </DropdownMenuItem>
+                {
+                  questionSet.status === "published" ? (
+                    <DropdownMenuItem
+                      onClick={() => handleDraftQuestionSet(questionSet.id)}
+                    >
+                      <EyeOff className="mr-2 h-4 w-4" /> Unpublish
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem
+                      onClick={() => handlePublishQuestionSet(questionSet.id)}
+                    >
+                      <Eye className="mr-2 h-4 w-4" /> Publish
+                    </DropdownMenuItem>
+                  )
+                }
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         );
       },
     },

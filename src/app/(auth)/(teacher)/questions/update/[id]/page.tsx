@@ -17,6 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { ApiError } from "@/lib/axios";
+import { QUESTION_TYPES } from "@/constants/questions";
 
 // Create a schema for the subjectId field
 const subjectIdSchema = z.object({
@@ -57,6 +58,8 @@ export default function Page() {
                 { option: "", isCorrect: false },
                 { option: "", isCorrect: false }
             ],
+            correctAnswerBoolean: false,
+            correctAnswerText: "",
             difficulty: 3,
         },
         mode: "onBlur",
@@ -70,6 +73,8 @@ export default function Page() {
                 subSubjectId: data.subSubjectId,
                 question: data.question,
                 options: data.options.map(x => ({ option: x.option, isCorrect: x.isCorrect })) || [],
+                correctAnswerBoolean: data.type === QUESTION_TYPES.TRUE_FALSE ? data.correctAnswerBoolean : null,
+                correctAnswerText: data.type === QUESTION_TYPES.FILL_IN_THE_BLANKS ? data.correctAnswerText : "",
                 difficulty: data.difficulty,
             });
             form.setValue("subjectId", data.subjectId);

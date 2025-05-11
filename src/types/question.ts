@@ -4,6 +4,7 @@ import { subSubjectSchema } from "./sub-subject";
 import { questionTypes } from "@/enums/questions";
 import { optionSchema } from "./option";
 import { userSchema } from "./user";
+import { QUESTION_TYPES } from "@/constants/questions";
 
 // Define a schema for a single subject
 export const questionSchema = z.object({
@@ -15,6 +16,8 @@ export const questionSchema = z.object({
   subSubject: subSubjectSchema,
   question: z.string(),
   options: z.array(optionSchema),
+  correctAnswerBoolean: z.boolean(),
+  correctAnswerText: z.string(),
   difficulty: z.number(),
   status: z.enum(["pending", "approved", "rejected"]),
   createdById: z.string(),
@@ -42,20 +45,43 @@ export const questionReqDto = z.object({
     option: z.string().min(1, { message: "Option is required" }),
     isCorrect: z.boolean()
   })),
+  correctAnswerBoolean: z.boolean().nullable().optional(),
+  correctAnswerText: z.string(),
   difficulty: z.number().min(1, { message: "Difficulty is required" }).max(5)
 })
   .refine(
-    (data) => !(data.type === "mcq" && data.options.length === 0),
+    (data) => !(data.type === QUESTION_TYPES.MCQ && data.options.length === 0),
     {
       message: "Options are required for MCQ type questions",
       path: ["options"],
     }
   )
   .refine(
-    (data) => !(data.type !== "mcq" && data.options.length > 0),
+    (data) => !(data.type !== QUESTION_TYPES.MCQ && data.options.length > 0),
     {
       message: "Options should be empty for non-MCQ type questions",
       path: ["options"],
+    }
+  )
+  .refine(
+    (data) => !(data.type === QUESTION_TYPES.TRUE_FALSE && data.correctAnswerBoolean === null),
+    {
+      message: "Correct answer is required.",
+      path: ["correctAnswerBoolean"]
+    }
+  )
+  .refine(
+    (data) => !(data.type === QUESTION_TYPES.FILL_IN_THE_BLANKS && !data.correctAnswerText),
+    {
+      message: "Correct answer is required.",
+      path: ["correctAnswerText"]
+    }
+  )
+  .refine(
+    (data) => !(data.type !== QUESTION_TYPES.FILL_IN_THE_BLANKS && (data.correctAnswerText != null && data.correctAnswerText !== "") ),
+    {
+      message: "Correct answer should be empty for non Fill In The Blanks type questions.",
+      path: ["correctAnswerText"]
     }
   );
 

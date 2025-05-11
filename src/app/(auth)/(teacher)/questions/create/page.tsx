@@ -52,6 +52,8 @@ export default function Page() {
                 { option: "", isCorrect: false },
                 { option: "", isCorrect: false }
             ],
+            correctAnswerBoolean: undefined,
+            correctAnswerText: "",
             difficulty: 3,
         },
         mode: "onBlur",

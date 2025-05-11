@@ -13,6 +13,7 @@ import { QuestionReqDto } from "@/types/question";
 import { questionTypes } from "@/enums/questions";
 import { QuestionFormData } from "../create/page";
 import { Skeleton } from "@/components/ui/skeleton";
+import { QUESTION_TYPES } from "@/constants/questions";
 
 interface QuestionFormProps {
     onSubmit: (data: QuestionReqDto) => void;
@@ -59,6 +60,8 @@ export function QuestionForm({
                         subSubjectId: data.subSubjectId,
                         question: data.question,
                         options: data.options,
+                        correctAnswerBoolean: data.correctAnswerBoolean,
+                        correctAnswerText: data.correctAnswerText,
                         difficulty: data.difficulty
                     };
 
@@ -240,7 +243,7 @@ export function QuestionForm({
                     />
 
                     {/* MCQ Options */}
-                    {questionType === "mcq" && (
+                    {questionType === QUESTION_TYPES.MCQ && (
                         <div className="space-y-4">
                             <div className="flex items-center gap-2">
                                 <FormLabel className="text-sm font-medium">Options</FormLabel>
@@ -298,39 +301,62 @@ export function QuestionForm({
                     )}
 
                     {/* True/False Option */}
-                    {questionType === "trueOrFalse" && (
+                    {questionType === QUESTION_TYPES.TRUE_FALSE && (
                         <FormField
                             control={form.control}
-                            name="options"
+                            name="correctAnswerBoolean"
                             render={({ field }) => (
                                 <FormItem>
                                     <div className="flex items-center gap-2">
                                         <FormLabel className="text-sm font-medium">Correct Answer</FormLabel>
                                     </div>
-                                    <Select
-                                        onValueChange={(value) => {
-                                            form.setValue("options", [
-                                                { option: "True", isCorrect: value === "true" },
-                                                { option: "False", isCorrect: value === "false" }
-                                            ]);
-                                        }}
-                                        defaultValue={field.value?.[0]?.isCorrect ? "true" : "false"}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select correct answer" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="true">True</SelectItem>
-                                            <SelectItem value="false">False</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                    {!currentSubSubjectId && !form.formState.isDirty ? (
+                                        <Skeleton className="h-10 w-full" />
+                                    ) : (
+                                        <Select
+                                            onValueChange={(value) => {
+                                                form.setValue("correctAnswerBoolean", value === "true");
+                                            }}
+                                            value={field.value ? "true" : "false"}
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select correct answer" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="true">True</SelectItem>
+                                                <SelectItem value="false">False</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    )}
                                     {shouldShowError("options") && (
                                         <FormMessage className="text-red-500">
                                             {form.formState.errors.options?.message}
                                         </FormMessage>
                                     )}
+
+                                </FormItem>
+                            )}
+                        />
+                    )}
+
+                    {questionType === QUESTION_TYPES.FILL_IN_THE_BLANKS && (
+                        <FormField
+                            control={form.control}
+                            name="correctAnswerText"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <div className="flex items-center gap-2">
+                                        <FormLabel className="text-sm font-medium">Correct Answer</FormLabel>
+                                    </div>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="Answer"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { QUESTION_TYPES } from "@/constants/questions";
 import { questionTypes } from "@/enums/questions";
 import { useGetQuestionSetDetail } from "@/hooks/api/useQuestionSet";
 import { CheckCircleIcon, Edit, Loader2 } from "lucide-react";
@@ -63,8 +64,8 @@ export default function QuestionSetDetail() {
         </div>
 
         <div className="flex flex-col gap-2">
-            <span className="text-sm text-neutral-700 font-bold">Created by: {`${data?.createdBy?.firstName ?? "Admin"} ${data?.createdBy?.middleName ?? "Quiz"} ${data?.createdBy?.lastName ?? "User"}`} • {data?.createdBy?.email ?? "admin@quizit.com"}</span>
-            <span className="text-sm text-neutral-700 font-bold">Created at: {data?.createdAt?.toString() ?? '2025-05-03 11:34:58'}</span>
+          <span className="text-sm text-neutral-700 font-bold">Created by: {`${data?.createdBy?.firstName ?? "Admin"} ${data?.createdBy?.middleName ?? "Quiz"} ${data?.createdBy?.lastName ?? "User"}`} • {data?.createdBy?.email ?? "admin@quizit.com"}</span>
+          <span className="text-sm text-neutral-700 font-bold">Created at: {data?.createdAt?.toString() ?? '2025-05-03 11:34:58'}</span>
         </div>
 
         {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -126,7 +127,7 @@ export default function QuestionSetDetail() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  {question.type === "mcq" && (
+                  {question.type === QUESTION_TYPES.MCQ && (
                     <div className="space-y-2">
                       <h4 className="font-medium">Options:</h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -139,6 +140,21 @@ export default function QuestionSetDetail() {
                       </div>
                     </div>
                   )}
+
+                  {
+                    question.type === QUESTION_TYPES.TRUE_FALSE && (
+                      <div className="space-y-2 gap-1 flex flex-wrap">
+                        <p>Correct Answer:</p> <p className="text-green-600">{question.correctAnswerBoolean ? "True" : "False"}</p>
+                      </div>
+                    )
+                  }
+                  {
+                    question.type === QUESTION_TYPES.FILL_IN_THE_BLANKS && (
+                      <div className="space-y-2 gap-1 flex flex-wrap">
+                        <p>Correct Answer:</p> <p className="text-green-600">{question.correctAnswerText}</p>
+                      </div>
+                    )
+                  }
 
                 </CardContent>
               </Card>

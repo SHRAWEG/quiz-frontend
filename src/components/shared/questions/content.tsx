@@ -1,3 +1,4 @@
+import { QUESTION_TYPES } from "@/constants/questions";
 import { Option } from "@/types/option";
 import { Question } from "@/types/question";
 
@@ -8,7 +9,7 @@ interface QuestionContentProps {
 export default function QuestionContent({ question }: QuestionContentProps) {
   return (
     <>
-      {question.type === "mcq" && question.options && (
+      {question.type === QUESTION_TYPES.MCQ && question.options && (
         <div className="my-4">
           <p className="font-medium">Options:</p>
           <ul className="mt-1 space-y-2">
@@ -30,14 +31,23 @@ export default function QuestionContent({ question }: QuestionContentProps) {
         </div>
       )} */}
 
-      {/* {question.type === "TRUE_FALSE" && question.options && (
-        <div className="mb-4">
+      {question.type === QUESTION_TYPES.TRUE_FALSE && (
+        <div className="my-4 flex flex-wrap gap-1">
           <p className="font-medium">Correct Answer:</p>
-          <p className="mt-1 text-green-600 font-medium">
-            {question.options[0].isCorrect ? "True" : "False"}
+          <p className="text-green-600 font-medium">
+            {question.correctAnswerBoolean ? "True" : "False"}
           </p>
         </div>
-      )} */}
+      )}
+
+      {question.type === QUESTION_TYPES.FILL_IN_THE_BLANKS && (
+        <div className="my-4 flex flex-wrap gap-1">
+          <p className="font-medium">Correct Answer:</p>
+          <p className="text-green-600 font-medium">
+            {question.correctAnswerText}
+          </p>
+        </div>
+      )}
     </>
   );
 }
