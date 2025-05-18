@@ -5,5 +5,6 @@ export const API_URLS = {
     question: "/questions",
     category: "/categories",
     questionSet: "/question-sets",
+    questionSetAttempt: "/question-set-attempts",
     quizzes: "/quizes"
 }

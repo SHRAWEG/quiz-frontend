@@ -21,7 +21,10 @@ interface FormProps {
 export function SubSubjectForm({ onSubmit, isPending, subjects, form, isUpdate }: FormProps) {
     const handleSaveAndAddMore = () => {
         onSubmit(form.getValues(), false);
-        form.reset();
+        form.reset({
+            subjectId: form.getValues("subjectId"),
+            name: ""
+        });
     };
 
     const handleSaveAndRedirect = () => {
@@ -47,8 +50,8 @@ export function SubSubjectForm({ onSubmit, isPending, subjects, form, isUpdate }
                                 {!subjectId && !form.formState.isDirty && isUpdate ? (
                                     <Skeleton className="h-10 w-full" />
                                 ) : (
-                                    <Select 
-                                        onValueChange={field.onChange} 
+                                    <Select
+                                        onValueChange={field.onChange}
                                         value={field.value || ""}
                                     >
                                         <FormControl>

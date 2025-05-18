@@ -1,7 +1,18 @@
 import { apiClient, ApiError, ApiResponse } from "@/lib/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Subject, SubjectReqDto } from "@/types/subject";
+import { Subject, SubjectList, SubjectReqDto } from "@/types/subject";
 import { API_URLS } from "@/lib/constants/api-urls";
+
+export type SubjectParams = {
+  page: number;
+  limit: number;
+  search: string;
+}
+
+export const useGetSubjects = (params?: SubjectParams) => useQuery<SubjectList>({
+  queryKey: ["subjects"],
+  queryFn: async () => await apiClient.get<SubjectList>(`${API_URLS.subject}`, { params })
+});
 
 export const useGetSubjectDetail = (subjectId: string) => useQuery<Subject>({
   queryKey: ["subject", subjectId],

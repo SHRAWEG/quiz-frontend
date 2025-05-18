@@ -28,6 +28,24 @@ export const questionSetListSchema = z.object({
     pageSize: z.number()
 })
 
+export const questionSetToAttemptSchema = z.object({
+    id: z.string(),
+    isFree: z.boolean(),
+    categoryId: z.string(),
+    category: categorySchema,
+    name: z.string(),
+    questionsCount: z.number()
+})
+
+export const questionSetsToAttemptListSchema = z.object({
+    data: z.array(questionSetToAttemptSchema),
+    totalItems: z.number(),
+    totalPages: z.number(),
+    currentPage: z.number(),
+    pageSize: z.number()
+})
+
+
 export const questionSetReqDto = z.object({
     categoryId: z.string().min(1, { message: "Category is required" }),
     name: z.string().min(1, { message: "Name is required" }),
@@ -37,4 +55,6 @@ export const questionSetReqDto = z.object({
 export type QuestionSetReqDto = z.infer<typeof questionSetReqDto>;
 export type QuestionSet = z.infer<typeof questionSetSchema>;
 export type QuestionSetList = z.infer<typeof questionSetListSchema>;
+export type QuestionSetToAttempt = z.infer<typeof questionSetToAttemptSchema>;
+export type QuestionSetsToAttemptList = z.infer<typeof questionSetsToAttemptListSchema>;
 

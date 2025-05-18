@@ -23,11 +23,18 @@ import {
     TrendingUp,
     CheckCircle
 } from 'lucide-react';
+import { useGetQuestionSetAttempts } from '@/hooks/api/useQuestionSetAttempt';
+import { QuestionSetAttemptList } from '@/types/question-set-attempt';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
+import { formatISODate } from '@/lib/format-date';
 // import { Button } from '@/components/ui/button';
 // import { Badge } from '@/components/ui/badge';
 // import Link from 'next/link';
 
 export default function StudentDashboard() {
+    const router = useRouter();
+
     const [stats, setStats] = useState({
         quizzesTaken: 0,
         averageScore: 0,
@@ -78,20 +85,10 @@ export default function StudentDashboard() {
     //     }
     // ];
 
-    const completedQuizzes = [
-        {
-            id: '4',
-            title: 'Grammar Test',
-            score: 92,
-            dateCompleted: '2023-12-05'
-        },
-        {
-            id: '5',
-            title: 'Geography Quiz',
-            score: 78,
-            dateCompleted: '2023-11-28'
-        }
-    ];
+    const { data: questionSetAttempts } = useGetQuestionSetAttempts();
+
+    const pendingQuestionSets: QuestionSetAttemptList = questionSetAttempts?.filter((attempt) => !attempt.isCompleted) || [];
+    const completedQuestionSets = questionSetAttempts?.filter((attempt) => attempt.isCompleted) || [];
 
     return (
         <div className="p-6 space-y-6">
@@ -149,9 +146,10 @@ export default function StudentDashboard() {
             </div>
 
             {/* Tabs for different dashboard sections */}
-            <Tabs defaultValue="completed" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 md:w-auto">
-                    <TabsTrigger value="completed">Completed Quizzes</TabsTrigger>
+            <Tabs defaultValue="pending" className="w-full">
+                <TabsList className="grid w-full grid-cols-3 md:w-auto">
+                    <TabsTrigger value="pending">Pending Sets</TabsTrigger>
+                    <TabsTrigger value="completed">Completed Sets</TabsTrigger>
                     <TabsTrigger value="progress">My Progress</TabsTrigger>
                 </TabsList>
 
@@ -190,35 +188,114 @@ export default function StudentDashboard() {
                     </div>
                 </TabsContent> */}
 
+                <TabsContent value="pending" className="space-y-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>History</CardTitle>
+                            <CardDescription>Your pending sets</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {pendingQuestionSets.length === 0 ?
+                                <div className="flex items-center justify-center h-32 text-muted-foreground">
+                                    <p>No pending quizzes available</p>
+                                </div>
+                                :
+                                <div className="space-y-4">
+                                    {pendingQuestionSets.map((questionSetAttempt) => {
+                                        const startedAt = formatISODate(questionSetAttempt.startedAt.toString());
+
+                                        return (
+                                            <div key={questionSetAttempt.id} className="flex items-center justify-between p-4 border rounded-lg">
+                                                <div>
+                                                    <h3 className="font-medium">{questionSetAttempt.questionSet.name}</h3>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        Started on {startedAt}
+                                                    </p>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        className="text-sm"
+                                                        onClick={() => {
+                                                            router.push(`/question-set-attempt/${questionSetAttempt.id}`);
+                                                            // Handle continue quiz action
+                                                            console.log(`Continue quiz with ID: ${questionSetAttempt.id}`);
+                                                        }}
+                                                    >
+                                                        Continue
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        )
+                                    }
+                                    )}
+                                </div>
+                            }
+
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
                 <TabsContent value="completed" className="space-y-4">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Quiz History</CardTitle>
-                            <CardDescription>Your completed quizzes and scores</CardDescription>
+                            <CardTitle>History</CardTitle>
+                            <CardDescription>Your completed sets and scores</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="space-y-4">
-                                {completedQuizzes.map((quiz) => (
-                                    <div key={quiz.id} className="flex items-center justify-between p-4 border rounded-lg">
-                                        <div>
-                                            <h3 className="font-medium">{quiz.title}</h3>
-                                            <p className="text-sm text-muted-foreground">
-                                                Completed on {quiz.dateCompleted}
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <span className={`text-lg font-bold ${quiz.score >= 80 ? 'text-green-500' :
-                                                quiz.score >= 60 ? 'text-yellow-500' : 'text-red-500'
-                                                }`}>
-                                                {quiz.score}%
-                                            </span>
-                                            <CheckCircle className={`h-5 w-5 ${quiz.score >= 80 ? 'text-green-500' :
-                                                quiz.score >= 60 ? 'text-yellow-500' : 'text-red-500'
-                                                }`} />
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                            {completedQuestionSets.length === 0 ?
+                                <div className="flex items-center justify-center h-32 text-muted-foreground">
+                                    <p>No completed quizzes available</p>
+                                </div>
+                                :
+                                <div className="space-y-4">
+                                    {completedQuestionSets.map((questionSetAttempt) => {
+                                        const startedAt = formatISODate(questionSetAttempt.startedAt.toString());
+                                        let completedAt = '';
+                                        if (questionSetAttempt.completedAt) {
+                                            completedAt = formatISODate(questionSetAttempt.completedAt.toString());
+                                        } else {
+                                            completedAt = 'N/A';
+                                        }
+                                        return (
+                                            <div key={questionSetAttempt.id} className="flex items-center justify-between p-4 border rounded-lg">
+                                                <div>
+                                                    <h3 className="font-medium">{questionSetAttempt.questionSet.name}</h3>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        Started on {startedAt}
+                                                    </p>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        Completed on {completedAt}
+                                                    </p>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className={`text-lg font-bold ${questionSetAttempt.score >= 80 ? 'text-green-500' :
+                                                        questionSetAttempt.score >= 60 ? 'text-yellow-500' : 'text-red-500'
+                                                        }`}>
+                                                        {Math.round(questionSetAttempt.percentage)}%
+                                                    </span>
+                                                    <CheckCircle className={`h-5 w-5 ${questionSetAttempt.score >= 80 ? 'text-green-500' :
+                                                        questionSetAttempt.score >= 60 ? 'text-yellow-500' : 'text-red-500'
+                                                        }`} />
+
+                                                    <Button
+                                                        variant="outline"
+                                                        className="text-sm"
+                                                        onClick={() => {
+                                                            router.push(`/question-set-attempt/${questionSetAttempt.id}/results`);
+                                                            // Handle view results action
+                                                            console.log(`View results for questionSetAttempt ID: ${questionSetAttempt.id}`);
+                                                        }}
+                                                    >
+                                                        View Results
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            }
+
                         </CardContent>
                     </Card>
                 </TabsContent>

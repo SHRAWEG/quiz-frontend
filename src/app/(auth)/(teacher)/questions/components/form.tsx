@@ -16,7 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { QUESTION_TYPES } from "@/constants/questions";
 
 interface QuestionFormProps {
-    onSubmit: (data: QuestionReqDto) => void;
+    onSubmit: (data: QuestionReqDto, redirect: boolean, callback?: () => void) => void;
     subjectChange: (subjectId: string) => void;
     isPending: boolean;
     initialValues?: Partial<QuestionReqDto & { subjectId: string }>;
@@ -35,6 +35,49 @@ export function QuestionForm({
     form,
     isUpdate = false
 }: QuestionFormProps) {
+    const handleSaveAndAddMore = () => {
+        const data = form.getValues();
+
+        const apiData: QuestionReqDto = {
+            type: data.type,
+            subSubjectId: data.subSubjectId,
+            question: data.question,
+            options: data.options,
+            correctAnswerBoolean: data.correctAnswerBoolean,
+            correctAnswerText: data.correctAnswerText,
+            difficulty: data.difficulty
+        };
+
+        onSubmit(apiData, false, () => {
+            form.reset({
+                type: data.type,
+                subjectId: data.subjectId,
+                subSubjectId: data.subSubjectId,
+                question: "",
+                options: [],
+                correctAnswerBoolean: undefined,
+                correctAnswerText: "",
+                difficulty: 3
+            });
+        });
+    };
+
+    const handleSaveAndRedirect = () => {
+        const data = form.getValues();
+
+        const apiData: QuestionReqDto = {
+            type: data.type,
+            subSubjectId: data.subSubjectId,
+            question: data.question,
+            options: data.options,
+            correctAnswerBoolean: data.correctAnswerBoolean,
+            correctAnswerText: data.correctAnswerText,
+            difficulty: data.difficulty
+        };
+
+        onSubmit(apiData, true);
+    };
+
 
     const questionType = form.watch("type");
     const currentSubjectId = form.watch("subjectId");
@@ -47,27 +90,11 @@ export function QuestionForm({
         );
     };
 
-    console.log(form.formState.errors)
-
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column - Form */}
             <Form {...form}>
-                <form onSubmit={form.handleSubmit((data) => {
-                    // Extract only the fields needed for the API (excluding subjectId)
-                    const apiData: QuestionReqDto = {
-                        type: data.type,
-                        subSubjectId: data.subSubjectId,
-                        question: data.question,
-                        options: data.options,
-                        correctAnswerBoolean: data.correctAnswerBoolean,
-                        correctAnswerText: data.correctAnswerText,
-                        difficulty: data.difficulty
-                    };
-
-                    // Call the provided onSubmit with the filtered data
-                    onSubmit(apiData);
-                })}
+                <form onSubmit={form.handleSubmit(handleSaveAndRedirect)}
                     className="space-y-6">
                     {/* Question Type */}
                     <FormField
@@ -88,13 +115,18 @@ export function QuestionForm({
                                                 { option: "", isCorrect: false },
                                                 { option: "", isCorrect: false }
                                             ]);
+                                            form.setValue("correctAnswerBoolean", undefined);
+                                            form.setValue("correctAnswerText", "");
                                         } else if (value === "true-false") {
                                             form.setValue("options", [
                                                 { option: "", isCorrect: false },
                                                 { option: "", isCorrect: false }
                                             ]);
+                                            form.setValue("options", []);
+                                            form.setValue("correctAnswerText", "");
                                         } else {
                                             form.setValue("options", []);
+                                            form.setValue("correctAnswerBoolean", undefined);
                                         }
                                     }}
                                     defaultValue={field.value}
@@ -370,7 +402,6 @@ export function QuestionForm({
                             <FormItem>
                                 <div className="flex items-center gap-2">
                                     <FormLabel className="text-sm font-medium">Difficulty Level</FormLabel>
-                                    <InfoIcon className="h-4 w-4 text-muted-foreground" />
                                 </div>
                                 <div className="flex items-center space-x-4">
                                     <FormControl>
@@ -380,7 +411,7 @@ export function QuestionForm({
                                             max="5"
                                             value={field.value}
                                             onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                            className={`h-11 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 ${shouldShowError("difficulty")
+                                            className={`h-11 w-full rounded-md border bg-white text-sm shadow-sm focus:outline-none ${shouldShowError("difficulty")
                                                 ? "border-destructive focus-visible:ring-destructive"
                                                 : "border-gray-300 focus-visible:ring-primary"
                                                 }`}
@@ -398,14 +429,34 @@ export function QuestionForm({
                         )}
                     />
 
-                    <CardFooter className="flex justify-end px-0 pb-0">
-                        <Button
-                            type="submit"
-                            disabled={isPending}
-                            className="min-w-[120px]"
-                        >
-                            {isPending ? "Saving..." : "Save Question"}
-                        </Button>
+                    <CardFooter className="flex gap-2 justify-end px-0 pb-0">
+                        {isUpdate ? (
+                            <Button
+                                type="submit"
+                                disabled={isPending}
+                                className="min-w-[120px]"
+                            >
+                                {isPending ? "Saving..." : "Save"}
+                            </Button>
+                        ) : (
+                            <>
+                                <Button
+                                    type="submit"
+                                    disabled={isPending}
+                                    className="min-w-[120px]"
+                                >
+                                    {isPending ? "Saving..." : "Save"}
+                                </Button>
+                                <Button
+                                    type="button"
+                                    disabled={isPending}
+                                    onClick={handleSaveAndAddMore}
+                                    className="min-w-[120px]"
+                                >
+                                    {isPending ? "Saving..." : "Save & Add More"}
+                                </Button>
+                            </>
+                        )}
                     </CardFooter>
                 </form>
             </Form>

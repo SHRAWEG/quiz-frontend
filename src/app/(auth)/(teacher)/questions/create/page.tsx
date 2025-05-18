@@ -59,14 +59,20 @@ export default function Page() {
         mode: "onBlur",
     });
 
-    const onSubmit = (data: QuestionReqDto) => {
+    const onSubmit = (data: QuestionReqDto, redirect: boolean, callback?: () => void) => {
         createQuestion(data, {
             onSuccess: () => {
                 refetch();
 
                 toast.success("Question created successfully");
 
-                router.push("/questions");
+                if (redirect) {
+                    router.push("/questions");
+                }
+
+                if(callback) {
+                    callback()
+                }
             },
 
             onError: (error: ApiError) => {

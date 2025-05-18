@@ -1,5 +1,5 @@
 import { DataTable } from "@/components/shared/server-data-table/data-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { QuestionSetParams, useDeleteQuestionSet, useDraftQuestionSet, useGetQuestionSets, usePublishQuestionSet } from "@/hooks/api/useQuestionSet";
 // import { useGetAllCategories } from "@/hooks/api/useCategory";
@@ -27,8 +27,11 @@ export default function UsersPage() {
   // const { data: categories } = useGetAllCategories();
   const { data, refetch, isFetching } = useGetQuestionSets(params);
   const { mutate: deleteQuestionSet } = useDeleteQuestionSet();
-  const { mutate: publishQuestionSet } = usePublishQuestionSet();
-  const { mutate: draftQuestionSet } = useDraftQuestionSet();
+  const { mutate: publishQuestionSet, isPending: isPublishPending } = usePublishQuestionSet();
+  const { mutate: draftQuestionSet, isPending: isDraftPending } = useDraftQuestionSet();
+  const [pendingId, setPendingId] = useState("");
+
+  useEffect(() => { refetch() }, [refetch, tableState])
 
   // const handleCategoryChange = (value: string) => {
   //   if (value === "all") {
@@ -45,7 +48,6 @@ export default function UsersPage() {
 
   const handlePaginationChange = (pagination: any) => {
     setTableState(prev => ({ ...prev, pagination }));
-    refetch();
   };
 
   const handleDelete = (questionSetId: string) => {
@@ -61,6 +63,7 @@ export default function UsersPage() {
   }
 
   const handlePublishQuestionSet = (questionSetId: string) => {
+    setPendingId(questionSetId);
     publishQuestionSet({ questionSetId }, {
       onSuccess: () => {
         refetch();
@@ -73,6 +76,7 @@ export default function UsersPage() {
   }
 
   const handleDraftQuestionSet = (questionSetId: string) => {
+    setPendingId(questionSetId);
     draftQuestionSet({ questionSetId }, {
       onSuccess: () => {
         refetch();
@@ -84,7 +88,7 @@ export default function UsersPage() {
     })
   }
 
-  const tableColumns = getColumns(handleDelete, handlePublishQuestionSet, handleDraftQuestionSet)
+  const tableColumns = getColumns(handleDelete, handlePublishQuestionSet, handleDraftQuestionSet, isDraftPending || isPublishPending, pendingId)
 
   return (
     <div className="flex flex-col gap-4">
@@ -116,7 +120,8 @@ export default function UsersPage() {
         columns={tableColumns}
         data={data?.data || []}
         pageCount={data?.totalPages ?? 0}
-        isLoading={isFetching && !data}
+        totalItems={data?.totalItems ?? 0}
+        isLoading={isFetching}
         onPaginationChange={handlePaginationChange}
       />
     </div>

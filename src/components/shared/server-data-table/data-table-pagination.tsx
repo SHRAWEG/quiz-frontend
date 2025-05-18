@@ -9,11 +9,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
   isLoading?: boolean;
+  totalItems: number;
 }
 
 export function DataTablePagination<TData>({
   table,
   isLoading = false,
+  totalItems
 }: DataTablePaginationProps<TData>) {
   return (
     <div className="flex items-center justify-between px-2">
@@ -21,7 +23,12 @@ export function DataTablePagination<TData>({
         <Skeleton className="h-8 w-[100px]" />
       ) : (
         <div className="flex-1 text-sm text-muted-foreground">
-          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+          <span>
+            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()} | 
+          </span>
+          <span className="ml-2">
+            Total Rows: {totalItems}
+          </span>
         </div>
       )}
       <div className="flex items-center space-x-6 lg:space-x-8">
@@ -36,7 +43,7 @@ export function DataTablePagination<TData>({
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
-              {[10, 20, 30, 40, 50].map((pageSize) => (
+              {[5, 10, 20, 30, 40, 50].map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>

@@ -1,26 +1,40 @@
 "use client"
 
-import { ClientSideDataTable } from "@/components/shared/client-data-table/data-table"
-import { useDeleteSubject, useGetAllSubjects } from "@/hooks/api/useSubject"
+import { DataTable } from "@/components/shared/server-data-table/data-table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { SubjectParams, useDeleteSubject, useGetSubjects } from "@/hooks/api/useSubject"
 import { ApiError } from "@/lib/axios";
-import { Subject } from "@/types/subject";
-import { Edit, Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-
-const columns = [
-    {
-        accessorKey: "name",
-        header: "Name"
-    }
-
-]
+import { getColumns } from "./columns";
 
 export default function List() {
-    const { data, isFetched } = useGetAllSubjects();
-    const router = useRouter();
-    const { mutate: deleteSubject } = useDeleteSubject();
-    const { refetch } = useGetAllSubjects();
+    const [searchTerm, setSearchTerm] = useState("");
+    const [tableState, setTableState] = useState({
+        pagination: { pageIndex: 0, pageSize: 10 },
+        sorting: [] as { id: string; desc: boolean }[],
+    });
+
+    const params: SubjectParams = {
+        page: tableState.pagination.pageIndex + 1,
+        limit: tableState.pagination.pageSize,
+        search: searchTerm
+    }
+
+    const { data, isFetching, refetch } = useGetSubjects(params)
+    const { mutate: deleteSubject } = useDeleteSubject()
+
+    useEffect(() => { refetch() }, [refetch, tableState])
+
+    const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        refetch();
+    }
+
+    const handlePaginationChange = (pagination: any) => {
+        setTableState(prev => ({ ...prev, pagination }));
+    };
 
     const handleDelete = (id: string) => {
         deleteSubject({ subjectId: id }, {
@@ -36,34 +50,29 @@ export default function List() {
 
     }
 
+    const tableColumns = getColumns(handleDelete);
+
     return (
-        <ClientSideDataTable
-            columns={columns}
-            data={data || []}
-            enableColumnVisibility={true}
-            enableSorting={true}
-            enableFiltering={true}
-            enablePagination={true}
-            isFetched={isFetched}
-            actions={[
-                {
-                    id: "edit",
-                    label: "Edit",
-                    icon: Edit,
-                    action: (data: Subject) => {
-                        router.push(`/subjects/update/${data.id}`)
-                    }
-                },
-                {
-                    id: "delete",
-                    label: "Delete",
-                    icon: Trash,
-                    action: (data: Subject) => {
-                        handleDelete(data.id)
-                    },
-                    variant: "destructive"
-                }
-            ]}
-        />
+        <div className="flex flex-col gap-4">
+            <form onSubmit={handleSubmit} className="flex flex-wrap gap-4">
+                <Input
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full md:w-1/3"
+                    disabled={isFetching}
+                />
+
+                <Button variant="default" type="submit">Filter</Button>
+            </form>
+            <DataTable
+                columns={tableColumns}
+                data={data?.data || []}
+                pageCount={data?.totalPages ?? 0}
+                totalItems={data?.totalItems ?? 0}
+                isLoading={isFetching}
+                onPaginationChange={handlePaginationChange}
+            />
+        </div>
     )
 }

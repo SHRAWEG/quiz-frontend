@@ -1,7 +1,18 @@
 import { apiClient, ApiError, ApiResponse } from "@/lib/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Category, CategoryReqDto } from "@/types/category";
+import { Category, CategoryList, CategoryReqDto } from "@/types/category";
 import { API_URLS } from "@/lib/constants/api-urls";
+
+export type CategoryParams = {
+  page: number;
+  limit: number;
+  search: string;
+}
+
+export const useGetCategories = (params?: CategoryParams) => useQuery<CategoryList>({
+  queryKey: ["categories"],
+  queryFn: async () => await apiClient.get<CategoryList>(`${API_URLS.category}`, { params })
+});
 
 export const useGetCategoryDetail = (categoryId: string) => useQuery<Category>({
   queryKey: ["category", categoryId],

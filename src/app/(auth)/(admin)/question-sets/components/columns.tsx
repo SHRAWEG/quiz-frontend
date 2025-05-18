@@ -1,14 +1,16 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Eye, Pencil, Trash, EyeOff, EyeIcon, Edit } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Eye, Pencil, Trash, BookmarkMinus, BookmarkCheck, Loader2 } from "lucide-react";
 import { QuestionSet } from "@/types/question-set";
 import Link from "next/link";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const getColumns = (
   handleDelete: (id: string) => void,
   handlePublishQuestionSet: (id: string) => void,
-  handleDraftQuestionSet: (id: string) => void
+  handleDraftQuestionSet: (id: string) => void,
+  isPending: boolean,
+  pendingId: string
 ): ColumnDef<QuestionSet>[] => [
     {
       accessorKey: "name",
@@ -40,14 +42,15 @@ export const getColumns = (
       header: "Status",
       enableSorting: true,
       cell: ({ row }) => {
-        const status = row.getValue("status") as string;
+        const questionSet = row.original;
         return (
-          <span className={`px-2 py-1 rounded-full text-xs ${status === "published"
-            ? "bg-green-100 text-green-800"
-            : "bg-red-100 text-red-800"
-            }`}>
-            {status === "published" ? "Published" : "Draft"}
-          </span>
+          isPending && pendingId === questionSet.id ? <Loader2 className="animate-spin" /> :
+            <span className={`px-2 py-1 rounded-full text-xs ${questionSet.status === "published"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+              }`}>
+              {questionSet.status === "published" ? "Published" : "Draft"}
+            </span>
         );
       },
     },
@@ -60,68 +63,89 @@ export const getColumns = (
 
         return (
           <div className="flex flex-wrap gap-2">
-            <Button
-              variant="default"
-              className="bg-cyan-500"
-            >
-              <Eye />
-            </Button>
-            <Button
-              variant="secondary"
-              className="bg-pink-300"
-            >
-              <Pencil />
-            </Button>
-            <Button
-              variant="destructive"
-              className="bg-red-500"
-            >
-              <Trash />
-            </Button>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <MoreHorizontal className="h-4 w-4" />
-                  <span className="sr-only">Open menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <Link href={`/question-sets/view/${questionSet.id}`} passHref>
-                  <DropdownMenuItem>
-                    <Eye className="mr-2 h-4 w-4" /> View
-                  </DropdownMenuItem>
-                </Link>
-
-                <Link href={`/question-sets/update/${questionSet.id}`} passHref>
-                  <DropdownMenuItem>
-                    <Pencil className="mr-2 h-4 w-4" /> Edit
-                  </DropdownMenuItem>
-                </Link>
-
-                <DropdownMenuItem
-                  onClick={() => handleDelete(questionSet.id)}
-                  className="text-red-600 focus:text-red-600"
-                >
-                  <Trash className="mr-2 h-4 w-4" /> Delete
-                </DropdownMenuItem>
-                {
-                  questionSet.status === "published" ? (
-                    <DropdownMenuItem
-                      onClick={() => handleDraftQuestionSet(questionSet.id)}
+            <Link href={`/question-sets/view/${questionSet.id}`} passHref>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="default"
+                      className="bg-cyan-500"
                     >
-                      <EyeOff className="mr-2 h-4 w-4" /> Unpublish
-                    </DropdownMenuItem>
-                  ) : (
-                    <DropdownMenuItem
-                      onClick={() => handlePublishQuestionSet(questionSet.id)}
+                      <Eye />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>View</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </Link>
+            <Link href={`/question-sets/update/${questionSet.id}`} passHref>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="default"
+                      className="bg-pink-300"
                     >
-                      <Eye className="mr-2 h-4 w-4" /> Publish
-                    </DropdownMenuItem>
-                  )
-                }
-              </DropdownMenuContent>
-            </DropdownMenu>
+                      <Pencil />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Update</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </Link>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  {
+                    isPending && pendingId === questionSet.id ? <Button disabled variant="secondary"><Loader2 className="animate-spin" /></Button> : (
+                      <Button
+                        variant="default"
+                        className={questionSet.status === "published" ? "bg-violet-500" : "bg-green-500"}
+                        onClick={() => {
+                          if (questionSet.status === "published") {
+                            handleDraftQuestionSet(questionSet.id)
+                          } else {
+                            handlePublishQuestionSet(questionSet.id)
+                          }
+                        }}
+                      >
+                        {
+                          questionSet.status === "published" ? (
+                            <BookmarkMinus />
+                          ) : (
+                            <BookmarkCheck />
+                          )
+                        }
+                      </Button>
+                    )
+                  }
+
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{questionSet.status === "published" ? "Draft" : "Publish"}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="default"
+                    className="bg-red-500"
+                    onClick={() => handleDelete(questionSet.id)}
+                  >
+                    <Trash />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Delete</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         );
       },

@@ -1,7 +1,7 @@
 "use client";
 
 import { subjectReqDto, SubjectReqDto } from "@/types/subject";
-import { useCreateSubject, useGetAllSubjects } from "@/hooks/api/useSubject";
+import { useCreateSubject } from "@/hooks/api/useSubject";
 import { useRouter } from "next/navigation";
 import { SubjectForm } from "../components/form";
 import { PageHeader } from "@/components/layout/app-header";
@@ -16,7 +16,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 export default function Page() {
     const { mutate: createSubject, isPending } = useCreateSubject();
     const router = useRouter();
-    const { refetch } = useGetAllSubjects();
 
     const form = useForm<SubjectReqDto>({
         resolver: zodResolver(subjectReqDto),
@@ -29,7 +28,6 @@ export default function Page() {
     const onSubmit = (data: SubjectReqDto, redirect: boolean) => {
         createSubject(data, {
             onSuccess: () => {
-                refetch();
 
                 toast.success("Subject created successfully");
 

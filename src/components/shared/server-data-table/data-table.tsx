@@ -23,6 +23,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   pageCount: number;
+  totalItems: number;
   isLoading?: boolean;
   onSortingChange?: (sorting: SortingState) => void;
   onPaginationChange?: (pagination: { pageIndex: number; pageSize: number }) => void;
@@ -32,6 +33,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   pageCount,
+  totalItems,
   isLoading = false,
   onSortingChange,
   onPaginationChange,
@@ -69,10 +71,12 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-md border">
+    <div className="space-y-4 -mx-4">
+      <div className="border-y-1">
         <Table>
-          <TableHeader>
+          <TableHeader
+            className="ring-offset-6 bg-accent"
+          >
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -84,7 +88,7 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {isLoading ? (
+            {isLoading && data.length === 0 ? (
               Array.from({ length: 5 }).map((_, index) => (
                 <TableRow key={`skeleton-${index}`}>
                   {columns.map((_, colIndex) => (
@@ -114,7 +118,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} isLoading={isLoading} />
+      <DataTablePagination totalItems={totalItems} table={table} isLoading={isLoading} />
     </div>
   );
 }
