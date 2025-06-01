@@ -8,7 +8,7 @@ import { QuestionAttempt } from "@/types/question-set-attempt"
 import { ChevronLeft, ChevronRight, LoaderPinwheel, Pencil, Upload } from "lucide-react"
 
 interface QuestionContentProps {
-  question: QuestionAttempt
+  questionAttempt: QuestionAttempt
   questionNumber: number
   totalQuestions: number
   answeredQuestions: number
@@ -21,7 +21,7 @@ interface QuestionContentProps {
 }
 
 export function QuestionContent({
-  question,
+  questionAttempt,
   questionNumber,
   totalQuestions,
   answeredQuestions,
@@ -32,6 +32,7 @@ export function QuestionContent({
   onSubmit,
   submitPending
 }: QuestionContentProps) {
+
   return (
     <div className="w-full overflow-y-auto">
       {/* Question Card */}
@@ -41,21 +42,21 @@ export function QuestionContent({
             <div className="flex flex-col justify-between items-start mb-6">
               {/*Question Type Subject -> Sub-Subject */}
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-sm font-medium text-muted-foreground">{questionTypes.find(x => x.value == question.type)?.label}</span>|
-                <span className="text-sm font-medium text-muted-foreground">{question.subject.name} - {question.subSubject.name}</span>|
-                {question.difficulty && (
+                <span className="text-sm font-medium text-muted-foreground">{questionTypes.find(x => x.value == questionAttempt.question.type)?.label}</span>|
+                <span className="text-sm font-medium text-muted-foreground">{questionAttempt.question.subject.name} - {questionAttempt.question.subSubject.name}</span>|
+                {questionAttempt.question.difficulty && (
                   <span className="text-sm font-medium text-muted-foreground">
-                    Difficulty: {question.difficulty}
+                    Difficulty: {questionAttempt.question.difficulty}
                   </span>
                 )}
               </div>
-              <h2 className="text-xl font-medium">{questionNumber}. {question.question}</h2>
+              <h2 className="text-xl font-medium">{questionNumber}. {questionAttempt.question.questionText}</h2>
             </div>
 
-            {/* mcq question options */}
-            {question.type === QUESTION_TYPES.MCQ && (
+            {/* mcq questionAttempt options */}
+            {questionAttempt.question.type === QUESTION_TYPES.MCQ && (
               <div className="space-y-3">
-                {question.options.map((option, index) => (
+                {questionAttempt.question.options.map((option, index) => (
                   <Button
                     key={option.id}
                     variant={selectedValue === option.id ? "default" : "outline"}
@@ -63,14 +64,14 @@ export function QuestionContent({
                     onClick={() => setSelectedValue(option.id)}
                   >
                     <span className="mr-2 font-medium">{index + 1}.</span>
-                    {option.option}
+                    {option.optionText}
                   </Button>
                 ))}
               </div>
             )}
 
-            {/* True or False question */}
-            {question.type === QUESTION_TYPES.TRUE_FALSE && (
+            {/* True or False questionAttempt */}
+            {questionAttempt.question.type === QUESTION_TYPES.TRUE_FALSE && (
               <div className="space-y-3">
                 <Button
                   variant={selectedValue === "true" ? "default" : "outline"}
@@ -89,8 +90,8 @@ export function QuestionContent({
               </div>
             )}
 
-            {/* Fill in the Blanks question */}
-            {question.type === QUESTION_TYPES.FILL_IN_THE_BLANKS && (
+            {/* Fill in the Blanks questionAttempt */}
+            {questionAttempt.question.type === QUESTION_TYPES.FILL_IN_THE_BLANKS && (
               <div className="space-y-3">
                 <input
                   type="text"
@@ -102,7 +103,7 @@ export function QuestionContent({
               </div>
             )}
 
-            {/* Flag question */}
+            {/* Flag questionAttempt */}
           </CardContent>
         </Card>
 
@@ -133,7 +134,7 @@ export function QuestionContent({
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <Pencil />
-                <span className="text-sm font-medium text-muted-foreground">{answeredQuestions} 10 of {totalQuestions} Questions Attempted </span>
+                <span className="text-sm font-medium text-muted-foreground">{answeredQuestions} of {totalQuestions} Questions Answered </span>
               </div>
               <Button
                 variant="default"

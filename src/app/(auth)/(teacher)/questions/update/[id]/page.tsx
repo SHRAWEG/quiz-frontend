@@ -51,12 +51,12 @@ export default function Page() {
             type: "mcq",
             subjectId: "",
             subSubjectId: "",
-            question: "",
+            questionText: "",
             options: [
-                { option: "", isCorrect: false },
-                { option: "", isCorrect: false },
-                { option: "", isCorrect: false },
-                { option: "", isCorrect: false }
+                { optionText: "", isCorrect: false },
+                { optionText: "", isCorrect: false },
+                { optionText: "", isCorrect: false },
+                { optionText: "", isCorrect: false }
             ],
             correctAnswerBoolean: false,
             correctAnswerText: "",
@@ -71,8 +71,8 @@ export default function Page() {
                 type: data.type,
                 subjectId: data.subjectId,
                 subSubjectId: data.subSubjectId,
-                question: data.question,
-                options: data.options.map(x => ({ option: x.option, isCorrect: x.isCorrect })) || [],
+                questionText: data.questionText,
+                options: data.options.map(x => ({ optionText: x.optionText, isCorrect: x.isCorrect })) || [],
                 correctAnswerBoolean: data.type === QUESTION_TYPES.TRUE_FALSE ? data.correctAnswerBoolean : null,
                 correctAnswerText: data.type === QUESTION_TYPES.FILL_IN_THE_BLANKS ? data.correctAnswerText : "",
                 difficulty: data.difficulty,

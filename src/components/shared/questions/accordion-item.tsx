@@ -40,7 +40,7 @@ export function QuestionAccordionItem({
             <span className="font-medium">
               {question.subject.name} → {question.subSubject.name} →
             </span>
-            <span className="ml-3 ">Q: {question.question}</span>
+            <span className="ml-3 ">Q: {question.questionText}</span>
             <div className="flex gap-2 mt-1">
               <Badge variant="outline">{questionTypes.find(x => x.value == question.type)?.label}</Badge>
               {/* <DifficultyStars difficulty={question.difficulty} /> */}

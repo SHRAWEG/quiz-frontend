@@ -69,7 +69,7 @@ export default function QuestionManagement({
               data?.data.map((question) => (
                 <div key={question.id} className="border p-3 rounded-lg flex justify-between items-start">
                   <div>
-                    <div className="font-medium">{question.question}</div>
+                    <div className="font-medium">{question.questionText}</div>
                     <div className="text-sm text-muted-foreground mt-1">
                       {question.subject.name} • {question.subSubject.name} • {question.type}
                     </div>
@@ -111,7 +111,7 @@ export default function QuestionManagement({
                 <div key={question.id} className="border p-3 rounded-lg flex justify-between items-start">
                   <div>
                     <span className="text-muted-foreground text-sm mr-2">Q{index + 1}.</span>
-                    <span>{question.question}</span>
+                    <span>{question.questionText}</span>
                   </div>
                   <Button
                     variant="ghost"

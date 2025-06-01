@@ -10,8 +10,8 @@ export const questionSetSchema = z.object({
     category: categorySchema,
     name: z.string(),
     isFree: z.boolean(),
-    isTimer: z.boolean(),
-    timer: z.number(),
+    isTimeLimited: z.boolean(),
+    timeLimitSeconds: z.number(),
     questions: z.array(questionSchema),
     status: z.enum(["published", "draft"]),
     createdById: z.string(),
@@ -49,8 +49,18 @@ export const questionSetsToAttemptListSchema = z.object({
 export const questionSetReqDto = z.object({
     categoryId: z.string().min(1, { message: "Category is required" }),
     name: z.string().min(1, { message: "Name is required" }),
+    isTimeLimited: z.boolean(),
+    timeLimitSeconds: z.number().min(300, { message: "Time limit must be at least 5 minute" }).optional(),
     isFree: z.boolean()
-})
+}).superRefine((data, ctx) => {
+    if (data.isTimeLimited && (!data.timeLimitSeconds || data.timeLimitSeconds < 1)) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Time limit must be at least 5 minute when timer is enabled",
+            path: ["timeLimitSeconds"]
+        });
+    }
+});
 
 export type QuestionSetReqDto = z.infer<typeof questionSetReqDto>;
 export type QuestionSet = z.infer<typeof questionSetSchema>;

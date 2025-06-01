@@ -40,17 +40,17 @@ export function QuestionNavigation({
       {!isCollapsed ? (
         <ScrollArea className="h-[calc(100vh-120px)]"> {/* Adjusted height */}
           <div className="flex flex-col gap-2 p-3">
-            {questions.map((question, index) => {
-              const isAnswered = question.questionAttempts.length > 0
+            {questions.map((questionAttempt, index) => {
+              const isAnswered = questionAttempt.selectedBooleanAnswer != null || questionAttempt.selectedOptionId || questionAttempt.selectedTextAnswer
               return (
-                <div key={question.id} className="">
+                <div key={questionAttempt.id} className="">
                   <Button
-                    variant={question.id === currentQuestionId ? "default" : "outline"}
+                    variant={questionAttempt.id === currentQuestionId ? "default" : "outline"}
                     className={`w-full h-auto min-h-10 justify-start text-left ${isAnswered && "ring-1 ring-green-400"}`}
-                    onClick={() => onQuestionSelect(question.id)}
+                    onClick={() => onQuestionSelect(questionAttempt.id)}
                   >
                     <span className="font-medium mr-2">{index + 1}.</span>
-                    {question.question}
+                    {questionAttempt.question.questionText}
                   </Button>
                 </div>
               )
@@ -61,20 +61,21 @@ export function QuestionNavigation({
         /* Collapsed State */
         <div className="flex flex-col items-center pt-4 gap-2">
           {questions.slice(0, 8).map((q, i) => {
-            const isAnswered = q.questionAttempts.length > 0
+            const isAnswered = q.selectedBooleanAnswer !== null || q.selectedOptionId || q.selectedTextAnswer
             return (
-            <Button
-              key={q.id}
-              variant={
-                q.id === currentQuestionId ? "default" : "outline"
-              }
-              size="icon"
-              className={`w-10 h-10 ${isAnswered && "ring-1 ring-green-400"}`}
-              onClick={() => onQuestionSelect(q.id)}
-            >
-              {i}
-            </Button>
-          )})}
+              <Button
+                key={q.id}
+                variant={
+                  q.id === currentQuestionId ? "default" : "outline"
+                }
+                size="icon"
+                className={`w-10 h-10 ${isAnswered && "ring-1 ring-green-400"}`}
+                onClick={() => onQuestionSelect(q.id)}
+              >
+                {i}
+              </Button>
+            )
+          })}
           {questions.length > 8 && (
             <span className="text-xs text-muted-foreground">
               +{questions.length - 8}

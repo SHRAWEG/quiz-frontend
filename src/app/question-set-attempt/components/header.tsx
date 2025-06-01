@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { Progress } from "@/components/ui/progress"
@@ -10,15 +10,19 @@ interface QuizHeaderProps {
   timeLimit?: number // in seconds
   currentQuestion: number
   totalQuestions: number
+  formattedTime?: string
+  isExpired?: boolean
 }
 
 export function QuizHeader({
   name,
   currentQuestion,
-  totalQuestions
+  totalQuestions,
+  formattedTime,
+  isExpired
 }: QuizHeaderProps) {
   const router = useRouter()
-  
+
   // Calculate progress percentage
   const progressValue = Math.round((currentQuestion / totalQuestions) * 100)
 
@@ -27,15 +31,15 @@ export function QuizHeader({
       <div className="px-4 py-3 flex items-center justify-between gap-4">
         {/* Left Section - Back Button & Quiz Info */}
         <div className="flex items-center gap-4 overflow-hidden">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="icon"
             onClick={() => router.back()}
             aria-label="Go back"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          
+
           <div className="truncate space-y-1">
             <h1 className="truncate font-medium text-sm md:text-base">
               {name}
@@ -44,6 +48,14 @@ export function QuizHeader({
               Question {currentQuestion} of {totalQuestions}
             </p>
           </div>
+        </div>
+
+        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md ${isExpired ? 'bg-red-100 text-red-800' : 'bg-accent'
+          }`}>
+          <Clock className="h-4 w-4" />
+          <span className="font-mono text-sm">
+            {formattedTime}
+          </span>
         </div>
 
         {/* Right Section - Timer & Controls */}
@@ -61,9 +73,9 @@ export function QuizHeader({
       </div>
 
       {/* Progress Bar */}
-      <Progress 
-        value={progressValue} 
-        className="h-1 rounded-none" 
+      <Progress
+        value={progressValue}
+        className="h-1 rounded-none"
       />
     </header>
   )

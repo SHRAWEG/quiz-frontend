@@ -45,12 +45,12 @@ export default function Page() {
             type: "mcq",
             subjectId: "",
             subSubjectId: "",
-            question: "",
+            questionText: "",
             options: [
-                { option: "", isCorrect: false },
-                { option: "", isCorrect: false },
-                { option: "", isCorrect: false },
-                { option: "", isCorrect: false }
+                { optionText: "", isCorrect: false },
+                { optionText: "", isCorrect: false },
+                { optionText: "", isCorrect: false },
+                { optionText: "", isCorrect: false }
             ],
             correctAnswerBoolean: undefined,
             correctAnswerText: "",

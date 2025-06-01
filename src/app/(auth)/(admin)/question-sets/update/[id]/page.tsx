@@ -35,6 +35,8 @@ export default function SubjectPage() {
             categoryId: "",
             name: "",
             isFree: false,
+            isTimeLimited: false,
+            timeLimitSeconds: undefined,
         },
         mode: "onBlur",
     });
@@ -45,6 +47,8 @@ export default function SubjectPage() {
                 categoryId: data.categoryId,
                 name: data.name || "",
                 isFree: data.isFree || false,
+                isTimeLimited: data.isTimeLimited || false,
+                timeLimitSeconds: data.timeLimitSeconds || undefined,
             });
             form.setValue("categoryId", data.categoryId);
         }

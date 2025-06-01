@@ -14,7 +14,7 @@ export const questionSchema = z.object({
   subject: subjectSchema,
   subSubjectId: z.string(),
   subSubject: subSubjectSchema,
-  question: z.string(),
+  questionText: z.string(),
   options: z.array(optionSchema),
   correctAnswerBoolean: z.boolean(),
   correctAnswerText: z.string(),
@@ -40,9 +40,9 @@ export const questionReqDto = z.object({
   type: z.enum(questionTypes.map(type => type.value) as [string, ...string[]]),
   // subjectId: z.string().min(1, { message: "Subject is required" }),
   subSubjectId: z.string().min(1, { message: "Sub-Subject is required" }),
-  question: z.string().min(1, { message: "Name is required" }),
+  questionText: z.string().min(1, { message: "Name is required" }),
   options: z.array(z.object({
-    option: z.string().min(1, { message: "Option is required" }),
+    optionText: z.string().min(1, { message: "Option is required" }),
     isCorrect: z.boolean()
   })),
   correctAnswerBoolean: z.boolean().nullable().optional(),

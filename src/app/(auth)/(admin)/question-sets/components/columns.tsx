@@ -38,6 +38,18 @@ export const getColumns = (
       cell: ({ row }) => row.original.questions.length
     },
     {
+      accessorKey: "timeLimit",
+      header: "Time Limit",
+      enableSorting: false,
+      cell: ({ row }) => {
+        const questionSet = row.original;
+        if (!questionSet.isTimeLimited) return "No Limit";
+        const hours = Math.floor(questionSet.timeLimitSeconds / 3600);
+        const minutes = Math.floor((questionSet.timeLimitSeconds % 3600) / 60);
+        return `${hours}h ${minutes}m`;
+      }
+    },
+    {
       accessorKey: "status",
       header: "Status",
       enableSorting: true,
@@ -69,7 +81,6 @@ export const getColumns = (
                   <TooltipTrigger asChild>
                     <Button
                       variant="default"
-                      className="bg-cyan-500"
                     >
                       <Eye />
                     </Button>
@@ -86,7 +97,6 @@ export const getColumns = (
                   <TooltipTrigger asChild>
                     <Button
                       variant="default"
-                      className="bg-pink-300"
                     >
                       <Pencil />
                     </Button>
@@ -134,8 +144,7 @@ export const getColumns = (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    variant="default"
-                    className="bg-red-500"
+                    variant="destructive"
                     onClick={() => handleDelete(questionSet.id)}
                   >
                     <Trash />

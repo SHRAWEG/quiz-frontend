@@ -41,7 +41,7 @@ export function QuestionForm({
         const apiData: QuestionReqDto = {
             type: data.type,
             subSubjectId: data.subSubjectId,
-            question: data.question,
+            questionText: data.questionText,
             options: data.options,
             correctAnswerBoolean: data.correctAnswerBoolean,
             correctAnswerText: data.correctAnswerText,
@@ -53,7 +53,7 @@ export function QuestionForm({
                 type: data.type,
                 subjectId: data.subjectId,
                 subSubjectId: data.subSubjectId,
-                question: "",
+                questionText: "",
                 options: [],
                 correctAnswerBoolean: undefined,
                 correctAnswerText: "",
@@ -68,7 +68,7 @@ export function QuestionForm({
         const apiData: QuestionReqDto = {
             type: data.type,
             subSubjectId: data.subSubjectId,
-            question: data.question,
+            questionText: data.questionText,
             options: data.options,
             correctAnswerBoolean: data.correctAnswerBoolean,
             correctAnswerText: data.correctAnswerText,
@@ -110,18 +110,14 @@ export function QuestionForm({
                                         field.onChange(value);
                                         if (value === "mcq") {
                                             form.setValue("options", [
-                                                { option: "", isCorrect: false },
-                                                { option: "", isCorrect: false },
-                                                { option: "", isCorrect: false },
-                                                { option: "", isCorrect: false }
+                                                { optionText: "", isCorrect: false },
+                                                { optionText: "", isCorrect: false },
+                                                { optionText: "", isCorrect: false },
+                                                { optionText: "", isCorrect: false }
                                             ]);
                                             form.setValue("correctAnswerBoolean", undefined);
                                             form.setValue("correctAnswerText", "");
                                         } else if (value === "true-false") {
-                                            form.setValue("options", [
-                                                { option: "", isCorrect: false },
-                                                { option: "", isCorrect: false }
-                                            ]);
                                             form.setValue("options", []);
                                             form.setValue("correctAnswerText", "");
                                         } else {
@@ -253,7 +249,7 @@ export function QuestionForm({
                     {/* Question Text */}
                     <FormField
                         control={form.control}
-                        name="question"
+                        name="questionText"
                         render={({ field }) => (
                             <FormItem>
                                 <div className="flex items-center gap-2">
@@ -262,7 +258,7 @@ export function QuestionForm({
                                 <FormControl>
                                     <Textarea
                                         placeholder="Enter your question here..."
-                                        className={`h-11 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 ${shouldShowError("question")
+                                        className={`h-11 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 ${shouldShowError("questionText")
                                             ? "border-destructive focus-visible:ring-destructive"
                                             : "border-gray-300 focus-visible:ring-primary"
                                             }`}
@@ -306,7 +302,7 @@ export function QuestionForm({
                                     />
                                     <FormField
                                         control={form.control}
-                                        name={`options.${index}.option`}
+                                        name={`options.${index}.optionText`}
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
@@ -523,17 +519,17 @@ export function QuestionForm({
                                 : "[Subject]"}
                             {form.watch("subSubjectId") && ` → ${subSubjects.find(s => s.id === form.watch("subSubjectId"))?.name}`}
                         </p>
-                        {form.watch("question") ? (
+                        {form.watch("questionText") ? (
                             <div>
-                                <p className="font-semibold">Q: {form.watch("question")}</p>
-                                {questionType === "mcq" && form.watch("options")?.some(o => o.option) && (
+                                <p className="font-semibold">Q: {form.watch("questionText")}</p>
+                                {questionType === "mcq" && form.watch("options")?.some(o => o.optionText) && (
                                     <div className="mt-2 space-y-1">
                                         <p className="text-muted-foreground">Options:</p>
                                         <ul className="list-disc pl-5">
                                             {form.watch("options")?.map((opt, i) => (
-                                                opt.option && (
+                                                opt.optionText && (
                                                     <li key={i} className={opt.isCorrect ? "text-green-600 font-medium" : ""}>
-                                                        {opt.option} {opt.isCorrect && "(Correct)"}
+                                                        {opt.optionText} {opt.isCorrect && "(Correct)"}
                                                     </li>
                                                 )
                                             ))}

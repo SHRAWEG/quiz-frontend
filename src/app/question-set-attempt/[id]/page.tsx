@@ -11,6 +11,8 @@ import { QuestionContent } from "../components/question-content"
 import { toast } from "sonner"
 import { QUESTION_TYPES } from "@/constants/questions"
 import { Button } from "@/components/ui/button"
+import { Trophy } from "lucide-react"
+import { useTimer } from "@/hooks/api/useTimer"
 
 export default function QuestionSetAttemptPage() {
   const { id } = useParams()
@@ -19,18 +21,22 @@ export default function QuestionSetAttemptPage() {
   const [questions, setQuestions] = useState<QuestionAttempt[]>([])
   const [currentQuestionId, setCurrentQuestionId] = useState<string>("")
   const [selectedValue, setSelectedValue] = useState<string | undefined>()
+  const [answeredQuestions, setAnsweredQuestions] = useState<number>(0)
 
   const { data: questionSetAttempt, isLoading, refetch } = useGetQuestionSetAttemptDetail(id as string)
   const { mutate: answerQuestion, isPending } = useAnswerQuestion()
   const { mutate: finishQuestionSet, isPending: submitPending } = useFinishQuestionSetAttempt()
 
+  const { formattedTime, isExpired } = useTimer(id as string, questionSetAttempt?.questionSet.isTimeLimited ?? false);
+
   // Initialize questions and current question
   useEffect(() => {
-    if (questionSetAttempt?.questionSet?.questions) {
-      setQuestions(questionSetAttempt.questionSet.questions)
+    if (questionSetAttempt?.questionAttempts) {
+      setQuestions(questionSetAttempt.questionAttempts)
       if (currentQuestionId === "") {
-        setCurrentQuestionId(questionSetAttempt.questionSet.questions[0]?.id || "")
+        setCurrentQuestionId(questionSetAttempt.questionAttempts[0].id || "")
       }
+      setAnsweredQuestions(questionSetAttempt.questionAttempts.filter(q => q.selectedBooleanAnswer !== null || q.selectedOptionId || q.selectedTextAnswer).length)
     }
   }, [questionSetAttempt, currentQuestionId])
 
@@ -44,13 +50,13 @@ export default function QuestionSetAttemptPage() {
   ), [questions, currentQuestionId])
 
   const selectedVal = useMemo(() => {
-    if (currentQuestion?.type === QUESTION_TYPES.MCQ) {
-      return currentQuestion.questionAttempts[0]?.selectedOptionId
-    } else if (currentQuestion?.type === QUESTION_TYPES.TRUE_FALSE) {
-      if (currentQuestion.questionAttempts.length === 0) return null
-      return currentQuestion.questionAttempts[0]?.selectedBooleanAnswer ? "true" : "false"
-    } else if (currentQuestion?.type === QUESTION_TYPES.FILL_IN_THE_BLANKS) {
-      return currentQuestion.questionAttempts[0]?.selectedTextAnswer
+    if (currentQuestion?.question.type === QUESTION_TYPES.MCQ) {
+      return currentQuestion.selectedOptionId
+    } else if (currentQuestion?.question.type === QUESTION_TYPES.TRUE_FALSE) {
+      if (currentQuestion.selectedBooleanAnswer === null) return null
+      return currentQuestion.selectedBooleanAnswer ? "true" : "false"
+    } else if (currentQuestion?.question.type === QUESTION_TYPES.FILL_IN_THE_BLANKS) {
+      return currentQuestion.selectedTextAnswer
     }
     return null
   }, [currentQuestion])
@@ -59,10 +65,10 @@ export default function QuestionSetAttemptPage() {
   const handleNavigate = (direction: "prev" | "next", selectedValue?: string) => {
     if (selectedValue) {
       const answerData: AnswerReqDto = {
-        questionId: currentQuestionId,
-        selectedOptionId: currentQuestion?.type === QUESTION_TYPES.MCQ ? selectedValue : null,
-        selectedBooleanAnswer: currentQuestion?.type === QUESTION_TYPES.TRUE_FALSE ? (selectedValue == "true" ? true : selectedValue == "false" ? false : null) : null,
-        selectedTextAnswer: currentQuestion?.type === QUESTION_TYPES.FILL_IN_THE_BLANKS ? selectedValue : null
+        questionAttemptId: currentQuestionId,
+        selectedOptionId: currentQuestion?.question.type === QUESTION_TYPES.MCQ ? selectedValue : null,
+        selectedBooleanAnswer: currentQuestion?.question.type === QUESTION_TYPES.TRUE_FALSE ? (selectedValue == "true" ? true : selectedValue == "false" ? false : null) : null,
+        selectedTextAnswer: currentQuestion?.question.type === QUESTION_TYPES.FILL_IN_THE_BLANKS ? selectedValue : null
       }
 
       answerQuestion({ questionSetAttemptId: id as string, data: answerData }, {
@@ -105,6 +111,24 @@ export default function QuestionSetAttemptPage() {
     })
   }
 
+  if (isExpired) {
+    onSubmit();
+    return (
+      <div className="flex items-center justify-center h-screen bg-secondary">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+          <h1 className="text-2xl font-bold mb-4">Time's Up!</h1>
+          <p className="text-muted-foreground mb-6">Your quiz time has expired.</p>
+          <Button
+            variant="default"
+            onClick={() => window.location.href = `/question-set-attempt/${id}/results`}
+          >
+            View Results
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
   // Loading state
   if (isLoading || !questionSetAttempt) {
     return (
@@ -138,32 +162,14 @@ export default function QuestionSetAttemptPage() {
 
   if (questionSetAttempt.isCompleted) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+      <div className="flex flex-col items-center justify-center h-screen bg-secondary">
         <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-8 text-center">
-            <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="48"
-                height="48"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-trophy"
-              >
-                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
-                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
-                <path d="M4 22h16" />
-                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
-                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
-                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
-              </svg>
+          <div className="bg-accent-foreground p-8 text-center">
+            <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Trophy className="h-52 w-52 text-accent" />
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2">Quiz Completed!</h1>
-            <p className="text-blue-100">You scored {questionSetAttempt.score} out of {questions.length}</p>
+            <h1 className="text-3xl font-bold text-accent mb-2">Quiz Completed!</h1>
+            <p className="text-accent">You scored {questionSetAttempt.score} out of {questions.length}</p>
           </div>
 
           <div className="p-8 space-y-6">
@@ -174,22 +180,22 @@ export default function QuestionSetAttemptPage() {
               </div>
               <div className="w-32 h-4 bg-gray-200 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
+                  className="h-full bg-green-500"
                   style={{ width: `${questionSetAttempt.percentage}%` }}
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-blue-50 p-4 rounded-lg text-center">
-                <p className="text-sm text-blue-600">Correct</p>
-                <p className="text-2xl font-bold text-blue-800">
+              <div className="bg-green-50 p-4 rounded-lg text-center">
+                <p className="text-sm text-green-600">Correct</p>
+                <p className="text-2xl font-bold text-green-800">
                   {questionSetAttempt.score}
                 </p>
               </div>
-              <div className="bg-purple-50 p-4 rounded-lg text-center">
-                <p className="text-sm text-purple-600">Incorrect</p>
-                <p className="text-2xl font-bold text-purple-800">
+              <div className="bg-red-50 p-4 rounded-lg text-center">
+                <p className="text-sm text-red-600">Incorrect</p>
+                <p className="text-2xl font-bold text-red-800">
                   {questions.length - questionSetAttempt.score}
                 </p>
               </div>
@@ -197,7 +203,8 @@ export default function QuestionSetAttemptPage() {
 
             <div className="pt-4 space-y-4">
               <Button
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                className="w-full"
+                variant="default"
                 onClick={() => window.location.href = `/question-set-attempt/${id}/results`}
               >
                 View Detailed Results
@@ -216,14 +223,14 @@ export default function QuestionSetAttemptPage() {
     )
   }
 
-  console.log(selectedVal)
-
   return (
     <div className="flex flex-col h-screen bg-muted">
       <QuizHeader
         name={questionSetAttempt.questionSet.name}
         currentQuestion={currentIndex + 1}
         totalQuestions={questions.length}
+        formattedTime={formattedTime}
+        isExpired={isExpired}
       />
 
       <div className="flex flex-1 overflow-hidden">
@@ -235,10 +242,10 @@ export default function QuestionSetAttemptPage() {
 
         {currentQuestion && (
           <QuestionContent
-            question={currentQuestion}
+            questionAttempt={currentQuestion}
             questionNumber={currentIndex + 1}
             totalQuestions={questions.length}
-            answeredQuestions={5}
+            answeredQuestions={answeredQuestions}
             selectedValue={selectedValue || selectedVal || ""}
             setSelectedValue={setSelectedValue}
             onNavigate={handleNavigate}

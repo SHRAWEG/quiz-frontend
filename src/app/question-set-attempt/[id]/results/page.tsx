@@ -4,15 +4,16 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { useParams } from "next/navigation"
-import { useGetQuestionSetAttemptDetail } from "@/hooks/api/useQuestionSetAttempt"
+import { useGetQuestionSetAttemptResult } from "@/hooks/api/useQuestionSetAttempt"
 import { ChevronLeft, Clock, Award, BookOpen } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
+import { QUESTION_TYPES } from "@/constants/questions"
 
 export default function QuizResultsPage() {
   const { id } = useParams()
   const router = useRouter()
-  const { data, isLoading } = useGetQuestionSetAttemptDetail(id as string)
+  const { data, isLoading } = useGetQuestionSetAttemptResult(id as string)
 
   if (isLoading) {
     return (
@@ -49,7 +50,7 @@ export default function QuizResultsPage() {
   //       q.selectedTextAnswer === q.correctTextAnswer)
   // ).length
 
-  const totalQuestions = data.questionSet.questions.length
+  const totalQuestions = data.questionAttempts.length
 
   return (
     <div className="container mx-auto py-8">
@@ -135,7 +136,7 @@ export default function QuizResultsPage() {
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Difficulty</span>
                 <span className="font-medium">
-                  {data.questionSet.questions.reduce((acc, q) => acc + q.difficulty, 0) / totalQuestions}/5
+                  {data.questionAttempts.reduce((acc, q) => acc + q.question.difficulty, 0) / totalQuestions}/5
                 </span>
               </div>
             </div>
@@ -149,20 +150,20 @@ export default function QuizResultsPage() {
           <CardTitle>Question Breakdown</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {data.questionSet.questions.map((question, index) => {
-            const isCorrect = question.questionAttempts[0]?.isCorrect
+          {data.questionAttempts.map((questionAttempt, index) => {
+            const isCorrect = questionAttempt.isCorrect
 
             return (
-              <div key={question.id} className="border rounded-lg p-4">
+              <div key={questionAttempt.id} className="border rounded-lg p-4">
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <h3 className="font-medium">
-                      Question {index + 1}: {question.question}
+                      Question {index + 1}: {questionAttempt.question.questionText}
                     </h3>
                     <div className="flex gap-2 mt-1">
-                      <Badge variant="outline">{question.type}</Badge>
+                      <Badge variant="outline">{questionAttempt.question.type}</Badge>
                       <Badge variant="outline">
-                        Difficulty: {question.difficulty}/5
+                        Difficulty: {questionAttempt.question.difficulty}/5
                       </Badge>
                     </div>
                   </div>
@@ -171,7 +172,7 @@ export default function QuizResultsPage() {
                   </Badge>
                 </div>
 
-                {question.type === "MCQ" && (
+                {questionAttempt.question.type === QUESTION_TYPES.MCQ && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div>
                       <h4 className="text-sm font-medium text-muted-foreground mb-2">
@@ -179,7 +180,7 @@ export default function QuizResultsPage() {
                       </h4>
                       <div className={`p-3 rounded-md ${isCorrect ? 'bg-green-50' : 'bg-red-50'
                         }`}>
-                        {question.options.find(o => o.id === question.selectedOptionId)?.option || "Not answered"}
+                        {questionAttempt.question.options.find(o => o.id === questionAttempt.selectedOptionId)?.optionText || "Not answered"}
                       </div>
                     </div>
                     {!isCorrect && (
@@ -188,14 +189,14 @@ export default function QuizResultsPage() {
                           Correct Answer
                         </h4>
                         <div className="p-3 rounded-md bg-green-50">
-                          {question.options.find(o => o.id)?.option}
+                          {questionAttempt.question.options.find(o => o.isCorrect)?.optionText}
                         </div>
                       </div>
                     )}
                   </div>
                 )}
 
-                {(question.type === "True/False" || question.type === "Short Answer") && (
+                {(questionAttempt.question.type === QUESTION_TYPES.TRUE_FALSE) && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div>
                       <h4 className="text-sm font-medium text-muted-foreground mb-2">
@@ -203,9 +204,7 @@ export default function QuizResultsPage() {
                       </h4>
                       <div className={`p-3 rounded-md ${isCorrect ? 'bg-green-50' : 'bg-red-50'
                         }`}>
-                        {question.type === "True/False"
-                          ? question.selectedBooleanAnswer?.toString() || "Not answered"
-                          : question.selectedTextAnswer || "Not answered"}
+                        {questionAttempt.selectedBooleanAnswer === null ? "Not Answered" : questionAttempt.selectedBooleanAnswer ? "True" : "False"}
                       </div>
                     </div>
                     {!isCorrect && (
@@ -214,7 +213,31 @@ export default function QuizResultsPage() {
                           Correct Answer
                         </h4>
                         <div className="p-3 rounded-md bg-green-50">
-                          true
+                          {questionAttempt.question.correctAnswerBoolean ? "True" : "False"}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {(questionAttempt.question.type === QUESTION_TYPES.FILL_IN_THE_BLANKS) && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-2">
+                        Your Answer
+                      </h4>
+                      <div className={`p-3 rounded-md ${isCorrect ? 'bg-green-50' : 'bg-red-50'
+                        }`}>
+                        {questionAttempt.selectedTextAnswer || "Not answered"}
+                      </div>
+                    </div>
+                    {!isCorrect && (
+                      <div>
+                        <h4 className="text-sm font-medium text-muted-foreground mb-2">
+                          Correct Answer
+                        </h4>
+                        <div className="p-3 rounded-md bg-green-50">
+                          {questionAttempt.question.correctAnswerText}
                         </div>
                       </div>
                     )}

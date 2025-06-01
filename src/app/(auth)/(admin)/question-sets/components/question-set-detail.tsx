@@ -24,7 +24,7 @@ export default function QuestionSetDetail() {
     const query = search.toLowerCase();
 
     return (
-      question.question.toLowerCase().includes(query) ||
+      question.questionText.toLowerCase().includes(query) ||
       question.subject.name.toLowerCase().includes(query) ||
       question.subSubject.name.toLowerCase().includes(query)
     );
@@ -60,6 +60,15 @@ export default function QuestionSetDetail() {
           </span>
           <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${data?.status == 'published' ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}>
             {data?.status === "published" ? "Published" : "Draft"}
+          </span>
+          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm bg-accent`}>
+            {data?.isTimeLimited
+              ? (() => {
+                const hours = Math.floor(data?.timeLimitSeconds / 3600);
+                const minutes = Math.floor((data?.timeLimitSeconds % 3600) / 60);
+                return `${hours}h ${minutes}m`;
+              })()
+              : "No Limit"}
           </span>
         </div>
 
@@ -117,7 +126,7 @@ export default function QuestionSetDetail() {
               <Card key={question.id}>
                 <CardHeader>
                   <div className="flex justify-between items-start">
-                    <h3 className="font-medium text-lg">{index + 1}. {question.question}</h3>
+                    <h3 className="font-medium text-lg">{index + 1}. {question.questionText}</h3>
                   </div>
 
                   <div className="flex flex-wrap gap-4">
@@ -133,7 +142,7 @@ export default function QuestionSetDetail() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                         {question.options.map((option, index) =>
                           <div key={option.id} className={`flex flex-wrap justify-between p-2 rounded ${option.isCorrect && "bg-green-50 text-green-600 font-bold"}`}>
-                            <span>{String.fromCharCode(65 + index)}. {option.option}</span>
+                            <span>{String.fromCharCode(65 + index)}. {option.optionText}</span>
                             {option.isCorrect && <CheckCircleIcon />}
                           </div>
                         )}

@@ -1,35 +1,15 @@
 import { z } from "zod";
-import { categorySchema } from "./category";
-import { questionTypes } from "@/enums/questions";
-import { subjectSchema } from "./subject";
-import { subSubjectSchema } from "./sub-subject";
+import { questionSchema } from "./question";
+import { questionSetSchema } from "./question-set";
 
 const questionAttemptSchema = z.object({
     id: z.string(),
-    type: z.enum(questionTypes.map(type => type.value) as [string, ...string[]]),
-    subjectId: z.string(),
-    subject: subjectSchema,
-    subSubjectId: z.string(),
-    subSubject: subSubjectSchema,
-    question: z.string(),
-    options: z.array(z.object({
-        id: z.string(),
-        option: z.string()
-    })),
-    difficulty: z.number(),
-    questionAttempts: z.array(z.object({
-        id: z.string(),
-        questionAttemptId: z.string(),
-        questionSetAttemptId: z.string(),
-        selectedOptionId: z.string().nullable(),
-        selectedBooleanAnswer: z.boolean().nullable(),
-        selectedTextAnswer: z.string().nullable(),
-        isCorrect: z.boolean()
-    })),
-    selectedOptionId: z.string().nullable(),
-    selectedBooleanAnswer: z.boolean().nullable(),
     selectedTextAnswer: z.string().nullable(),
-    status: z.enum(["viewed", "answered"])
+    selectedBooleanAnswer: z.boolean().nullable(),
+    selectedOptionId: z.string().nullable(),
+    isCorrect: z.boolean(),
+    questionId: z.string(),
+    question: questionSchema
 });
 
 export const questionSetAttemptSchema = z.object({
@@ -40,16 +20,8 @@ export const questionSetAttemptSchema = z.object({
     isCompleted: z.boolean(),
     score: z.number(),
     percentage: z.number(),
-    questionSet: z.object({
-        id: z.string(),
-        categoryId: z.string(),
-        category: categorySchema,
-        name: z.string(),
-        isFree: z.boolean(),
-        isTimer: z.boolean(),
-        timer: z.number(),
-        questions: z.array(questionAttemptSchema),
-    })
+    questionSet: questionSetSchema,
+    questionAttempts: z.array(questionAttemptSchema)
 })
 
 export const questionSetAttemptResSchema = z.object({
@@ -63,7 +35,7 @@ export const questionSetAttemptResSchema = z.object({
 });
 
 export const answerReqSchema = z.object({
-    questionId: z.string(),
+    questionAttemptId: z.string(),
     selectedOptionId: z.string().nullable(),
     selectedBooleanAnswer: z.boolean().nullable(),
     selectedTextAnswer: z.string().nullable(),

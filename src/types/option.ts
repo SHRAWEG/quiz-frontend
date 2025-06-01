@@ -3,7 +3,7 @@ import { z } from "zod";
 export const optionSchema = z.object({
   id: z.string(),
   questionId: z.string(),
-  option: z.string(),
+  optionText: z.string(),
   isCorrect: z.boolean()
 });
 

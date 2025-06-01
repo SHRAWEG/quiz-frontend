@@ -55,7 +55,7 @@ export default function QuestionContent({ question }: QuestionContentProps) {
 function OptionItem({ option, index }: { option: Option, index: number }) {
   return (
     <li className={`flex items-start gap-2 ${option.isCorrect ? "text-green-600 font-medium" : ""}`}>
-      {option.isCorrect ? "✓" : "✗"} {String.fromCharCode(65 + index)}) {option.option}
+      {option.isCorrect ? "✓" : "✗"} {String.fromCharCode(65 + index)}) {option.optionText}
     </li>
   );
 }

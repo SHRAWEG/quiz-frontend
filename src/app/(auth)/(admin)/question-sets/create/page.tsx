@@ -26,6 +26,8 @@ export default function Page() {
       categoryId: "",
       name: "",
       isFree: false,
+      isTimeLimited: false,
+      timeLimitSeconds: undefined, // Default to 5 minutes
     },
     mode: "onBlur",
   });

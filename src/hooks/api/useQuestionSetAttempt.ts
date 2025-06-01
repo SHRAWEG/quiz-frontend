@@ -10,6 +10,16 @@ export type QuestionSetParams = {
   categoryId: string;
 }
 
+export type StatusRes = {
+  id: string;
+  remainingTimeSeconds: number;
+  startedAt: string;
+  expiryAt: string;
+  isExpired: boolean;
+  timeLimitSeconds: number | null;
+  isCompleted: boolean;
+}
+
 export const useGetQuestionSetAttempts = () => useQuery<QuestionSetAttemptList>({
   queryKey: ["questionSetAttempts"],
   queryFn: async () => {
@@ -26,6 +36,22 @@ export const useGetQuestionSetAttemptDetail = (questionSetAttemptId: string) => 
   }
 })
 
+export const useGetStatus = (questionSetAttemptId: string) => useQuery<StatusRes>({
+  queryKey: ["questionSetAttempt", questionSetAttemptId],
+  queryFn: async () => {
+    const response = await apiClient.get<ApiResponse<StatusRes>>(`${API_URLS.questionSetAttempt}/${questionSetAttemptId}`)
+    return response.data;
+  }
+})
+
+export const useGetQuestionSetAttemptResult = (questionSetAttemptId: string) => useQuery<QuestionSetAttempt>({
+  queryKey: ["questionSetAttemptResult", questionSetAttemptId],
+  queryFn: async () => {
+    const response = await apiClient.get<ApiResponse<QuestionSetAttempt>>(`${API_URLS.questionSetAttempt}/report/${questionSetAttemptId}`)
+    return response.data;
+  }
+})
+
 export const useStartQuestionSetAttempt = () =>
   useMutation<ApiResponse<QuestionSetAttemptResDto>, ApiError, { questionSetId: string }>({
     mutationKey: ["startQuestionSetAttempt"],
@@ -35,11 +61,11 @@ export const useStartQuestionSetAttempt = () =>
 export const useAnswerQuestion = () =>
   useMutation<ApiResponse<QuestionSetAttempt>, ApiError, { questionSetAttemptId: string, data: AnswerReqDto }>({
     mutationKey: ["answerQuestion"],
-    mutationFn: async ({questionSetAttemptId, data}) => await apiClient.post(`${API_URLS.questionSetAttempt}/answer/${questionSetAttemptId}`, data)
+    mutationFn: async ({ questionSetAttemptId, data }) => await apiClient.post(`${API_URLS.questionSetAttempt}/answer/${questionSetAttemptId}`, data)
   });
 
 export const useFinishQuestionSetAttempt = () =>
-  useMutation<ApiResponse, ApiError, { questionSetId: string;}>({
+  useMutation<ApiResponse, ApiError, { questionSetId: string; }>({
     mutationKey: ["finishQuestionSet"],
     mutationFn: async ({ questionSetId }) => await apiClient.put<ApiResponse>(`${API_URLS.questionSetAttempt}/${questionSetId}/finish`)
   });

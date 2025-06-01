@@ -28,7 +28,6 @@ export const getColumns = (
                   <TooltipTrigger asChild>
                     <Button
                       variant="default"
-                      className="bg-pink-300"
                     >
                       <Pencil />
                     </Button>
@@ -43,8 +42,7 @@ export const getColumns = (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    variant="default"
-                    className="bg-red-500"
+                    variant="destructive"
                     onClick={() => handleDelete(category.id)}
                   >
                     <Trash />
