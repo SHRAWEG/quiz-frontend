@@ -8,6 +8,7 @@ const questionAttemptSchema = z.object({
     selectedBooleanAnswer: z.boolean().nullable(),
     selectedOptionId: z.string().nullable(),
     isCorrect: z.boolean(),
+    isChecked: z.boolean(),
     questionId: z.string(),
     question: questionSchema
 });

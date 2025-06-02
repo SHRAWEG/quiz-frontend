@@ -206,7 +206,7 @@ export default function QuestionSetAttemptPage() {
                 <Button
                   variant="outline"
                   className="w-full"
-                  onClick={() => window.location.href = '/'}
+                  onClick={() => window.location.href = '/dashboard'}
                 >
                   Return to Dashboard
                 </Button>
@@ -260,7 +260,7 @@ export default function QuestionSetAttemptPage() {
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button
                 variant="secondary"
-                onClick={() => router.push('/')}
+                onClick={() => router.push('/dashboard')}
                 className="gap-2"
               >
                 <ChevronLeft className="h-4 w-4" />
