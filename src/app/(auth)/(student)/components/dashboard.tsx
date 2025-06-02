@@ -269,14 +269,14 @@ export default function StudentDashboard() {
                                                     </p>
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <span className={`text-lg font-bold ${questionSetAttempt.score >= 80 ? 'text-green-500' :
+                                                    {/* <span className={`text-lg font-bold ${questionSetAttempt.score >= 80 ? 'text-green-500' :
                                                         questionSetAttempt.score >= 60 ? 'text-yellow-500' : 'text-red-500'
                                                         }`}>
                                                         {Math.round(questionSetAttempt.percentage)}%
                                                     </span>
                                                     <CheckCircle className={`h-5 w-5 ${questionSetAttempt.score >= 80 ? 'text-green-500' :
                                                         questionSetAttempt.score >= 60 ? 'text-yellow-500' : 'text-red-500'
-                                                        }`} />
+                                                        }`} /> */}
 
                                                     <Button
                                                         variant="outline"

@@ -76,13 +76,6 @@ export const questionReqDto = z.object({
       message: "Correct answer is required.",
       path: ["correctAnswerText"]
     }
-  )
-  .refine(
-    (data) => !(data.type !== QUESTION_TYPES.FILL_IN_THE_BLANKS && (data.correctAnswerText != null && data.correctAnswerText !== "") ),
-    {
-      message: "Correct answer should be empty for non Fill In The Blanks type questions.",
-      path: ["correctAnswerText"]
-    }
   );
 
 

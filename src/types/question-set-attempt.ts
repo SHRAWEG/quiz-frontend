@@ -18,6 +18,7 @@ export const questionSetAttemptSchema = z.object({
     startedAt: z.date(),
     completedAt: z.date().nullable(),
     isCompleted: z.boolean(),
+    isChecked: z.boolean(),
     score: z.number(),
     percentage: z.number(),
     questionSet: questionSetSchema,
@@ -34,6 +35,14 @@ export const questionSetAttemptResSchema = z.object({
     percentage: z.number()
 });
 
+export const questionSetAttemptsToReviewListSchema = z.object({
+    data: z.array(questionSetAttemptSchema),
+    totalItems: z.number(),
+    totalPages: z.number(),
+    currentPage: z.number(),
+    pageSize: z.number()
+})
+
 export const answerReqSchema = z.object({
     questionAttemptId: z.string(),
     selectedOptionId: z.string().nullable(),
@@ -46,9 +55,15 @@ export const answerReqSchema = z.object({
     }
 )
 
+export const markReqSchema = z.object({
+    isCorrect: z.boolean()
+});
+
 export type AnswerReqDto = z.infer<typeof answerReqSchema>;
+export type MarkReqDto = z.infer<typeof markReqSchema>;
 export type QuestionAttempt = z.infer<typeof questionAttemptSchema>;
 export type QuestionSetAttempt = z.infer<typeof questionSetAttemptSchema>;
 export type QuestionSetAttemptList = z.infer<typeof questionSetAttemptSchema>[];
+// export type QuestionSetAttemptsToReviewList = z.infer<typeof questionSetAttemptsToReviewListSchema>;
 export type QuestionSetAttemptResDto = z.infer<typeof questionSetAttemptResSchema>;
 

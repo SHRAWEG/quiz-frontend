@@ -5,15 +5,52 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { useParams } from "next/navigation"
 import { useGetQuestionSetAttemptResult } from "@/hooks/api/useQuestionSetAttempt"
-import { ChevronLeft, Clock, Award, BookOpen } from "lucide-react"
+import { ChevronLeft, Clock, Award, BookOpen, AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { QUESTION_TYPES } from "@/constants/questions"
+import { formatISODate } from "@/lib/format-date"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { useState } from "react"
+
+const formatElapsedTime = (milliseconds: number): string => {
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (days > 0) {
+    return `${days}d ${hours}h`;
+  }
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`;
+  }
+  if (minutes > 0) {
+    return `${minutes}m ${seconds}s`;
+  }
+  return `${seconds}s`;
+};
+
+const formatRemainingTime = (milliseconds: number): string => {
+  const seconds = Math.floor(milliseconds / 1000);
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}m ${remainingSeconds}s`;
+};
 
 export default function QuizResultsPage() {
   const { id } = useParams()
   const router = useRouter()
   const { data, isLoading } = useGetQuestionSetAttemptResult(id as string)
+  const [showFullAnswer, setShowFullAnswer] = useState<string | null>(null);
+  const [showFullCorrectAnswer, setShowFullCorrectAnswer] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -51,6 +88,75 @@ export default function QuizResultsPage() {
   // ).length
 
   const totalQuestions = data.questionAttempts.length
+  const timeTaken = new Date(data?.completedAt ?? "").getTime() - new Date(data.startedAt).getTime()
+
+  // Show pending verification screen if results need admin checking
+  if (data.isChecked === false) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="flex justify-center mb-6">
+            <AlertCircle className="h-16 w-16 text-yellow-500" />
+          </div>
+          <h1 className="text-3xl font-bold mb-4">Results Pending Verification</h1>
+
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle>Quiz Information</CardTitle>
+            </CardHeader>
+            <CardContent className="text-left space-y-4">
+              <div>
+                <p className="text-sm text-muted-foreground">Quiz Name</p>
+                <p className="font-medium">{data.questionSet.name}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Completed On</p>
+                <p className="font-medium">
+                  {formatISODate(new Date(data.completedAt ?? "").toISOString())}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Status</p>
+                <Badge variant="default" className="mt-1">
+                  Awaiting Verification
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+            <h3 className="font-medium text-lg mb-3">What's happening?</h3>
+            <p className="text-muted-foreground mb-4">
+              Your quiz contains questions that require manual review by our team.
+              This process typically takes 24-48 hours.
+            </p>
+            <p className="text-muted-foreground">
+              You'll receive a notification when your results are ready.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Button
+              variant="secondary"
+              onClick={() => router.push('/')}
+              className="gap-2"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Return to Dashboard
+            </Button>
+            {/* <Button
+              variant="outline"
+              onClick={() => router.push(`/quiz/${id}/answers`)}
+              className="gap-2"
+            >
+              <BookOpen className="h-4 w-4" />
+              View Your Answers
+            </Button> */}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="container mx-auto py-8">
@@ -98,19 +204,18 @@ export default function QuizResultsPage() {
             <CardTitle>Time</CardTitle>
             <Clock className="h-6 w-6 text-primary" />
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold mb-2">
-              {/* Math.floor(timeSpent / 60)}m {timeSpent % 60 */} TBA
+          <CardContent className="space-y-2">
+            <div className="text-3xl font-bold">
+              {formatElapsedTime(timeTaken)}
             </div>
-            {/* {data.questionSet.isTimer && (
-              <p className="text-muted-foreground">
-                {timeSpent < data.questionSet.timer * 60 ? (
-                  <span className="text-green-500">Finished with {Math.floor((data.questionSet.timer * 60 - timeSpent) / 60)}m {(data.questionSet.timer * 60 - timeSpent) % 60}s remaining</span>
-                ) : (
-                  <span className="text-red-500">Exceeded time limit</span>
-                )}
-              </p>
-            )} */}
+
+            <div className="text-sm text-muted-foreground pt-1">
+              <p>Started at {formatISODate(new Date(data.startedAt).toISOString())}</p>
+            </div>
+            <div className="text-sm text-muted-foreground pt-1">
+              <p>Completed at {formatISODate(new Date(data.completedAt ?? "").toISOString())}</p>
+            </div>
+
           </CardContent>
         </Card>
 
@@ -243,6 +348,30 @@ export default function QuizResultsPage() {
                     )}
                   </div>
                 )}
+
+                {(questionAttempt.question.type === QUESTION_TYPES.LONG ||
+                  questionAttempt.question.type === QUESTION_TYPES.SHORT) && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                      <div>
+                        <h4 className="text-sm font-medium text-muted-foreground mb-2">
+                          Your Answer
+                        </h4>
+                        <div className={`p-3 rounded-md ${isCorrect ? 'bg-green-50' : 'bg-red-50'}`}>
+                          <div className="whitespace-pre-wrap break-words line-clamp-3">
+                            {questionAttempt.selectedTextAnswer || "Not answered"}
+                          </div>
+                          <Button
+                            variant="link"
+                            size="sm"
+                            className="p-0 h-auto text-primary mt-2"
+                            onClick={() => setShowFullAnswer(questionAttempt.id)}
+                          >
+                            Show full answer
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
               </div>
             )
           })}
@@ -275,6 +404,29 @@ export default function QuizResultsPage() {
           Return to Dashboard
         </Button>
       </div>
+
+      {/* Modal for showing full answers */}
+      <Dialog open={!!showFullAnswer} onOpenChange={() => setShowFullAnswer(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Your Full Answer</DialogTitle>
+          </DialogHeader>
+          <div className="whitespace-pre-wrap p-4 bg-muted rounded-md">
+            {data?.questionAttempts.find(q => q.id === showFullAnswer)?.selectedTextAnswer}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!showFullCorrectAnswer} onOpenChange={() => setShowFullCorrectAnswer(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Correct Answer</DialogTitle>
+          </DialogHeader>
+          <div className="whitespace-pre-wrap p-4 bg-muted rounded-md">
+            {data?.questionAttempts.find(q => q.id === showFullCorrectAnswer)?.question.correctAnswerText}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

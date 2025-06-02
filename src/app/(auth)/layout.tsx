@@ -5,6 +5,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/layout/app-sidebar"
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Suspense, useEffect } from "react";
+import { title } from "process";
 
 const items = [
   {
@@ -48,6 +49,12 @@ const items = [
     url: "/explore",
     icon: LayoutList,
     role: ["student"]
+  },
+  {
+    title: "Reviews",
+    url: "/reviews",
+    icon: FileQuestion,
+    role: ["admin"]
   }
 ]
 

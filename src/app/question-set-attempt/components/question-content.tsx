@@ -103,6 +103,19 @@ export function QuestionContent({
               </div>
             )}
 
+            {/* Long and Short questionAttempt */}
+            {(questionAttempt.question.type === QUESTION_TYPES.LONG || questionAttempt.question.type === QUESTION_TYPES.SHORT) && (
+              <div className="space-y-3">
+                <textarea
+                  rows={questionAttempt.question.type === QUESTION_TYPES.SHORT ? 4 : 16}
+                  value={selectedValue || ""}
+                  onChange={(e) => setSelectedValue(e.target.value)}
+                  placeholder="Type your answer here..."
+                  className="w-full border rounded-md p-2"
+                />
+              </div>
+            )}
+
             {/* Flag questionAttempt */}
           </CardContent>
         </Card>
@@ -142,7 +155,7 @@ export function QuestionContent({
                 disabled={submitPending}
                 className="gap-2 bg-green-600"
               >
-                {submitPending ? <LoaderPinwheel className="animate-spin" /> : <Upload /> } Finish
+                {submitPending ? <LoaderPinwheel className="animate-spin" /> : <Upload />} Finish
               </Button>
             </div>
           </CardContent>

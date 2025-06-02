@@ -120,9 +120,13 @@ export function QuestionForm({
                                         } else if (value === "true-false") {
                                             form.setValue("options", []);
                                             form.setValue("correctAnswerText", "");
+                                        } else if (value === "fill-in-the-blanks") {
+                                            form.setValue("options", []);
+                                            form.setValue("correctAnswerBoolean", undefined);
                                         } else {
                                             form.setValue("options", []);
                                             form.setValue("correctAnswerBoolean", undefined);
+                                            form.setValue("correctAnswerText", "");
                                         }
                                     }}
                                     defaultValue={field.value}

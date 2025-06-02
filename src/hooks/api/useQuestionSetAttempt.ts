@@ -1,7 +1,7 @@
 import { apiClient, ApiError, ApiResponse } from "@/lib/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { API_URLS } from "@/lib/constants/api-urls";
-import { AnswerReqDto, QuestionSetAttempt, QuestionSetAttemptList, QuestionSetAttemptResDto } from "@/types/question-set-attempt";
+import { AnswerReqDto, MarkReqDto, QuestionSetAttempt, QuestionSetAttemptList, QuestionSetAttemptResDto } from "@/types/question-set-attempt";
 
 export type QuestionSetParams = {
   page: number;
@@ -24,6 +24,22 @@ export const useGetQuestionSetAttempts = () => useQuery<QuestionSetAttemptList>(
   queryKey: ["questionSetAttempts"],
   queryFn: async () => {
     const response = await apiClient.get<ApiResponse<QuestionSetAttemptList>>(API_URLS.questionSetAttempt)
+    return response.data;
+  }
+})
+
+export const useGetQuestionSetAttemptsToReview = () => useQuery<QuestionSetAttemptList>({
+  queryKey: ["questionSetAttempts"],
+  queryFn: async () => {
+    const response = await apiClient.get<ApiResponse<QuestionSetAttemptList>>(`${API_URLS.questionSetAttempt}/review`)
+    return response.data;
+  }
+})
+
+export const useGetQuestionSetAttemptToReview = (questionSetAttemptId: string) => useQuery<QuestionSetAttempt>({
+  queryKey: ["questionSetAttempt", questionSetAttemptId],
+  queryFn: async () => {
+    const response = await apiClient.get<ApiResponse<QuestionSetAttempt>>(`${API_URLS.questionSetAttempt}/review/${questionSetAttemptId}`)
     return response.data;
   }
 })
@@ -65,7 +81,19 @@ export const useAnswerQuestion = () =>
   });
 
 export const useFinishQuestionSetAttempt = () =>
-  useMutation<ApiResponse, ApiError, { questionSetId: string; }>({
+  useMutation<ApiResponse, ApiError, { questionSetAttemptId: string; }>({
     mutationKey: ["finishQuestionSet"],
-    mutationFn: async ({ questionSetId }) => await apiClient.put<ApiResponse>(`${API_URLS.questionSetAttempt}/${questionSetId}/finish`)
+    mutationFn: async ({ questionSetAttemptId }) => await apiClient.put<ApiResponse>(`${API_URLS.questionSetAttempt}/finish/${questionSetAttemptId}`)
+  });
+
+export const useMarkQuestion = () =>
+  useMutation<ApiResponse<QuestionSetAttempt>, ApiError, { questionAttemptId: string, data: MarkReqDto }>({
+    mutationKey: ["markQuestion"],
+    mutationFn: async ({ questionAttemptId, data }) => await apiClient.put(`${API_URLS.questionSetAttempt}/reviewAnswer/${questionAttemptId}`, data)
+  });
+
+export const useMarkQuestionSet = () =>
+  useMutation<ApiResponse, ApiError, { questionSetAttemptId: string; }>({
+    mutationKey: ["markQuestionSet"],
+    mutationFn: async ({ questionSetAttemptId }) => await apiClient.put<ApiResponse>(`${API_URLS.questionSetAttempt}/markChecked/${questionSetAttemptId}`)
   });

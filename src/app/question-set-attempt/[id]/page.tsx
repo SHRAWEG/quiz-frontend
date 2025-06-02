@@ -55,7 +55,7 @@ export default function QuestionSetAttemptPage() {
     } else if (currentQuestion?.question.type === QUESTION_TYPES.TRUE_FALSE) {
       if (currentQuestion.selectedBooleanAnswer === null) return null
       return currentQuestion.selectedBooleanAnswer ? "true" : "false"
-    } else if (currentQuestion?.question.type === QUESTION_TYPES.FILL_IN_THE_BLANKS) {
+    } else if (currentQuestion?.question.type === QUESTION_TYPES.FILL_IN_THE_BLANKS || currentQuestion?.question.type === QUESTION_TYPES.SHORT || currentQuestion?.question.type === QUESTION_TYPES.LONG) {
       return currentQuestion.selectedTextAnswer
     }
     return null
@@ -68,7 +68,9 @@ export default function QuestionSetAttemptPage() {
         questionAttemptId: currentQuestionId,
         selectedOptionId: currentQuestion?.question.type === QUESTION_TYPES.MCQ ? selectedValue : null,
         selectedBooleanAnswer: currentQuestion?.question.type === QUESTION_TYPES.TRUE_FALSE ? (selectedValue == "true" ? true : selectedValue == "false" ? false : null) : null,
-        selectedTextAnswer: currentQuestion?.question.type === QUESTION_TYPES.FILL_IN_THE_BLANKS ? selectedValue : null
+        selectedTextAnswer: (currentQuestion?.question.type === QUESTION_TYPES.FILL_IN_THE_BLANKS
+          || currentQuestion?.question.type === QUESTION_TYPES.LONG
+          || currentQuestion?.question.type === QUESTION_TYPES.SHORT) ? selectedValue : null
       }
 
       answerQuestion({ questionSetAttemptId: id as string, data: answerData }, {
@@ -102,31 +104,16 @@ export default function QuestionSetAttemptPage() {
   }
 
   const onSubmit = () => {
-    finishQuestionSet({ questionSetId: id as string }, {
+    finishQuestionSet({ questionSetAttemptId: id as string }, {
       onSuccess: (res) => {
         refetch()
 
         toast.success(res.message)
+      },
+      onError: () => {
+        // window.location.reload();
       }
     })
-  }
-
-  if (isExpired) {
-    onSubmit();
-    return (
-      <div className="flex items-center justify-center h-screen bg-secondary">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-          <h1 className="text-2xl font-bold mb-4">Time's Up!</h1>
-          <p className="text-muted-foreground mb-6">Your quiz time has expired.</p>
-          <Button
-            variant="default"
-            onClick={() => window.location.href = `/question-set-attempt/${id}/results`}
-          >
-            View Results
-          </Button>
-        </div>
-      </div>
-    )
   }
 
   // Loading state
@@ -218,6 +205,26 @@ export default function QuestionSetAttemptPage() {
               </Button>
             </div>
           </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (questionSetAttempt.questionSet.isTimeLimited && formattedTime === "00:00:00") {
+    return (
+      <div className="flex items-center justify-center h-screen bg-muted">
+        <div className="text-center p-8">
+          <h2 className="text-xl font-semibold mb-4">Time's Up!</h2>
+          <p className="text-muted-foreground">
+            Your time for this quiz has expired. Please submit your answers.
+          </p>
+          <Button
+            className="mt-4"
+            onClick={onSubmit}
+            disabled={submitPending}
+          >
+            {submitPending ? "Submitting..." : "Submit Answers"}
+          </Button>
         </div>
       </div>
     )

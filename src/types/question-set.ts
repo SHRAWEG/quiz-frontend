@@ -50,7 +50,7 @@ export const questionSetReqDto = z.object({
     categoryId: z.string().min(1, { message: "Category is required" }),
     name: z.string().min(1, { message: "Name is required" }),
     isTimeLimited: z.boolean(),
-    timeLimitSeconds: z.number().min(300, { message: "Time limit must be at least 5 minute" }).optional(),
+    timeLimitSeconds: z.number().min(60, { message: "Time limit must be at least 1 minute" }).optional(),
     isFree: z.boolean()
 }).superRefine((data, ctx) => {
     if (data.isTimeLimited && (!data.timeLimitSeconds || data.timeLimitSeconds < 1)) {

@@ -25,7 +25,7 @@ export function useTimer(attemptId: string, isTimeLimited: boolean) {
       );
       return response.data;
     },
-    refetchInterval: 30000, // Sync every 5 minutes
+    refetchInterval: 300000, // Sync every 5 minutes
   });
 
   useEffect(() => {
