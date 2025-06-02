@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useParams, useRouter } from "next/navigation"
-import { useGetQuestionSetAttemptToReview, useMarkQuestion } from "@/hooks/api/useQuestionSetAttempt"
+import { useGetQuestionSetAttemptToReview, useMarkQuestion, useMarkQuestionSet } from "@/hooks/api/useQuestionSetAttempt"
 import { ChevronLeft, CheckCircle2, XCircle, BookOpen } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { QUESTION_TYPES } from "@/constants/questions"
@@ -18,6 +18,7 @@ export default function AttemptReviewPage() {
   const router = useRouter()
   const { data: attempt, isLoading, refetch } = useGetQuestionSetAttemptToReview(id as string)
   const { mutate: markQuestionAttempt } = useMarkQuestion();
+  const { mutate: markQuestionSetAttempt } = useMarkQuestionSet();
   const [isSaving, setIsSaving] = useState(false)
   const [reviewStatus, setReviewStatus] = useState<Record<string, boolean>>({})
 
@@ -70,23 +71,20 @@ export default function AttemptReviewPage() {
 
   const handleSaveReview = async () => {
     setIsSaving(true)
-    try {
-      // This is where you'll implement your API call
-      // await updateAttemptReview({
-      //   attemptId: id as string,
-      //   questionReviews: Object.entries(reviewStatus).map(([questionAttemptId, isCorrect]) => ({
-      //     questionAttemptId,
-      //     isCorrect
-      //   }))
-      // })
+    markQuestionSetAttempt({questionSetAttemptId: id as string}, {
+      onSuccess: () => {
+        toast.success("Review saved successfully")
+        refetch()
 
-      toast.success("Review saved successfully")
-      refetch()
-    } catch (error) {
-      toast.error((error as ApiError).message || "Failed to save review")
-    } finally {
-      setIsSaving(false)
-    }
+        router.push('/reviews')
+
+        setIsSaving(false)
+      },
+      onError: (error: ApiError) => {
+        toast.error(error.message || "Failed to save review")
+        setIsSaving(false)
+      }
+    })
   }
 
   const calculateNewScore = () => {
