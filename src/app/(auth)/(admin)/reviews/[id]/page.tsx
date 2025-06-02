@@ -34,14 +34,14 @@ export default function AttemptReviewPage() {
   }, [attempt])
 
   const handleMarkCorrect = (questionAttemptId: string) => {
-    setReviewStatus(prev => ({ ...prev, [questionAttemptId]: true }))
-
     const markData: MarkReqDto = {
       isCorrect: true
     }
 
     markQuestionAttempt({ questionAttemptId: questionAttemptId as string, data: markData }, {
       onSuccess: () => {
+        setReviewStatus(prev => ({ ...prev, [questionAttemptId]: true }))
+
         toast.success("Marked as correct")
         refetch();
       },
@@ -52,26 +52,26 @@ export default function AttemptReviewPage() {
   }
 
   const handleMarkIncorrect = (questionAttemptId: string) => {
-    setReviewStatus(prev => ({ ...prev, [questionAttemptId]: false }))
-
     const markData: MarkReqDto = {
       isCorrect: false
     }
 
     markQuestionAttempt({ questionAttemptId: questionAttemptId as string, data: markData }, {
       onSuccess: () => {
-        toast.success("Marked as correct")
+        setReviewStatus(prev => ({ ...prev, [questionAttemptId]: false }))
+
+        toast.success("Marked as incorrect")
         refetch();
       },
       onError: (error: ApiError) => {
-        toast.error(error.message || "Failed to mark as correct")
+        toast.error(error.message || "Failed to mark as incorrect")
       }
     })
   }
 
   const handleSaveReview = async () => {
     setIsSaving(true)
-    markQuestionSetAttempt({questionSetAttemptId: id as string}, {
+    markQuestionSetAttempt({ questionSetAttemptId: id as string }, {
       onSuccess: () => {
         toast.success("Review saved successfully")
         refetch()
@@ -109,7 +109,7 @@ export default function AttemptReviewPage() {
           <p className="text-muted-foreground mb-6">
             We couldn't retrieve this attempt data.
           </p>
-          <Button onClick={() => router.push('/admin/review')}>
+          <Button onClick={() => router.push('/reviews')}>
             Return to Review List
           </Button>
         </div>
@@ -123,9 +123,9 @@ export default function AttemptReviewPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
           <Button
-            variant="ghost"
+            variant="default"
             onClick={() => router.push('/admin/review')}
-            className="gap-2 mb-4 md:mb-0"
+            className="gap-2 mb-4"
           >
             <ChevronLeft className="h-4 w-4" />
             Back to Review List
@@ -185,8 +185,8 @@ export default function AttemptReviewPage() {
             const currentStatus = reviewStatus[questionAttempt.id] ?? questionAttempt.isCorrect
             const isMcq = questionAttempt.question.type === QUESTION_TYPES.MCQ
             const isTrueFalse = questionAttempt.question.type === QUESTION_TYPES.TRUE_FALSE
+            const isFillInTheBlanks = questionAttempt.question.type === QUESTION_TYPES.FILL_IN_THE_BLANKS
             const isTextAnswer = [
-              QUESTION_TYPES.FILL_IN_THE_BLANKS,
               QUESTION_TYPES.SHORT,
               QUESTION_TYPES.LONG
             ].includes(questionAttempt.question.type)
@@ -224,8 +224,8 @@ export default function AttemptReviewPage() {
                         ? "Not Answered"
                         : questionAttempt.selectedBooleanAnswer ? "True" : "False"
                     )}
-                    {isTextAnswer && (
-                      <div className="whitespace-pre-wrap">
+                    {(isFillInTheBlanks || isTextAnswer) && (
+                      <div className="whitespa)ce-pre-wrap">
                         {questionAttempt.selectedTextAnswer || "Not answered"}
                       </div>
                     )}
@@ -233,7 +233,7 @@ export default function AttemptReviewPage() {
                 </div>
 
                 {/* Correct Answer (for reference) */}
-                {!currentStatus && (
+                {(!currentStatus && !isTextAnswer) && (
                   <div className="mt-4">
                     <h4 className="text-sm font-medium text-muted-foreground mb-2">
                       Correct Answer
@@ -245,7 +245,7 @@ export default function AttemptReviewPage() {
                       {isTrueFalse && (
                         questionAttempt.question.correctAnswerBoolean ? "True" : "False"
                       )}
-                      {isTextAnswer && (
+                      {isFillInTheBlanks && (
                         <div className="whitespace-pre-wrap">
                           {questionAttempt.question.correctAnswerText}
                         </div>
@@ -255,26 +255,30 @@ export default function AttemptReviewPage() {
                 )}
 
                 {/* Review Controls */}
-                <div className="flex gap-2 mt-4">
-                  <Button
-                    variant={currentStatus ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => handleMarkCorrect(questionAttempt.id)}
-                    disabled={attempt.isChecked}
-                  >
-                    <CheckCircle2 className="h-4 w-4 mr-2" />
-                    Mark Correct
-                  </Button>
-                  <Button
-                    variant={!currentStatus ? "destructive" : "outline"}
-                    size="sm"
-                    onClick={() => handleMarkIncorrect(questionAttempt.id)}
-                    disabled={attempt.isChecked}
-                  >
-                    <XCircle className="h-4 w-4 mr-2" />
-                    Mark Incorrect
-                  </Button>
-                </div>
+                {
+                  isTextAnswer && (
+                    <div className="flex gap-2 mt-4">
+                      <Button
+                        variant={currentStatus ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handleMarkCorrect(questionAttempt.id)}
+                        disabled={attempt.isChecked}
+                      >
+                        <CheckCircle2 className="h-4 w-4 mr-2" />
+                        Mark Correct
+                      </Button>
+                      <Button
+                        variant={!currentStatus ? "destructive" : "outline"}
+                        size="sm"
+                        onClick={() => handleMarkIncorrect(questionAttempt.id)}
+                        disabled={attempt.isChecked}
+                      >
+                        <XCircle className="h-4 w-4 mr-2" />
+                        Mark Incorrect
+                      </Button>
+                    </div>
+                  )
+                }
               </div>
             )
           })}
