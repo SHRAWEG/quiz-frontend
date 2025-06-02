@@ -43,7 +43,7 @@ export function SubSubjectForm({ subjectId, onSubmit, isPending, subjects, form,
                     <h2 className="text-md font-semibold">Subject: </h2>
                     {isFetching && <Skeleton className="w-24 h-4" />}
                     {!isFetching && subject && (
-                        <span className="text-lg font-bold text-green-800">
+                        <span className="text-lg font-bold">
                             {subject.name}
                         </span>
                     )}

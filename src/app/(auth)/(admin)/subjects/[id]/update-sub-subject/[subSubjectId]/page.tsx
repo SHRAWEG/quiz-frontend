@@ -46,7 +46,7 @@ export default function SubjectPage() {
         }
     }, [data, form]);
 
-    const onSubmit = (data: SubSubjectReqDto, ) => {
+    const onSubmit = (data: SubSubjectReqDto,) => {
         updateSubject({ subSubjectId, data }, {
             onSuccess: () => {
                 router.push(`/subjects/view/${data.subjectId}`);
@@ -77,11 +77,12 @@ export default function SubjectPage() {
                 description="Update the sub-subject name below"
                 breadcrumbs={[
                     { label: "Dashboard", href: "/" },
-                    { label: "Sub-Subjects", href: "/sub-subjects" },
-                    { label: "Update" }
+                    { label: "Subjects", href: "/subjects" },
+                    { label: "Subject Detail", href: `/subjects/view/${subjectId}` },
+                    { label: "Update Sub Subject" }
                 ]}
                 actions={
-                    <Button onClick={() => router.push("/sub-subjects")}>
+                    <Button onClick={() => router.push(`/subjects/view/${subjectId}`)}>
                         <ChevronLeft className="mr-2 h-4 w-4" />
                         Back
                     </Button>

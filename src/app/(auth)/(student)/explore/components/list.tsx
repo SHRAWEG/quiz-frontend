@@ -16,6 +16,24 @@ type filter = {
   categoryId: string;
 }
 
+const formatTime = (totalSeconds: number): string => {
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (days > 0) {
+    return `${days}d ${hours}h`;
+  }
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`;
+  }
+  if (minutes > 0) {
+    return `${minutes}m ${seconds}s`;
+  }
+  return `${seconds}s`;
+};
+
 export default function QuestionSetList() {
   const router = useRouter();
 
@@ -177,7 +195,12 @@ export default function QuestionSetList() {
               <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
                 <div className="flex items-center gap-1">
                   <Clock className="h-4 w-4" />
-                  <span>30 min</span>
+                  {questionSet.isTimeLimited ? (
+                    <span>{formatTime(questionSet.timeLimitSeconds ?? 0)}</span>
+                  ) : (
+                    <span>No Time Limit</span>
+                  )
+                  }
                 </div>
               </div>
 

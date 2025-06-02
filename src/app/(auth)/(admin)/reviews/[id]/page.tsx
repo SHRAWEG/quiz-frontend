@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useParams, useRouter } from "next/navigation"
 import { useGetQuestionSetAttemptToReview, useMarkQuestion, useMarkQuestionSet } from "@/hooks/api/useQuestionSetAttempt"
-import { ChevronLeft, CheckCircle2, XCircle, BookOpen } from "lucide-react"
+import { ChevronLeft, CheckCircle2, XCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { QUESTION_TYPES } from "@/constants/questions"
 import { formatISODate } from "@/lib/format-date"
@@ -85,10 +85,6 @@ export default function AttemptReviewPage() {
         setIsSaving(false)
       }
     })
-  }
-
-  const calculateNewScore = () => {
-    return Object.values(reviewStatus).filter(Boolean).length
   }
 
   if (isLoading) {

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { QuizHeader } from "../components/header"
 import { QuestionNavigation } from "../components/question-nav"
 import { useAnswerQuestion, useFinishQuestionSetAttempt, useGetQuestionSetAttemptDetail } from "@/hooks/api/useQuestionSetAttempt"
@@ -11,11 +11,16 @@ import { QuestionContent } from "../components/question-content"
 import { toast } from "sonner"
 import { QUESTION_TYPES } from "@/constants/questions"
 import { Button } from "@/components/ui/button"
-import { Trophy } from "lucide-react"
+import { AlertCircle, ChevronLeft, Trophy } from "lucide-react"
 import { useTimer } from "@/hooks/api/useTimer"
+import { ApiError } from "@/lib/axios"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { formatISODate } from "@/lib/format-date"
+import { Badge } from "@/components/ui/badge"
 
 export default function QuestionSetAttemptPage() {
   const { id } = useParams()
+  const router = useRouter()
 
   // State management
   const [questions, setQuestions] = useState<QuestionAttempt[]>([])
@@ -27,7 +32,9 @@ export default function QuestionSetAttemptPage() {
   const { mutate: answerQuestion, isPending } = useAnswerQuestion()
   const { mutate: finishQuestionSet, isPending: submitPending } = useFinishQuestionSetAttempt()
 
-  const { formattedTime, isExpired } = useTimer(id as string, questionSetAttempt?.questionSet.isTimeLimited ?? false);
+  const { formattedTime, isExpired } = useTimer(id as string);
+
+  console.log(formattedTime, isExpired)
 
   // Initialize questions and current question
   useEffect(() => {
@@ -74,7 +81,7 @@ export default function QuestionSetAttemptPage() {
       }
 
       answerQuestion({ questionSetAttemptId: id as string, data: answerData }, {
-        onSuccess: (res) => {
+        onSuccess: () => {
           const newIndex = direction === "prev" ? currentIndex - 1 : currentIndex + 1
           if (newIndex >= 0 && newIndex < questions.length) {
             setCurrentQuestionId(questions[newIndex].id)
@@ -82,11 +89,9 @@ export default function QuestionSetAttemptPage() {
           setSelectedValue("")
 
           refetch();
-
-          toast.success(res.message)
         },
-        onError: (error) => {
-          toast.error("Error submitting answer: " + error.message)
+        onError: (error: ApiError) => {
+          toast.error("Error submitting answer: " + error.data.message)
         }
       })
     } else {
@@ -110,8 +115,9 @@ export default function QuestionSetAttemptPage() {
 
         toast.success(res.message)
       },
-      onError: () => {
-        // window.location.reload();
+      onError: (error: ApiError) => {
+        refetch()
+        toast.error("Error submitting answers." + error.data.message)
       }
     })
   }
@@ -149,68 +155,133 @@ export default function QuestionSetAttemptPage() {
 
   if (questionSetAttempt.isCompleted) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-secondary">
-        <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="bg-accent-foreground p-8 text-center">
-            <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Trophy className="h-52 w-52 text-accent" />
-            </div>
-            <h1 className="text-3xl font-bold text-accent mb-2">Quiz Completed!</h1>
-            <p className="text-accent">You scored {questionSetAttempt.score} out of {questions.length}</p>
-          </div>
-
-          <div className="p-8 space-y-6">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="text-lg font-semibold">Your Score</h3>
-                <p className="text-muted-foreground">{Math.round(questionSetAttempt.percentage)}%</p>
+      questionSetAttempt.isChecked ? (
+        <div className="flex flex-col items-center justify-center h-screen bg-secondary">
+          <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="bg-accent-foreground p-8 text-center">
+              <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Trophy className="h-52 w-52 text-accent" />
               </div>
-              <div className="w-32 h-4 bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-green-500"
-                  style={{ width: `${questionSetAttempt.percentage}%` }}
-                />
-              </div>
+              <h1 className="text-3xl font-bold text-accent mb-2">Quiz Completed!</h1>
+              <p className="text-accent">You scored {questionSetAttempt.score} out of {questions.length}</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-green-50 p-4 rounded-lg text-center">
-                <p className="text-sm text-green-600">Correct</p>
-                <p className="text-2xl font-bold text-green-800">
-                  {questionSetAttempt.score}
-                </p>
+            <div className="p-8 space-y-6">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="text-lg font-semibold">Your Score</h3>
+                  <p className="text-muted-foreground">{Math.round(questionSetAttempt.percentage)}%</p>
+                </div>
+                <div className="w-32 h-4 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-green-500"
+                    style={{ width: `${questionSetAttempt.percentage}%` }}
+                  />
+                </div>
               </div>
-              <div className="bg-red-50 p-4 rounded-lg text-center">
-                <p className="text-sm text-red-600">Incorrect</p>
-                <p className="text-2xl font-bold text-red-800">
-                  {questions.length - questionSetAttempt.score}
-                </p>
-              </div>
-            </div>
 
-            <div className="pt-4 space-y-4">
-              <Button
-                className="w-full"
-                variant="default"
-                onClick={() => window.location.href = `/question-set-attempt/${id}/results`}
-              >
-                View Detailed Results
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => window.location.href = '/'}
-              >
-                Return to Dashboard
-              </Button>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-green-50 p-4 rounded-lg text-center">
+                  <p className="text-sm text-green-600">Correct</p>
+                  <p className="text-2xl font-bold text-green-800">
+                    {questionSetAttempt.score}
+                  </p>
+                </div>
+                <div className="bg-red-50 p-4 rounded-lg text-center">
+                  <p className="text-sm text-red-600">Incorrect</p>
+                  <p className="text-2xl font-bold text-red-800">
+                    {questions.length - questionSetAttempt.score}
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-4 space-y-4">
+                <Button
+                  className="w-full"
+                  variant="default"
+                  onClick={() => window.location.href = `/question-set-attempt/${id}/results`}
+                >
+                  View Detailed Results
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => window.location.href = '/'}
+                >
+                  Return to Dashboard
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="container mx-auto py-8">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="flex justify-center mb-6">
+              <AlertCircle className="h-16 w-16 text-yellow-500" />
+            </div>
+            <h1 className="text-3xl font-bold mb-4">Results Pending Verification</h1>
+
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle>Quiz Information</CardTitle>
+              </CardHeader>
+              <CardContent className="text-left space-y-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Quiz Name</p>
+                  <p className="font-medium">{questionSetAttempt.questionSet.name}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Completed On</p>
+                  <p className="font-medium">
+                    {formatISODate(new Date(questionSetAttempt.completedAt ?? "").toISOString())}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Status</p>
+                  <Badge variant="default" className="mt-1">
+                    Awaiting Verification
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+              <h3 className="font-medium text-lg mb-3">What's happening?</h3>
+              <p className="text-muted-foreground mb-4">
+                Your quiz contains questions that require manual review by our team.
+                This process typically takes 24-48 hours.
+              </p>
+              <p className="text-muted-foreground">
+                You'll receive a notification when your results are ready.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Button
+                variant="secondary"
+                onClick={() => router.push('/')}
+                className="gap-2"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Return to Dashboard
+              </Button>
+              {/* <Button
+              variant="outline"
+              onClick={() => router.push(`/quiz/${id}/answers`)}
+              className="gap-2"
+            >
+              <BookOpen className="h-4 w-4" />
+              View Your Answers
+            </Button> */}
+            </div>
+          </div>
+        </div>
+      )
     )
   }
 
-  if (questionSetAttempt.questionSet.isTimeLimited && formattedTime === "00:00:00") {
+  if (questionSetAttempt.questionSet.isTimeLimited && (formattedTime === "00:00" || formattedTime === "0:00" || formattedTime === "--:--") && isExpired) {
     return (
       <div className="flex items-center justify-center h-screen bg-muted">
         <div className="text-center p-8">

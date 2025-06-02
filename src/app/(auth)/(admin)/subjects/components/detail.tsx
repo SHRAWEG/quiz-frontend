@@ -38,7 +38,7 @@ export default function SubjectDetailPage() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap gap-1 items-center border-b-2 pb-4">
         <div className="text-2xl text-muted-foreground">Subject:</div>
-        <div className="text-2xl font-bold text-green-800">{data?.name}</div>
+        <div className="text-2xl font-bold">{data?.name}</div>
       </div>
       <div className="flex flex-wrap justify-between">
         <div className="text-lg text-muted-foreground">Sub-Subjects:</div>

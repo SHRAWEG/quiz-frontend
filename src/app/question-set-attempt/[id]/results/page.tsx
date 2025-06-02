@@ -37,14 +37,6 @@ const formatElapsedTime = (milliseconds: number): string => {
   return `${seconds}s`;
 };
 
-const formatRemainingTime = (milliseconds: number): string => {
-  const seconds = Math.floor(milliseconds / 1000);
-  if (seconds < 60) return `${seconds}s`;
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  return `${minutes}m ${remainingSeconds}s`;
-};
-
 export default function QuizResultsPage() {
   const { id } = useParams()
   const router = useRouter()
@@ -91,7 +83,7 @@ export default function QuizResultsPage() {
   const timeTaken = new Date(data?.completedAt ?? "").getTime() - new Date(data.startedAt).getTime()
 
   // Show pending verification screen if results need admin checking
-  if (data.isChecked === false) {
+  if (!data.isChecked) {
     return (
       <div className="container mx-auto py-8">
         <div className="max-w-3xl mx-auto text-center">

@@ -13,11 +13,11 @@ export const getColumns = (
       header: "Name",
       enableSorting: false,
     },
-    {
-      accessorKey: "subSubjectCount",
-      header: "#Sub-Subjects",
-      enableSorting: false,
-    },
+    // {
+    //   accessorKey: "subSubjectCount",
+    //   header: "#Sub-Subjects",
+    //   enableSorting: false,
+    // },
     {
       id: "actions",
       header: "Actions",
@@ -49,6 +49,7 @@ export const getColumns = (
                   <TooltipTrigger asChild>
                     <Button
                       variant="default"
+                      className="bg-yellow-500 hover:bg-yellow-400"
                     >
                       <Pencil />
                     </Button>
@@ -65,7 +66,7 @@ export const getColumns = (
                   <TooltipTrigger asChild>
                     <Button
                       variant="default"
-                      className="bg-green-600"
+                      className="bg-green-600 hover:bg-green-500"
                     >
                       <Plus />
                     </Button>

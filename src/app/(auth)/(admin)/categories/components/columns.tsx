@@ -28,6 +28,7 @@ export const getColumns = (
                   <TooltipTrigger asChild>
                     <Button
                       variant="default"
+                      className="bg-yellow-500 hover:bg-yellow-400"
                     >
                       <Pencil />
                     </Button>

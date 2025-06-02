@@ -20,8 +20,7 @@ import {
     Award,
     BarChart2,
     Calendar,
-    TrendingUp,
-    CheckCircle
+    TrendingUp
 } from 'lucide-react';
 import { useGetQuestionSetAttempts } from '@/hooks/api/useQuestionSetAttempt';
 import { QuestionSetAttemptList } from '@/types/question-set-attempt';

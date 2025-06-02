@@ -13,7 +13,7 @@ export type TimerResponse = {
   isCompleted: boolean;
 };
 
-export function useTimer(attemptId: string, isTimeLimited: boolean) {
+export function useTimer(attemptId: string) {
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
   // Fetch initial time and auto-refetch
@@ -25,7 +25,7 @@ export function useTimer(attemptId: string, isTimeLimited: boolean) {
       );
       return response.data;
     },
-    refetchInterval: 300000, // Sync every 5 minutes
+    refetchInterval: 30000, // Sync every 30 seconds
   });
 
   useEffect(() => {

@@ -97,6 +97,7 @@ export const getColumns = (
                   <TooltipTrigger asChild>
                     <Button
                       variant="default"
+                      className="bg-yellow-500 hover:bg-yellow-400"
                     >
                       <Pencil />
                     </Button>
@@ -114,7 +115,7 @@ export const getColumns = (
                     isPending && pendingId === questionSet.id ? <Button disabled variant="secondary"><Loader2 className="animate-spin" /></Button> : (
                       <Button
                         variant="default"
-                        className={questionSet.status === "published" ? "bg-violet-500" : "bg-green-500"}
+                        className={questionSet.status === "published" ? "bg-violet-500 hover:bg-violet-400" : "bg-green-500 hover:bg-green-400"}
                         onClick={() => {
                           if (questionSet.status === "published") {
                             handleDraftQuestionSet(questionSet.id)

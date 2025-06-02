@@ -31,6 +31,8 @@ export const questionSetListSchema = z.object({
 export const questionSetToAttemptSchema = z.object({
     id: z.string(),
     isFree: z.boolean(),
+    isTimeLimited: z.boolean(),
+    timeLimitSeconds: z.number().optional(),
     categoryId: z.string(),
     category: categorySchema,
     name: z.string(),
