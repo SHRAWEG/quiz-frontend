@@ -26,6 +26,7 @@ import { ApiError } from "@/lib/axios";
 import { useAuthContext } from "@/contexts/AuthContext";
 
 export default function LoginScreen() {
+  const { login } = useAuthContext();
 
   const { mutate, isPending } = useLogin();
   const { mutate: resendVerify } = useResendVerification();
@@ -34,7 +35,7 @@ export default function LoginScreen() {
   const [error, setError] = useState("");
   const [resendVerifyLink, setResendVerifyLink] = useState(false);
 
-  const { login } = useAuthContext();
+
 
   const form = useForm<LoginReqDto>({
     resolver: zodResolver(loginReqDto),

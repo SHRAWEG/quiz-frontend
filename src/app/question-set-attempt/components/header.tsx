@@ -12,6 +12,7 @@ interface QuizHeaderProps {
   totalQuestions: number
   formattedTime?: string
   isExpired?: boolean
+  isTimeCritical?: boolean
 }
 
 export function QuizHeader({
@@ -19,7 +20,8 @@ export function QuizHeader({
   currentQuestion,
   totalQuestions,
   formattedTime,
-  isExpired
+  isExpired,
+  isTimeCritical
 }: QuizHeaderProps) {
   const router = useRouter()
 
@@ -48,6 +50,15 @@ export function QuizHeader({
               Question {currentQuestion} of {totalQuestions}
             </p>
           </div>
+        </div>
+
+        <div className={`${isTimeCritical ? 'animate-pulse' : ''}`}>
+          {/* ... existing content ... */}
+          {isTimeCritical && (
+            <span className="text-red-600 font-bold">
+              Auto submitting in {formattedTime}
+            </span>
+          )}
         </div>
 
         <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md ${isExpired ? 'bg-red-100 text-red-800' : 'bg-accent'

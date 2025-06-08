@@ -15,6 +15,7 @@ export type TimerResponse = {
 
 export function useTimer(attemptId: string) {
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [showWarning, setShowWarning] = useState(false);
 
   // Fetch initial time and auto-refetch
   const { data } = useQuery<TimerResponse>({
@@ -41,6 +42,12 @@ export function useTimer(attemptId: string) {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         if (prev === null) return null;
+
+        // Show warning when 10 seconds left
+        if (prev <= 10 && !showWarning) {
+          setShowWarning(true);
+        }
+
         if (prev <= 0) {
           clearInterval(timer);
           return 0;
@@ -50,7 +57,7 @@ export function useTimer(attemptId: string) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeLeft]);
+  }, [timeLeft, showWarning]);
 
   const formatTime = (seconds: number | null): string => {
     if (seconds === null) return '--:--';
@@ -69,6 +76,8 @@ export function useTimer(attemptId: string) {
     timeLeft,
     formattedTime: formatTime(timeLeft),
     expiryAt: data?.expiryAt,
-    isExpired: data?.isExpired || false
+    isExpired: data?.isExpired || false,
+    showWarning,
+    isTimeCritical: (timeLeft || 0) <= 10
   };
 }

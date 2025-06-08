@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { QUESTION_TYPES } from "@/constants/questions"
 import { questionTypes } from "@/enums/questions"
 import { QuestionAttempt } from "@/types/question-set-attempt"
-import { ChevronLeft, ChevronRight, LoaderPinwheel, Pencil, Upload } from "lucide-react"
+import { ChevronLeft, ChevronRight, Eye, LoaderPinwheel, Pencil, Upload } from "lucide-react"
 
 interface QuestionContentProps {
   questionAttempt: QuestionAttempt
@@ -14,9 +14,10 @@ interface QuestionContentProps {
   answeredQuestions: number
   selectedValue: string | undefined
   setSelectedValue: (optionId: string) => void
+  setShowReviewModal: (showReviewModal: boolean) => void
   onNavigate: (direction: "prev" | "next", selectedValue?: string) => void
   isPending: boolean
-  onSubmit: () => void
+  setSubmitConfirmation: (isSubmit: boolean) => void
   submitPending: boolean
 }
 
@@ -27,9 +28,10 @@ export function QuestionContent({
   answeredQuestions,
   selectedValue,
   setSelectedValue,
+  setShowReviewModal,
   onNavigate,
   isPending,
-  onSubmit,
+  setSubmitConfirmation,
   submitPending
 }: QuestionContentProps) {
 
@@ -149,14 +151,25 @@ export function QuestionContent({
                 <Pencil />
                 <span className="text-sm font-medium text-muted-foreground">{answeredQuestions} of {totalQuestions} Questions Answered </span>
               </div>
-              <Button
-                variant="default"
-                onClick={onSubmit}
-                disabled={submitPending}
-                className="gap-2 bg-green-600"
-              >
-                {submitPending ? <LoaderPinwheel className="animate-spin" /> : <Upload />} Finish
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="default"
+                  onClick={() => setShowReviewModal(true)}
+                  className="gap-2"
+                >
+                  <Eye className="h-4 w-4" />
+                  Review Answers
+                </Button>
+                <Button
+                  variant="default"
+                  onClick={() => setSubmitConfirmation(true)}
+                  className="gap-2 bg-green-600 hover:bg-green-500"
+                  disabled={submitPending}
+                >
+                  {submitPending ? <LoaderPinwheel className="animate-spin" /> : <Upload />} Finish
+                </Button>
+              </div>
+
             </div>
           </CardContent>
         </Card>

@@ -44,7 +44,7 @@ export default function SubjectPage() {
             });
             form.setValue("subjectId", data.subjectId);
         }
-    }, [data, form]);
+    }, [data, form, subjectId]);
 
     const onSubmit = (data: SubSubjectReqDto,) => {
         updateSubject({ subSubjectId, data }, {
