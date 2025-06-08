@@ -27,7 +27,7 @@ export default function ReviewAnswers(
   }: ReviewAnswerProps
 ) {
   return (
-    <div className="mx-auto my-8">
+    <div className="mx-16 my-8">
       <p className="text-sm text-muted-foreground">
         {answeredAll ?
           "All questions answered - ready to submit!" :
