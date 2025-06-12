@@ -10,6 +10,7 @@ interface QuizHeaderProps {
   timeLimit?: number // in seconds
   currentQuestion: number
   totalQuestions: number
+  attemptNumber: number
   formattedTime?: string
   isExpired?: boolean
   isTimeCritical?: boolean
@@ -21,7 +22,8 @@ export function QuizHeader({
   totalQuestions,
   formattedTime,
   isExpired,
-  isTimeCritical
+  isTimeCritical,
+  attemptNumber
 }: QuizHeaderProps) {
   const router = useRouter()
 
@@ -44,7 +46,7 @@ export function QuizHeader({
 
           <div className="truncate space-y-1">
             <h1 className="truncate font-medium text-sm md:text-base">
-              {name}
+              {name} | Attempt: {attemptNumber}
             </h1>
             <p className="text-xs text-muted-foreground">
               Question {currentQuestion} of {totalQuestions}

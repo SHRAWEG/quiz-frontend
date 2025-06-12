@@ -22,6 +22,17 @@ export const questionSetAttemptSchema = z.object({
     isChecked: z.boolean(),
     score: z.number(),
     percentage: z.number(),
+    attemptNumber: z.number(),
+    totalAttempts: z.number(),
+    reportStatistics: z.object({
+        highestOverallPercentage: z.number(),
+        averageOverallPercentage: z.number(),
+        lowestOverallPercentage: z.number(),
+        highestUserPercentage: z.number(),
+        averageUserPercentage: z.number(),
+        lowestUserPercentage: z.number(),
+        totalAttempts: z.number()
+    }),
     questionSet: questionSetSchema,
     questionAttempts: z.array(questionAttemptSchema)
 })

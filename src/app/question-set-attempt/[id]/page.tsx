@@ -184,6 +184,7 @@ export default function QuestionSetAttemptPage() {
     <div className="flex flex-col min-h-screen h-full bg-muted">
       <QuizHeader
         name={questionSetAttempt.questionSet.name}
+        attemptNumber={questionSetAttempt.attemptNumber}
         currentQuestion={currentIndex + 1}
         totalQuestions={questions.length}
         formattedTime={formattedTime}

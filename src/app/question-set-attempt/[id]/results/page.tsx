@@ -17,6 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { useState } from "react"
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 
 const formatElapsedTime = (milliseconds: number): string => {
   const totalSeconds = Math.floor(milliseconds / 1000);
@@ -156,6 +157,7 @@ export default function QuizResultsPage() {
       <div className="text-center mb-10">
         <h1 className="text-3xl font-bold mb-2">Results</h1>
         <p className="text-muted-foreground">{data.questionSet.name}</p>
+        <p className="text-blue-400">Attempt: {data.attemptNumber} of {data.totalAttempts} </p>
         <div className="flex justify-center mt-2">
           <Badge variant={data.questionSet.isFree ? "secondary" : "premium"} className="mr-2">
             {data.questionSet.isFree ? "Free" : "Premium"}
@@ -167,7 +169,7 @@ export default function QuizResultsPage() {
       </div>
 
       {/* Score Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Score</CardTitle>
@@ -188,6 +190,49 @@ export default function QuizResultsPage() {
                 }`
               }
             />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Comparison (Overall | Yours) </CardTitle>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-6 w-6 text-primary"
+            >
+              <path d="M3 3v18h18" />
+              <path d="m19 9-5 5-4-4-3 3" />
+            </svg>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Highest</span>
+                <span className="font-medium text-green-600">
+                  {Math.round(data.reportStatistics.highestOverallPercentage)}%
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Average</span>
+                <span className="font-medium">
+                  {Math.round(data.comparisonStats?.averageScore || 0)}%
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Lowest</span>
+                <span className="font-medium text-red-600">
+                  {Math.round(data.comparisonStats?.lowestScore || 0)}%
+                </span>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
