@@ -46,7 +46,7 @@ export function QuestionNavigation({
                 <div key={questionAttempt.id} className="">
                   <Button
                     variant={questionAttempt.id === currentQuestionId ? "default" : "outline"}
-                    className={`w-full h-auto min-h-10 justify-start text-left ${isAnswered && "ring-1 ring-green-400"}`}
+                    className={`w-full h-auto min-h-10 justify-start text-left whitespace-normal ${isAnswered && "ring-1 ring-green-400"}`}
                     onClick={() => onQuestionSelect(questionAttempt.id)}
                   >
                     <span className="font-medium mr-2">{index + 1}.</span>

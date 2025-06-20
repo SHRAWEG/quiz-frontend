@@ -1,58 +1,78 @@
 "use client"
 
-import { Home, FileQuestion, Book, Loader2, LayoutList } from "lucide-react"
+import {
+  LayoutDashboard,
+  BookOpenText,
+  HelpCircle,
+  Tags,
+  Library,
+  LineChart,
+  ClipboardList,
+  ClipboardCheck,
+  CreditCard,
+  Loader2,
+  Crown
+} from "lucide-react"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/layout/app-sidebar"
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Suspense, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const items = [
   {
     title: "Dashboard",
     url: "/dashboard",
-    icon: Home,
+    icon: LayoutDashboard, // More specific than Home for admin dashboards
     role: ['admin', 'teacher', 'student']
   },
   {
-    title: "Subject",
+    title: "Subjects",
     url: "/subjects",
-    icon: Book,
+    icon: BookOpenText, // Better for subject management
     role: ["admin"]
   },
-  // {
-  //   title: "Sub Subject",
-  //   url: "/sub-subjects",
-  //   icon: BookText,
-  //   role: ["admin"]
-  // },
   {
-    title: "Question",
+    title: "Questions",
     url: "/questions",
-    icon: FileQuestion,
+    icon: HelpCircle, // More question-specific than FileQuestion
     role: ["admin", "teacher"]
   },
   {
-    title: "Category",
+    title: "Categories",
     url: "/categories",
-    icon: FileQuestion,
+    icon: Tags, // Better for categorization
     role: ["admin"]
   },
   {
-    title: "Question Set",
-    url: "/question-sets",
-    icon: FileQuestion,
+    title: "Question Banks",
+    url: "/question-sets", // Changed URL to match better name
+    icon: Library, // Represents collections of questions
     role: ["admin"]
   },
   {
-    title: "Explore",
-    url: "/explore",
-    icon: LayoutList,
+    title: "My Progress",
+    url: "/history", // Consider renaming the URL too
+    icon: LineChart, // Shows progress better than History
     role: ["student"]
   },
   {
-    title: "Reviews",
+    title: "Practice Tests",
+    url: "/explore", // Consider renaming to /practice
+    icon: ClipboardList, // Represents tests/exams
+    role: ["student"]
+  },
+  {
+    title: "Student Assessments", // More descriptive than "Reviews"
     url: "/reviews",
-    icon: FileQuestion,
+    icon: ClipboardCheck, // Represents checking/grading
+    role: ["admin"]
+  },
+  {
+    title: "Subscription Plans", // More descriptive than "Payments"
+    url: "/subscription-plans",
+    icon: CreditCard, // Standard for payment/subscriptions
     role: ["admin"]
   }
 ]
@@ -62,6 +82,8 @@ export default function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const router = useRouter();
+
   const { user, isAuthenticated, isLoading, logout } = useAuthContext();
 
   useEffect(() => {
@@ -92,7 +114,18 @@ export default function AdminLayout({
             <div className="flex items-center h-16 px-4 sm:px-6 lg:px-8">
               <SidebarTrigger />
               <div className="ml-auto flex items-center space-x-4">
-                {/* You can add user dropdown or other header items here */}
+                {
+                  user?.role === 'student' && (
+                    <Button
+                      variant="default"
+                      className="hidden sm:inline-flex bg-amber-500 text-white hover:bg-amber-600 focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 rounded-md"
+                      onClick={() => router.push('/subscriptions')}
+                    >
+                      <Crown className="mr-2" />
+                      Go Premium
+                    </Button>
+                  )
+                }
               </div>
             </div>
           </header>

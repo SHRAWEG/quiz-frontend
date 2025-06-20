@@ -1,7 +1,7 @@
 import { apiClient, ApiError, ApiResponse } from "@/lib/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { API_URLS } from "@/lib/constants/api-urls";
-import { Question, QuestionList, QuestionReqDto } from "@/types/question";
+import { Question, QuestionList, QuestionReqDto, UploadQuestionResDto } from "@/types/question";
 
 export type QuestionParams = {
   page: number;
@@ -59,4 +59,18 @@ export const useDeleteQuestion = () =>
   useMutation<Question, ApiError, { questionId: string }>({
     mutationKey: ["deleteQuestion"],
     mutationFn: async ({ questionId }) => await apiClient.delete<Question>(`${API_URLS.question}/${questionId}`)
+  })
+
+export const useImportQuestions = () =>
+  useMutation<ApiResponse<UploadQuestionResDto>, ApiError, { file: File }>({
+    mutationKey: ["importQuestions"],
+    mutationFn: async ({ file }) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      return await apiClient.post<ApiResponse<UploadQuestionResDto>>(`${API_URLS.question}/upload-csv`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
+    }
   })

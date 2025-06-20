@@ -23,18 +23,25 @@ export const questionSetAttemptSchema = z.object({
     score: z.number(),
     percentage: z.number(),
     attemptNumber: z.number(),
-    totalAttempts: z.number(),
     reportStatistics: z.object({
         highestOverallPercentage: z.number(),
         averageOverallPercentage: z.number(),
         lowestOverallPercentage: z.number(),
-        highestUserPercentage: z.number(),
-        averageUserPercentage: z.number(),
-        lowestUserPercentage: z.number(),
-        totalAttempts: z.number()
+        userHighestPercentage: z.number(),
+        userAveragePercentage: z.number(),
+        userLowestPercentage: z.number(),
+        totalUserAttempts: z.number()
     }),
     questionSet: questionSetSchema,
     questionAttempts: z.array(questionAttemptSchema)
+})
+
+export const questionSetAttemptListSchema = z.object({
+    data: z.array(questionSetAttemptSchema),
+    totalItems: z.number(),
+    totalPages: z.number(),
+    currentPage: z.number(),
+    pageSize: z.number()
 })
 
 export const questionSetAttemptResSchema = z.object({
@@ -75,7 +82,7 @@ export type AnswerReqDto = z.infer<typeof answerReqSchema>;
 export type MarkReqDto = z.infer<typeof markReqSchema>;
 export type QuestionAttempt = z.infer<typeof questionAttemptSchema>;
 export type QuestionSetAttempt = z.infer<typeof questionSetAttemptSchema>;
-export type QuestionSetAttemptList = z.infer<typeof questionSetAttemptSchema>[];
+export type QuestionSetAttemptList = z.infer<typeof questionSetAttemptListSchema>;
 // export type QuestionSetAttemptsToReviewList = z.infer<typeof questionSetAttemptsToReviewListSchema>;
 export type QuestionSetAttemptResDto = z.infer<typeof questionSetAttemptResSchema>;
 

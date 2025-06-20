@@ -7,6 +7,7 @@ import { useParams } from "next/navigation"
 import { useGetQuestionSetAttemptResult } from "@/hooks/api/useQuestionSetAttempt"
 import { ChevronLeft, Clock, Award, BookOpen, AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
+
 import { Badge } from "@/components/ui/badge"
 import { QUESTION_TYPES } from "@/constants/questions"
 import { formatISODate } from "@/lib/format-date"
@@ -17,7 +18,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { useState } from "react"
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 
 const formatElapsedTime = (milliseconds: number): string => {
   const totalSeconds = Math.floor(milliseconds / 1000);
@@ -82,6 +82,8 @@ export default function QuizResultsPage() {
 
   const totalQuestions = data.questionAttempts.length
   const timeTaken = new Date(data?.completedAt ?? "").getTime() - new Date(data.startedAt).getTime()
+
+  console.log(data);
 
   // Show pending verification screen if results need admin checking
   if (!data.isChecked) {
@@ -157,7 +159,7 @@ export default function QuizResultsPage() {
       <div className="text-center mb-10">
         <h1 className="text-3xl font-bold mb-2">Results</h1>
         <p className="text-muted-foreground">{data.questionSet.name}</p>
-        <p className="text-blue-400">Attempt: {data.attemptNumber} of {data.totalAttempts} </p>
+        <p className="text-blue-400">Attempt: {data.attemptNumber} of {data.reportStatistics.totalUserAttempts} </p>
         <div className="flex justify-center mt-2">
           <Badge variant={data.questionSet.isFree ? "secondary" : "premium"} className="mr-2">
             {data.questionSet.isFree ? "Free" : "Premium"}
@@ -217,19 +219,21 @@ export default function QuizResultsPage() {
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Highest</span>
                 <span className="font-medium text-green-600">
-                  {Math.round(data.reportStatistics.highestOverallPercentage)}%
+                  {Math.round(data.reportStatistics.highestOverallPercentage)}% | {Math.round(data.reportStatistics.userHighestPercentage)}%
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Average</span>
                 <span className="font-medium">
-                  {Math.round(data.comparisonStats?.averageScore || 0)}%
+                  {Math.round(data.reportStatistics.averageOverallPercentage)}% | {Math.round(data.reportStatistics.userAveragePercentage)}%
+
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Lowest</span>
                 <span className="font-medium text-red-600">
-                  {Math.round(data.comparisonStats?.lowestScore || 0)}%
+                  {Math.round(data.reportStatistics.lowestOverallPercentage)}% | {Math.round(data.reportStatistics.userLowestPercentage)}%
+
                 </span>
               </div>
             </div>

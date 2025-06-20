@@ -3,12 +3,6 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { API_URLS } from "@/lib/constants/api-urls";
 import { AnswerReqDto, MarkReqDto, QuestionSetAttempt, QuestionSetAttemptList, QuestionSetAttemptResDto } from "@/types/question-set-attempt";
 
-export type QuestionSetParams = {
-  page: number;
-  limit: number;
-  search: string;
-  categoryId: string;
-}
 
 export type StatusRes = {
   id: string;
@@ -20,18 +14,22 @@ export type StatusRes = {
   isCompleted: boolean;
 }
 
-export const useGetQuestionSetAttempts = () => useQuery<QuestionSetAttemptList>({
-  queryKey: ["questionSetAttempts"],
-  queryFn: async () => {
-    const response = await apiClient.get<ApiResponse<QuestionSetAttemptList>>(API_URLS.questionSetAttempt)
-    return response.data;
-  }
-})
+export type QuestionSetAttemptParams = {
+  page: number;
+  limit: number;
+  search: string;
+  status: string;
+}
 
-export const useGetQuestionSetAttemptsToReview = () => useQuery<QuestionSetAttemptList>({
+export const useGetQuestionSetAttempts = (params?: QuestionSetAttemptParams) => useQuery<QuestionSetAttemptList>({
+  queryKey: ["questionSetAttempts", params],
+  queryFn: async () => await apiClient.get<QuestionSetAttemptList>(`${API_URLS.questionSetAttempt}`, { params })
+});
+
+export const useGetQuestionSetAttemptsToReview = () => useQuery<QuestionSetAttempt[]>({
   queryKey: ["questionSetAttempts"],
   queryFn: async () => {
-    const response = await apiClient.get<ApiResponse<QuestionSetAttemptList>>(`${API_URLS.questionSetAttempt}/review`)
+    const response = await apiClient.get<ApiResponse<QuestionSetAttempt[]>>(`${API_URLS.questionSetAttempt}/review`)
     return response.data;
   }
 })

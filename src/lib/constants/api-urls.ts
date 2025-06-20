@@ -6,5 +6,6 @@ export const API_URLS = {
     category: "/categories",
     questionSet: "/question-sets",
     questionSetAttempt: "/question-set-attempts",
-    quizzes: "/quizes"
+    quizzes: "/quizes",
+    subscriptionPlan: "/subscription-plans",
 }

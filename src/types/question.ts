@@ -78,9 +78,15 @@ export const questionReqDto = z.object({
     }
   );
 
-
+export const uploadQuestionResDto = z.object({
+  errors: z.array(z.object({
+    row: z.number(),
+    message: z.string()
+  }))
+});
 
 export type QuestionReqDto = z.infer<typeof questionReqDto>;
 export type Question = z.infer<typeof questionSchema>;
 export type QuestionList = z.infer<typeof questionListSchema>;
+export type UploadQuestionResDto = z.infer<typeof uploadQuestionResDto>;
 

@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/layout/app-header"
 import { useAuthContext } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
+import { Plus, Upload } from "lucide-react"
 
 export default function QuestionPage() {
   const { user } = useAuthContext();
@@ -24,12 +24,17 @@ export default function QuestionPage() {
         ]}
         actions={
           user?.role === "teacher" && (
-            <Button onClick={() => router.push("/questions/create")}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Question
-            </Button>
-          )
-        }
+            <>
+              <Button onClick={() => router.push("/questions/create")}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Question
+              </Button>
+              <Button onClick={() => router.push("/questions/upload")} variant="default" className="ml-2">
+                <Upload className="mr-2 h-4 w-4" />
+                Import Questions
+              </Button>
+            </>
+          )}
       />
       <QuestionsList />
     </Card>

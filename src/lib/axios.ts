@@ -6,6 +6,7 @@ import { getCookie } from 'cookies-next/client';
 export interface ApiResponse<T = any> {
   data: T;
   status: number;
+  success: boolean;
   message: string;
 }
 

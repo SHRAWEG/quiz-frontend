@@ -84,10 +84,14 @@ export default function StudentDashboard() {
     //     }
     // ];
 
-    const { data: questionSetAttempts } = useGetQuestionSetAttempts();
+    const params = {
+        page: 1,
+        limit: 10,
+        search: '',
+        status: 'pending',
+    }
 
-    const pendingQuestionSets: QuestionSetAttemptList = questionSetAttempts?.filter((attempt) => !attempt.isCompleted) || [];
-    const completedQuestionSets = questionSetAttempts?.filter((attempt) => attempt.isCompleted) || [];
+    const { data: questionSetAttempts } = useGetQuestionSetAttempts(params);
 
     return (
         <div className="p-6 space-y-6">
@@ -145,12 +149,12 @@ export default function StudentDashboard() {
             </div>
 
             {/* Tabs for different dashboard sections */}
-            <Tabs defaultValue="pending" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 md:w-auto">
-                    <TabsTrigger value="pending">Pending Sets</TabsTrigger>
-                    <TabsTrigger value="completed">Completed Sets</TabsTrigger>
-                    <TabsTrigger value="progress">My Progress</TabsTrigger>
-                </TabsList>
+            {/* <Tabs defaultValue="pending" className="w-full">
+                <TabsList className="grid w-full grid-cols-1 md:w-auto"> */}
+                    {/* <TabsTrigger value="pending">Pending Sets</TabsTrigger> */}
+                    {/* <TabsTrigger value="completed">Completed Sets</TabsTrigger>
+                    <TabsTrigger value="progress">My Progress</TabsTrigger> */}
+                {/* </TabsList> */}
 
                 {/* <TabsContent value="quizzes" className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -187,20 +191,20 @@ export default function StudentDashboard() {
                     </div>
                 </TabsContent> */}
 
-                <TabsContent value="pending" className="space-y-4">
+                {/* <TabsContent value="pending" className="space-y-4"> */}
                     <Card>
                         <CardHeader>
                             <CardTitle>History</CardTitle>
                             <CardDescription>Your pending sets</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            {pendingQuestionSets.length === 0 ?
+                            {questionSetAttempts?.data.length === 0 ?
                                 <div className="flex items-center justify-center h-32 text-muted-foreground">
                                     <p>No pending quizzes available</p>
                                 </div>
                                 :
                                 <div className="space-y-4">
-                                    {pendingQuestionSets.map((questionSetAttempt) => {
+                                    {questionSetAttempts?.data.map((questionSetAttempt) => {
                                         const startedAt = formatISODate(questionSetAttempt.startedAt.toString());
 
                                         return (
@@ -233,9 +237,9 @@ export default function StudentDashboard() {
 
                         </CardContent>
                     </Card>
-                </TabsContent>
+                {/* </TabsContent> */}
 
-                <TabsContent value="completed" className="space-y-4">
+                {/* <TabsContent value="completed" className="space-y-4">
                     <Card>
                         <CardHeader>
                             <CardTitle>History</CardTitle>
@@ -268,14 +272,14 @@ export default function StudentDashboard() {
                                                     </p>
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    {/* <span className={`text-lg font-bold ${questionSetAttempt.score >= 80 ? 'text-green-500' :
+                                                    <span className={`text-lg font-bold ${questionSetAttempt.score >= 80 ? 'text-green-500' :
                                                         questionSetAttempt.score >= 60 ? 'text-yellow-500' : 'text-red-500'
                                                         }`}>
                                                         {Math.round(questionSetAttempt.percentage)}%
                                                     </span>
                                                     <CheckCircle className={`h-5 w-5 ${questionSetAttempt.score >= 80 ? 'text-green-500' :
                                                         questionSetAttempt.score >= 60 ? 'text-yellow-500' : 'text-red-500'
-                                                        }`} /> */}
+                                                        }`} /> 
 
                                                     <Button
                                                         variant="outline"
@@ -297,48 +301,8 @@ export default function StudentDashboard() {
 
                         </CardContent>
                     </Card>
-                </TabsContent>
-
-                <TabsContent value="progress" className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Score Trend</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-                                    <BarChart2 className="h-16 w-16" />
-                                    <p className="ml-2">Visualization of your performance over time</p>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Subject Breakdown</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-                                    <BookOpen className="h-16 w-16" />
-                                    <p className="ml-2">Your performance by subject area</p>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card className="md:col-span-2">
-                            <CardHeader>
-                                <CardTitle>Upcoming Quizzes</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="h-[200px] flex items-center justify-center text-muted-foreground">
-                                    <Calendar className="h-16 w-16" />
-                                    <p className="ml-2">Your scheduled quizzes will appear here</p>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </TabsContent>
-            </Tabs>
+                </TabsContent> */}
+            {/* </Tabs> */}
         </div>
     );
 }
