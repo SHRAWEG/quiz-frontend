@@ -1,7 +1,7 @@
 export const subscriptionDuration = [
     { value: "monthly", label: "Monthly" },
     { value: "quarterly", label: "Quarterly" },
-    { value: "semi-annually", label: "Semi-Annually" },
-    { value: "annually", label: "Annually" },
+    { value: "semi_annually", label: "Semi-Annually" },
+    { value: "yearly", label: "Annually" },
     { value: "lifetime", label: "Lifetime" },
 ];
