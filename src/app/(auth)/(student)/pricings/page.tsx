@@ -2,18 +2,18 @@
 "use client";
 
 import { useState } from 'react';
-import { Check, Crown, ShoppingBasket, Zap } from 'lucide-react';
+import { ShoppingBasket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useGetActiveSubscriptionPlans } from '@/hooks/api/useSubscriptionPlan';
+import { useRouter } from 'next/navigation';
 
 export default function SubscriptionPage() {
+  const router = useRouter();
+
   const [selectedPlan, setSelectedPlan] = useState<string>("");
-  const { data: subscriptionPlans, isLoading } = useGetActiveSubscriptionPlans();
+  const { data: subscriptionPlans } = useGetActiveSubscriptionPlans();
 
   return (
     <Card className="p-8">
@@ -70,8 +70,7 @@ export default function SubscriptionPage() {
           disabled={!selectedPlan}
           onClick={() => {
             if (selectedPlan) {
-              // Handle payment logic here
-              console.log(`Proceeding to payment for plan: ${selectedPlan}`);
+              router.push(`payment/${selectedPlan}`)
             }
           }}
         >

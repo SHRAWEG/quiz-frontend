@@ -119,7 +119,7 @@ export default function AdminLayout({
                     <Button
                       variant="default"
                       className="hidden sm:inline-flex bg-amber-500 text-white hover:bg-amber-600 focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 rounded-md"
-                      onClick={() => router.push('/subscriptions')}
+                      onClick={() => router.push('/pricings')}
                     >
                       <Crown className="mr-2" />
                       Go Premium
