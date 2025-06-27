@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader } from "@/components/layout/app-header";
+import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChevronLeft } from "lucide-react";

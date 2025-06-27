@@ -1,7 +1,7 @@
 // app/categories/[id]/page.tsx
 "use client"
 
-import { PageHeader } from "@/components/layout/app-header";
+import { PageHeader } from "@/components/ui/page-header";
 import { categoryReqDto, CategoryReqDto } from "@/types/category"
 import { useGetAllCategories, useGetCategoryDetail, useUpdateCategory } from "@/hooks/api/useCategory"
 import { useParams, useRouter } from "next/navigation"

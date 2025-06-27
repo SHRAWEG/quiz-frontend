@@ -8,5 +8,6 @@ export const API_URLS = {
     questionSetAttempt: "/question-set-attempts",
     quizzes: "/quizes",
     subscriptionPlan: "/subscription-plans",
-    userSubscription: "/user-subscriptions"
+    userSubscription: "/user-subscriptions",
+    user: "/users"
 }

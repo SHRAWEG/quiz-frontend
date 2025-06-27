@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { PageHeader } from "@/components/layout/app-header";
+import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";

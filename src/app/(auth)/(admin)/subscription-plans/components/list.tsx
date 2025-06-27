@@ -3,10 +3,10 @@
 import { DataTable } from "@/components/shared/server-data-table/data-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { SubscriptionPlanParams, useDeleteSubscriptionPlan, useGetSubscriptionPlans } from "@/hooks/api/useSubscriptionPlan"
-import { ApiError } from "@/lib/axios";
+import { SubscriptionPlanParams, useGetSubscriptionPlans } from "@/hooks/api/useSubscriptionPlan"
+// import { ApiError } from "@/lib/axios";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 import { getColumns } from "./columns";
 
 export default function List() {
@@ -23,7 +23,7 @@ export default function List() {
     }
 
     const { data, isFetching, refetch } = useGetSubscriptionPlans(params);
-    const { mutate: deleteSubscriptionPlan } = useDeleteSubscriptionPlan();
+    // const { mutate: deleteSubscriptionPlan } = useDeleteSubscriptionPlan();
 
     useEffect(() => { refetch() }, [refetch, tableState])
 
@@ -36,21 +36,21 @@ export default function List() {
         setTableState(prev => ({ ...prev, pagination }));
     };
 
-    const handleDelete = (id: string) => {
-        deleteSubscriptionPlan({ subscriptionPlanId: id }, {
-            onSuccess: () => {
-                refetch();
-                toast.success("Category deleted successfully");
-            },
+    // const handleDelete = (id: string) => {
+    //     deleteSubscriptionPlan({ subscriptionPlanId: id }, {
+    //         onSuccess: () => {
+    //             refetch();
+    //             toast.success("Category deleted successfully");
+    //         },
 
-            onError: (error: ApiError) => {
-                toast.error(error.data.message);
-            }
-        });
+    //         onError: (error: ApiError) => {
+    //             toast.error(error.data.message);
+    //         }
+    //     });
 
-    }
+    // }
 
-    const tableColumns = getColumns(handleDelete);
+    const tableColumns = getColumns();
 
     return (
         <div className="flex flex-col gap-4">

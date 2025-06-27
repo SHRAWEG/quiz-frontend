@@ -1,7 +1,7 @@
 "use client"
 
 import List from "./components/list"
-import { PageHeader } from "@/components/layout/app-header"
+import { PageHeader } from "@/components/ui/page-header"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Plus } from "lucide-react"

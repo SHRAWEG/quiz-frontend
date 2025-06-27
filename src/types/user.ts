@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { categorySchema } from "./category";
 
 // Define a schema for a single subject
 export const userSchema = z.object({
@@ -15,4 +16,14 @@ export const userSchema = z.object({
   updatedAt: z.date()
 });
 
+export const userPreference = z.object({
+  categories: z.array(categorySchema)
+})
+
+export const setUserPreferenceReq = z.object({
+  categoryIds: z.string().array().min(1)
+})
+
 export type User = z.infer<typeof userSchema>;
+export type UserPreference = z.infer<typeof userPreference>;
+export type SetUserPreference = z.infer<typeof setUserPreferenceReq>;

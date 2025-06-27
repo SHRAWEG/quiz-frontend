@@ -10,6 +10,7 @@ type User = {
   email: string
   name: string
   role: string
+  hasPreference: boolean
 }
 
 type AuthContextType = {
@@ -60,13 +61,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const storedRole = getClientCookie(COOKIE_KEYS.ROLE)
         const storedEmail = getClientCookie(COOKIE_KEYS.EMAIL)
         const storedName = getClientCookie(COOKIE_KEYS.NAME)
+        const hasPreference = getClientCookie(COOKIE_KEYS.HASPREFERENCE) === "true"
 
         if (storedToken) {
           setToken(storedToken)
           setUser({
             email: storedEmail || '',
             name: storedName || '',
-            role: storedRole || ''
+            role: storedRole || '',
+            hasPreference: hasPreference
           })
         }
       } catch (error) {
@@ -84,14 +87,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (data: LoginResDto) => {
     setIsLoading(true)
     try {
-      const { accessToken, role, name, email } = data
+      const { accessToken, role, name, email, hasPreference } = data
       setClientCookie(COOKIE_KEYS.TOKEN, accessToken, { maxAge: 60 * 60 * 24, path: '/' })
       setClientCookie(COOKIE_KEYS.EMAIL, email, { maxAge: 60 * 60 * 24, path: '/' })
       setClientCookie(COOKIE_KEYS.NAME, name, { maxAge: 60 * 60 * 24, path: '/' })
       setClientCookie(COOKIE_KEYS.ROLE, role, { maxAge: 60 * 60 * 24, path: '/' })
+      setClientCookie(COOKIE_KEYS.HASPREFERENCE, hasPreference.toString(), { maxAge: 60 * 60 * 24, path: '/' })
 
       setToken(accessToken)
-      setUser({ email, name, role })
+      setUser({ email, name, role, hasPreference })
       router.push('/dashboard')
     } catch (error) {
       console.error('Login error:', error)
@@ -107,6 +111,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     deleteClientCookie(COOKIE_KEYS.ROLE)
     deleteClientCookie(COOKIE_KEYS.EMAIL)
     deleteClientCookie(COOKIE_KEYS.NAME)
+    deleteClientCookie(COOKIE_KEYS.HASPREFERENCE)
+
+    localStorage.removeItem('preferencesModalSeen')
 
     setToken(null)
     setUser(null)
@@ -118,6 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     deleteClientCookie(COOKIE_KEYS.ROLE)
     deleteClientCookie(COOKIE_KEYS.EMAIL)
     deleteClientCookie(COOKIE_KEYS.NAME)
+    deleteClientCookie(COOKIE_KEYS.HASPREFERENCE)
 
     setToken(null)
     setUser(null)

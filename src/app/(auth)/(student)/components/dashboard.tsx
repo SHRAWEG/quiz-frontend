@@ -9,21 +9,12 @@ import {
     CardDescription
 } from '@/components/ui/card';
 import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger
-} from '@/components/ui/tabs';
-import {
     BookOpen,
     Clock,
     Award,
-    BarChart2,
-    Calendar,
     TrendingUp
 } from 'lucide-react';
 import { useGetQuestionSetAttempts } from '@/hooks/api/useQuestionSetAttempt';
-import { QuestionSetAttemptList } from '@/types/question-set-attempt';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { formatISODate } from '@/lib/format-date';

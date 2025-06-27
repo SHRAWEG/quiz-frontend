@@ -120,7 +120,7 @@ export default function QuestionSetList() {
         toast.success(res.message);
       },
       onError: (err) => {
-        toast.error(err.message);
+        toast.error(err.data.message);
       }
     })
   }

@@ -3,7 +3,7 @@
 import { useGetAllSubjects } from "@/hooks/api/useSubject";
 import { useRouter } from "next/navigation";
 import { QuestionForm } from "../components/form";
-import { PageHeader } from "@/components/layout/app-header";
+import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";

@@ -1,7 +1,7 @@
 // app/subjects/[id]/page.tsx
 "use client"
 
-import { PageHeader } from "@/components/layout/app-header";
+import { PageHeader } from "@/components/ui/page-header";
 import { subjectReqDto, SubjectReqDto } from "@/types/subject"
 import { useGetSubjectDetail, useUpdateSubject } from "@/hooks/api/useSubject"
 import { useParams, useRouter } from "next/navigation"

@@ -4,4 +4,5 @@ export const COOKIE_KEYS = {
   EMAIL: "email",
   NAME: "name", 
   ROLE: "role",
+  HASPREFERENCE: "hasPreference"
 };
