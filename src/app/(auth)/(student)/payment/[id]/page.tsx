@@ -36,8 +36,8 @@ export default function CheckoutPage() {
         product_code: response.data.productCode,
         product_service_charge: "0",
         product_delivery_charge: "0",
-        success_url: process.env.ESEWA_SUCCESS_URL,
-        failure_url: process.env.ESEWA_FAILURE_URL,
+        success_url: process.env.NEXT_PUBLIC_ESEWA_SUCCESS_URL,
+        failure_url: process.env.NEXT_PUBLIC_ESEWA_FAILURE_URL,
         signed_field_names: "total_amount,transaction_uuid,product_code",
         signature: response.data.signature
       };
