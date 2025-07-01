@@ -1,106 +1,64 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
 } from '@/components/ui/card';
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from '@/components/ui/tabs';
-import { 
-  PieChart, 
-  LineChart,
-  FileText, 
-  CheckCircle, 
-  Clock, 
-  Star,
-  TrendingUp
+import { useTeacherDashboard } from '@/hooks/api/useDashboard';
+import {
+  FileText,
+  CheckCircle,
+  Clock,
 } from 'lucide-react';
 
 export default function TeacherDashboard() {
-  const [stats, setStats] = useState({
-    questionsCreated: 0,
-    questionsInActiveQuizzes: 0,
-    pendingApproval: 0,
-    averageRating: 0,
-  });
-
-  // Mock data - replace with actual API calls
-  useEffect(() => {
-    // Simulate API fetch
-    setTimeout(() => {
-      setStats({
-        questionsCreated: 128,
-        questionsInActiveQuizzes: 42,
-        pendingApproval: 5,
-        averageRating: 4.2,
-      });
-    }, 500);
-  }, []);
+  const { data } = useTeacherDashboard();
 
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-3xl font-bold">Teacher Dashboard</h1>
-      
+
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Questions Created</p>
-                <h3 className="text-2xl font-bold">{stats.questionsCreated}</h3>
+                <h3 className="text-2xl font-bold">{data?.totalQuestionsAuthored}</h3>
               </div>
               <FileText className="h-8 w-8 text-blue-500" />
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">In Active Quizzes</p>
-                <h3 className="text-2xl font-bold">{stats.questionsInActiveQuizzes}</h3>
+                <p className="text-sm text-muted-foreground">Total Questions Used</p>
+                <h3 className="text-2xl font-bold">{data?.totalUsedInQuestionSets}</h3>
               </div>
               <CheckCircle className="h-8 w-8 text-green-500" />
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Pending Approval</p>
-                <h3 className="text-2xl font-bold">{stats.pendingApproval}</h3>
+                <p className="text-sm text-muted-foreground">Total Questions Approved</p>
+                <h3 className="text-2xl font-bold">{data?.totalApprovedQuestions}</h3>
               </div>
               <Clock className="h-8 w-8 text-yellow-500" />
             </div>
           </CardContent>
         </Card>
-        
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Average Rating</p>
-                <h3 className="text-2xl font-bold">{stats.averageRating}/5</h3>
-              </div>
-              <Star className="h-8 w-8 text-purple-500" />
-            </div>
-          </CardContent>
-        </Card>
       </div>
-      
+
       {/* Tabs for different dashboard sections */}
-      <Tabs defaultValue="overview" className="w-full">
+      {/* <Tabs defaultValue="overview" className="w-full">
         <TabsList className="grid w-full grid-cols-3 md:w-auto">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="questions">My Questions</TabsTrigger>
@@ -172,7 +130,7 @@ export default function TeacherDashboard() {
             </CardContent>
           </Card>
         </TabsContent>
-      </Tabs>
+      </Tabs> */}
     </div>
   );
 }
