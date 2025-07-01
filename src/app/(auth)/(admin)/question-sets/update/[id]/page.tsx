@@ -1,7 +1,7 @@
 // app/categories/[id]/page.tsx
 "use client"
 
-import { PageHeader } from "@/components/layout/app-header";
+import { PageHeader } from "@/components/ui/page-header";
 import { useParams, useRouter } from "next/navigation"
 import FullPageLoader from "@/components/ui/full-page-loader";
 import { Button } from "@/components/ui/button";

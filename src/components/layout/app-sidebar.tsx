@@ -66,7 +66,7 @@ export function AppSidebar(props: AppSidebarProps) {
                 <div className="truncate font-semibold mt-0.5">{user.email}</div>
               </div>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.replace('/profile')}>
                 <User className="mr-2 h-4 w-4" />
                 <span>Profile</span>
               </DropdownMenuItem>

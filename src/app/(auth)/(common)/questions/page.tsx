@@ -3,7 +3,7 @@
 
 import { Card } from "@/components/ui/card"
 import QuestionsList from "./components/list"
-import { PageHeader } from "@/components/layout/app-header"
+import { PageHeader } from "@/components/ui/page-header"
 import { useAuthContext } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"

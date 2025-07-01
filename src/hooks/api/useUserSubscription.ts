@@ -1,7 +1,7 @@
 import { apiClient, ApiError, ApiResponse } from "@/lib/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { API_URLS } from "@/lib/constants/api-urls";
-import { UserSubscription } from "@/types/user-subscription";
+import { UserSubscription, UserSubscriptionStatus } from "@/types/user-subscription";
 
 // export const useGetSubscriptionPlanDetail = (subscriptionPlanId: string) => useQuery<UserSubscription>({
 //   queryKey: ["subscriptionPlan", subscriptionPlanId],
@@ -11,12 +11,12 @@ import { UserSubscription } from "@/types/user-subscription";
 //   }
 // })
 
-// export const useGetActiveSubscriptionPlans = () => useQuery<ApiResponse<UserSubscription[]>>({
-//   queryKey: ["activeSubscriptionPlans"],
-//   queryFn: async () => {
-//     return await apiClient.get<ApiResponse<UserSubscription[]>>(`${API_URLS.subscriptionPlan}/active`);
-//   }
-// });
+export const useGetUserSubscriptionStatus = () => useQuery<UserSubscriptionStatus>({
+  queryKey: ["userSubscriptionStatus"],
+  queryFn: async () => {
+    return await apiClient.get<UserSubscriptionStatus>(`${API_URLS.userSubscription}/status`);
+  }
+});
 
 export const useCheckout = () =>
   useMutation<ApiResponse<UserSubscription>, ApiError, { subscriptionPlanId: string }>({

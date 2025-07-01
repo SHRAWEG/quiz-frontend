@@ -1,56 +1,45 @@
-// components/page-header.tsx
 "use client"
 
-import { cn } from "@/lib/utils"
-import React from "react"
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
+import { CheckCircle2, Crown } from "lucide-react";
+import { Button } from "../ui/button";
+import { SidebarTrigger } from "../ui/sidebar";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { useSubscription } from "@/contexts/SubscriptionContext";
+import { useRouter } from "next/navigation";
 
-interface PageHeaderProps {
-  title: string
-  description?: string
-  breadcrumbs?: {
-    label: string
-    href?: string
-  }[]
-  actions?: React.ReactNode
-  className?: string
-}
+export function Header() {
+  const router = useRouter();
 
-export function PageHeader({
-  title,
-  description,
-  breadcrumbs,
-  actions,
-  className,
-}: PageHeaderProps) {
+  const { user } = useAuthContext();
+  const { isActive, expiresAt } = useSubscription();
+
   return (
-    <div className={cn("mb-4 border-b-2", className)}>
-      {breadcrumbs && breadcrumbs.length > 0 && (
-        <Breadcrumb className="mb-4">
-          <BreadcrumbList>
-            {breadcrumbs.map((item, index) => (
-              <React.Fragment key={index}>
-                <BreadcrumbItem>
-                  <BreadcrumbLink href={item.href}>
-                    {item.label}
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
-              </React.Fragment>
-            ))}
-          </BreadcrumbList>
-        </Breadcrumb>
-      )}
-      
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-          {description && (
-            <p className="text-muted-foreground mt-1">{description}</p>
-          )}
+    <header className="bg-white shadow-sm z-10">
+      <div className="flex items-center h-16 px-4 sm:px-6 lg:px-8">
+        <SidebarTrigger />
+        <div className="ml-auto flex items-center space-x-4">
+          {
+            user?.role === 'student' && (!isActive ? (
+              <Button
+                variant="default"
+                className="hidden sm:inline-flex bg-amber-500 text-white hover:bg-amber-600 focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 rounded-md"
+                onClick={() => router.push('/pricings')}
+              >
+                <Crown className="mr-2" />
+                Go Premium
+              </Button>
+            ) : (
+              <div className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-md bg-emerald-50 border border-emerald-200">
+                <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                <span className="text-sm font-medium text-emerald-800">
+                  {expiresAt ? `Premium until ${new Date(expiresAt).toLocaleDateString()}` : 'Premium Member'}
+                </span>
+              </div>
+            ))
+          }
         </div>
-        {actions && <div className="flex items-center space-x-2">{actions}</div>}
       </div>
-    </div>
+    </header>
   )
+
 }

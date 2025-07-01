@@ -2,7 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { UploadQuestion } from "../components/upload-question";
-import { PageHeader } from "@/components/layout/app-header";
+import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";

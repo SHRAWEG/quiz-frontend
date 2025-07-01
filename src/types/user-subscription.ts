@@ -12,4 +12,10 @@ export const userSubscriptionSchema = z.object({
   isActive: z.boolean()
 });
 
+export const userSubscriptionStatusSchema = z.object({
+  isActive: z.boolean(),
+  expiresAt: z.date()
+})
+
 export type UserSubscription = z.infer<typeof userSubscriptionSchema>;
+export type UserSubscriptionStatus = z.infer<typeof userSubscriptionStatusSchema>;

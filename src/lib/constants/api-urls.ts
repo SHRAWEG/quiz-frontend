@@ -10,4 +10,5 @@ export const API_URLS = {
   quizzes: "/quizes",
   subscriptionPlan: "/subscription-plans",
   userSubscription: "/user-subscriptions",
+  user: "/users",
 };

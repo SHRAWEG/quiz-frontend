@@ -7,6 +7,7 @@ import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function SuccessPage() {
   const router = useRouter();
@@ -14,6 +15,8 @@ export default function SuccessPage() {
   const [error, setError] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(true);
   const { mutate: updatePayment } = useUpdatePayment();
+
+  const query = useQueryClient();
 
   useEffect(() => {
     const data = params.get('data');
@@ -30,6 +33,10 @@ export default function SuccessPage() {
         onSuccess: () => {
           setTimeout(() => router.push('/dashboard'), 3000);
           setIsVerifying(false);
+
+          query.refetchQueries({
+            queryKey: ['userSubscriptionStatus']
+          })
         },
         onError: (error: Error) => {
           setError(error.message || 'Payment verification failed');
@@ -37,7 +44,7 @@ export default function SuccessPage() {
         },
       }
     );
-  }, [params, updatePayment, router]);
+  }, [query, params, updatePayment, router]);
 
   if (error) {
     return (

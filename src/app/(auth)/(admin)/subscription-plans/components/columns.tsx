@@ -1,13 +1,9 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Pencil, Trash } from "lucide-react";
 import { SubscriptionPlan } from "@/types/subscription-plan";
 import { subscriptionDuration } from "@/enums/subscription-duration";
 
 export const getColumns = (
-  handleDelete: (id: string) => void
+  // handleDelete: (id: string) => void
 ): ColumnDef<SubscriptionPlan>[] => [
     {
       accessorKey: "name",

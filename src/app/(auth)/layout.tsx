@@ -10,15 +10,15 @@ import {
   ClipboardList,
   ClipboardCheck,
   CreditCard,
-  Loader2,
-  Crown
+  Loader2
 } from "lucide-react"
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/layout/app-sidebar"
 import { useAuthContext } from "@/contexts/AuthContext";
-import { Suspense, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
+import { PreferencesModal } from "./(student)/components/preferences-modal";
+import { Header } from "@/components/layout/app-header";
 
 const items = [
   {
@@ -77,67 +77,73 @@ const items = [
   }
 ]
 
-export default function AdminLayout({
+export default function AuthLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const router = useRouter();
-
   const { user, isAuthenticated, isLoading, logout } = useAuthContext();
+  const [showPreferences, setShowPreferences] = useState(false)
 
   useEffect(() => {
     if (isLoading) return;
     if (!isAuthenticated) {
       window.location.href = "/login";
     }
-  }, [isLoading, isAuthenticated]);
+
+    // Option 1: Using localStorage
+    const hasSeenModal = localStorage.getItem('preferencesModalSeen')
+
+    if (!hasSeenModal && user?.role === 'student') {
+      if (!user?.hasPreference) {
+        setShowPreferences(true)
+      } else {
+        localStorage.setItem('preferencesModalSeen', 'true')
+      }
+    }
+  }, [isLoading, isAuthenticated, user?.hasPreference, user?.role]);
+
+  const onClose = () => {
+    localStorage.setItem('preferencesModalSeen', 'true')
+    setShowPreferences(false);
+  }
 
   return (
-    <SidebarProvider>
-      <div className="flex bg-gray-50 w-full">
-        {/* Sidebar */}
-        <AppSidebar
-          items={items}
-          user={{
-            name: user?.name || "John Doe",
-            email: user?.email || "john@example.com"
-          }}
-          onLogout={logout}
-          role={user?.role || ""}
-        />
+    <SubscriptionProvider>
+      <SidebarProvider>
+        <div className="flex bg-gray-50 w-full">
+          {/* Sidebar */}
+          <AppSidebar
+            items={items}
+            user={{
+              name: user?.name || "John Doe",
+              email: user?.email || "john@example.com"
+            }}
+            onLogout={logout}
+            role={user?.role || ""}
+          />
 
-        {/* Main Content Area */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Header with sidebar trigger */}
-          <header className="bg-white shadow-sm z-10">
-            <div className="flex items-center h-16 px-4 sm:px-6 lg:px-8">
-              <SidebarTrigger />
-              <div className="ml-auto flex items-center space-x-4">
-                {
-                  user?.role === 'student' && (
-                    <Button
-                      variant="default"
-                      className="hidden sm:inline-flex bg-amber-500 text-white hover:bg-amber-600 focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 rounded-md"
-                      onClick={() => router.push('/pricings')}
-                    >
-                      <Crown className="mr-2" />
-                      Go Premium
-                    </Button>
-                  )
-                }
-              </div>
-            </div>
-          </header>
+          {/* Main Content Area */}
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {/* Header with sidebar trigger */}
+            <Header />  
 
-          {/* Main content with proper padding */}
-          <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-            <Suspense fallback={<Loader2 className="" />}>
-              {children}
-            </Suspense>
-          </main>
+            {/* Main content with proper padding */}
+            <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+              <Suspense fallback={<Loader2 className="" />}>
+                {children}
+
+                {user?.role === 'student' && (
+                  <PreferencesModal
+                    open={showPreferences}
+                    onClose={onClose}
+                  />
+                )}
+              </Suspense>
+            </main>
+          </div>
         </div>
-      </div>
-    </SidebarProvider>
+      </SidebarProvider>
+    </SubscriptionProvider>
   );
 }

@@ -13,7 +13,8 @@ export const loginResDto = z.object({
   accessToken: z.string(),
   role: z.string(),
   email: z.string(),
-  name: z.string()
+  name: z.string(),
+  hasPreference: z.boolean()
 })
 
 export const resendVerificationDto = z.object({

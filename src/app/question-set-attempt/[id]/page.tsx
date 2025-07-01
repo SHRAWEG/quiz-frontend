@@ -143,7 +143,7 @@ export default function QuestionSetAttemptPage() {
     if (questionSetAttempt?.questionSet.isTimeLimited && isExpired) {
       onSubmit();
     }
-  }, [isExpired, questionSetAttempt?.questionSet.isTimeLimited]);
+  }, [isExpired, questionSetAttempt?.questionSet.isTimeLimited, onSubmit]);
 
   // Loading state
   if (isLoading || !questionSetAttempt) {

@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { UploadCloud, FileText, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { useImportQuestions } from '@/hooks/api/useQuestion';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
