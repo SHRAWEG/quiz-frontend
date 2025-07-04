@@ -6,14 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
 import { useCancelCredit, useGetBalance, useInitiateCredit } from "@/hooks/api/useCredit";
 import { toast } from "sonner";
-import { error } from "console";
 
 export default function PurchaseCreditsPage() {
-  const router = useRouter();
-
   const [credits, setCredits] = useState<number>(100);
   const [step, setStep] = useState<"input" | "summary">("input");
   const [totalAmount, setTotalAmount] = useState<number>(0);

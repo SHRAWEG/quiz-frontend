@@ -8,7 +8,7 @@ import { useGetBalance, usePurchaseQuestionSet } from "@/hooks/api/useCredit";
 import { UseGetQuestionSetsToAttempt, useGetQuestionSetToAttempt } from "@/hooks/api/useQuestionSet";
 import { useStartQuestionSetAttempt } from "@/hooks/api/useQuestionSetAttempt";
 import { QuestionSetToAttempt } from "@/types/question-set";
-import { Award, CheckCircleIcon, Clock, Filter, Loader2, Search, Zap } from "lucide-react";
+import { Award, Clock, Filter, Loader2, Search, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";

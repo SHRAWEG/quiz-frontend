@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { useState } from "react"
+import { questionSetAccessType } from "@/enums/question-set-access-type"
 
 const formatElapsedTime = (milliseconds: number): string => {
   const totalSeconds = Math.floor(milliseconds / 1000);
@@ -161,8 +162,8 @@ export default function QuizResultsPage() {
         <p className="text-muted-foreground">{data.questionSet.name}</p>
         <p className="text-blue-400">Attempt: {data.attemptNumber} of {data.reportStatistics.totalUserAttempts} </p>
         <div className="flex justify-center mt-2">
-          <Badge variant={data.questionSet.isFree ? "secondary" : "premium"} className="mr-2">
-            {data.questionSet.isFree ? "Free" : "Premium"}
+          <Badge variant={data.questionSet.accessType === "free" ? "secondary" : "premium"} className="mr-2">
+            {questionSetAccessType.find(x => x.value === data.questionSet.accessType)?.label}
           </Badge>
           <Badge variant="outline">
             {data.questionSet.category?.name}

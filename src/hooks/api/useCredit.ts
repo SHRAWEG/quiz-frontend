@@ -1,7 +1,6 @@
 import { apiClient, ApiError, ApiResponse } from "@/lib/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { API_URLS } from "@/lib/constants/api-urls";
-import { UserSubscription, UserSubscriptionStatus } from "@/types/user-subscription";
 import { InitiateCredit } from "@/types/credit";
 
 // export const useGetSubscriptionPlanDetail = (subscriptionPlanId: string) => useQuery<UserSubscription>({

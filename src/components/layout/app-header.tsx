@@ -1,6 +1,6 @@
 "use client"
 
-import { CheckCircle2, CreditCard, Crown } from "lucide-react";
+import { CheckCircle2, Crown } from "lucide-react";
 import { Button } from "../ui/button";
 import { SidebarTrigger } from "../ui/sidebar";
 import { useAuthContext } from "@/contexts/AuthContext";
