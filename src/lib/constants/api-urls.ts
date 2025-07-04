@@ -9,5 +9,7 @@ export const API_URLS = {
     quizzes: "/quizes",
     subscriptionPlan: "/subscription-plans",
     userSubscription: "/user-subscriptions",
-    user: "/users"
+    user: "/users",
+    credit: "/credits",
+    creditPurchase: '/credit-purchases'
 }

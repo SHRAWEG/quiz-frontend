@@ -25,7 +25,8 @@ export default function Page() {
     defaultValues: {
       categoryId: "",
       name: "",
-      isFree: false,
+      accessType: "free",
+      creditCost: undefined,
       isTimeLimited: false,
       timeLimitSeconds: undefined, // Default to 5 minutes
     },
@@ -38,7 +39,7 @@ export default function Page() {
         refetch();
 
         toast.success("Question-set created successfully");
-        
+
         router.push(`/question-sets/update/${res.data.id}`)
       },
 

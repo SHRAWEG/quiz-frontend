@@ -4,7 +4,7 @@ import { Question } from "@/types/question";
 import QuestionContent from "./content";
 import QuestionFooter from ".//footer";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { questionTypes } from "@/enums/questions";
+import { questionTypes } from "@/enums/question-type";
 
 interface QuestionAccordionItemProps {
   question: Question;

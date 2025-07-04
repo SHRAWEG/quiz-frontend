@@ -10,7 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Subject } from "@/types/subject";
 import { SubSubject } from "@/types/sub-subject";
 import { QuestionReqDto } from "@/types/question";
-import { questionTypes } from "@/enums/questions";
+import { questionTypes } from "@/enums/question-type";
 import { QuestionFormData } from "../create/page";
 import { Skeleton } from "@/components/ui/skeleton";
 import { QUESTION_TYPES } from "@/constants/questions";

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { categorySchema } from "./category";
 import { userSchema } from "./user";
 import { questionSchema } from "./question";
+import { questionSetAccessType } from "@/enums/question-set-access-type";
 
 // Define a schema for a single question set
 export const questionSetSchema = z.object({
@@ -9,7 +10,8 @@ export const questionSetSchema = z.object({
     categoryId: z.string(),
     category: categorySchema,
     name: z.string(),
-    isFree: z.boolean(),
+    accessType: z.enum(questionSetAccessType.map(type => type.value) as [string, ...string[]]),
+    creditCost: z.number(),
     isTimeLimited: z.boolean(),
     timeLimitSeconds: z.number(),
     questions: z.array(questionSchema),
@@ -28,15 +30,24 @@ export const questionSetListSchema = z.object({
     pageSize: z.number()
 })
 
+export const purchaseInfo = z.object({
+    isPurchased: z.boolean(),
+    totalPurchases: z.number(),
+    unusedPurchases: z.number()
+})
+
 export const questionSetToAttemptSchema = z.object({
     id: z.string(),
-    isFree: z.boolean(),
+    accessType: z.enum(questionSetAccessType.map(type => type.value) as [string, ...string[]]),
+    creditCost: z.number(),
     isTimeLimited: z.boolean(),
     timeLimitSeconds: z.number().optional(),
     categoryId: z.string(),
     category: categorySchema,
     name: z.string(),
-    questionsCount: z.number()
+    questionsCount: z.number(),
+    totalAttempts: z.number(),
+    purchaseInfo: purchaseInfo
 })
 
 export const questionSetsToAttemptListSchema = z.object({
@@ -53,7 +64,8 @@ export const questionSetReqDto = z.object({
     name: z.string().min(1, { message: "Name is required" }),
     isTimeLimited: z.boolean(),
     timeLimitSeconds: z.number().min(60, { message: "Time limit must be at least 1 minute" }).optional(),
-    isFree: z.boolean()
+    accessType: z.enum(questionSetAccessType.map(type => type.value) as [string, ...string[]]),
+    creditCost: z.number().nullish(),
 }).superRefine((data, ctx) => {
     if (data.isTimeLimited && (!data.timeLimitSeconds || data.timeLimitSeconds < 1)) {
         ctx.addIssue({
@@ -61,6 +73,14 @@ export const questionSetReqDto = z.object({
             message: "Time limit must be at least 5 minute when timer is enabled",
             path: ["timeLimitSeconds"]
         });
+    }
+
+    if (data.accessType === "exclusive" && data.creditCost === null) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Please specify credit cost.",
+            path: ["creditCost"]
+        })
     }
 });
 

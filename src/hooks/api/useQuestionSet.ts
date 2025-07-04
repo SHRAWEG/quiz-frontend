@@ -1,7 +1,7 @@
 import { apiClient, ApiError, ApiResponse } from "@/lib/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { API_URLS } from "@/lib/constants/api-urls";
-import { QuestionSet, QuestionSetList, QuestionSetReqDto, QuestionSetsToAttemptList } from "@/types/question-set";
+import { QuestionSet, QuestionSetList, QuestionSetReqDto, QuestionSetsToAttemptList, QuestionSetToAttempt } from "@/types/question-set";
 
 export type QuestionSetParams = {
   page: number;
@@ -18,6 +18,15 @@ export const useGetQuestionSets = (params?: QuestionSetParams) => useQuery<Quest
 export const UseGetQuestionSetsToAttempt = (params?: QuestionSetParams) => useQuery<QuestionSetsToAttemptList>({
   queryKey: ["questionSetsToAttemptList", params],
   queryFn: async () => await apiClient.get<QuestionSetsToAttemptList>(`${API_URLS.questionSet}/question-sets-to-attempt`, { params })
+});
+
+export const useGetQuestionSetToAttempt = (questionSetId: string) => useQuery<QuestionSetToAttempt>({
+  queryKey: ["questionSetToAttempt", questionSetId],
+  queryFn: async () => {
+    const response = await apiClient.get<ApiResponse<QuestionSetToAttempt>>(`${API_URLS.questionSet}/question-sets-to-attempt/${questionSetId}`)
+    return response.data
+  },
+  enabled: !!questionSetId
 });
 
 export const useGetQuestionSetDetail = (questionSetId: string) => useQuery<QuestionSet>({

@@ -34,7 +34,8 @@ export default function SubjectPage() {
         defaultValues: {
             categoryId: "",
             name: "",
-            isFree: false,
+            accessType: data?.accessType || "",
+            creditCost: undefined,
             isTimeLimited: false,
             timeLimitSeconds: undefined,
         },
@@ -45,12 +46,14 @@ export default function SubjectPage() {
         if (data) {
             form.reset({
                 categoryId: data.categoryId,
-                name: data.name || "",
-                isFree: data.isFree || false,
+                name: data.name,
+                accessType: data.accessType,
+                creditCost: data.creditCost,
                 isTimeLimited: data.isTimeLimited || false,
                 timeLimitSeconds: data.timeLimitSeconds || undefined,
             });
             form.setValue("categoryId", data.categoryId);
+            form.watch();
         }
     }, [data, form]);
 
@@ -70,6 +73,8 @@ export default function SubjectPage() {
                             message: (messages as string[]).join(", "),
                         });
                     });
+                } else {
+                    toast.error(error.data.message)
                 }
             }
         });
@@ -104,7 +109,7 @@ export default function SubjectPage() {
     }
 
 
-    if (!data && isFetching) {
+    if (isFetching) {
         return <FullPageLoader />
     }
 

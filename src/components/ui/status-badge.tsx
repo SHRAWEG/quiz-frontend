@@ -13,7 +13,7 @@
 
 // StatusBadge.tsx
 import { Badge } from "@/components/ui/badge";
-import { questionStatuses } from "@/enums/questionStatus";
+import { questionStatuses } from "@/enums/question-status";
 
 export type Status = "approved" | "pending" | "rejected";
 

@@ -2,7 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { QUESTION_TYPES } from "@/constants/questions";
-import { questionTypes } from "@/enums/questions";
+import { questionSetAccessType } from "@/enums/question-set-access-type";
+import { questionTypes } from "@/enums/question-type";
 import { useGetQuestionSetDetail } from "@/hooks/api/useQuestionSet";
 import { CheckCircleIcon, Edit, Loader2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
@@ -55,9 +56,15 @@ export default function QuestionSetDetail() {
           <span className="inline-flex items-center px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-sm">
             Category: {data?.category?.name || "General"}
           </span>
-          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${data?.isFree ? "bg-blue-100 text-blue-600" : "bg-amber-100 text-amber-600"}`}>
-            {data?.isFree ? "Free" : "Paid"}
+          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${data?.accessType === 'free' ? "bg-blue-100 text-blue-600" : data?.accessType === 'paid' ? "bg-amber-100 text-amber-600" : "bg-fuchsia-100 text-fuchsia-600"}`}>
+            {questionSetAccessType.find(x => x.value === data?.accessType)?.label}
           </span>
+          {/* Add this line for credit cost */}
+          {data?.accessType === 'exclusive' && data?.creditCost && (
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-purple-100 text-purple-600 text-sm">
+              Cost: {data.creditCost} credits
+            </span>
+          )}
           <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${data?.status == 'published' ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}>
             {data?.status === "published" ? "Published" : "Draft"}
           </span>

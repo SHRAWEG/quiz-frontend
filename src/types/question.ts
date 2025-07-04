@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { subjectSchema } from "./subject";
 import { subSubjectSchema } from "./sub-subject";
-import { questionTypes } from "@/enums/questions";
+import { questionTypes } from "@/enums/question-type";
 import { optionSchema } from "./option";
 import { userSchema } from "./user";
 import { QUESTION_TYPES } from "@/constants/questions";

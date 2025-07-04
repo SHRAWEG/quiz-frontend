@@ -4,6 +4,7 @@ import { Eye, Pencil, Trash, BookmarkMinus, BookmarkCheck, Loader2 } from "lucid
 import { QuestionSet } from "@/types/question-set";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { questionSetAccessType } from "@/enums/question-set-access-type";
 
 export const getColumns = (
   handleDelete: (id: string) => void,
@@ -23,12 +24,16 @@ export const getColumns = (
       enableSorting: false,
     },
     {
-      accessorKey: "isFree",
-      header: "Is Free?",
+      accessorKey: "accessType",
+      header: "Access Type",
       enableSorting: false,
       cell: ({ row }) => {
-        const isFree = row.getValue("isFree") as boolean;
-        return isFree ? "Yes" : "No";
+        const accessType = row.getValue("accessType") as string;
+        return (
+          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${accessType === 'free' ? "bg-blue-100 text-blue-600" : accessType === 'paid' ? "bg-amber-100 text-amber-600" : "bg-fuchsia-100 text-fuchsia-600"}`}>
+            {questionSetAccessType.find(x => x.value === accessType)?.label}
+          </span>
+        )
       },
     },
     {

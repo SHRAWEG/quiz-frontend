@@ -12,7 +12,7 @@ import {
   CreditCard,
   Loader2
 } from "lucide-react"
-import { SidebarProvider } from "@/components/ui/sidebar"
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/layout/app-sidebar"
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Suspense, useEffect, useState } from "react";
@@ -108,6 +108,42 @@ export default function AuthLayout({
     setShowPreferences(false);
   }
 
+  if (user?.role !== 'student') {
+    return (
+      <SidebarProvider>
+        <div className="flex bg-gray-50 w-full">
+          {/* Sidebar */}
+          <AppSidebar
+            items={items}
+            user={{
+              name: user?.name || "John Doe",
+              email: user?.email || "john@example.com"
+            }}
+            onLogout={logout}
+            role={user?.role || ""}
+          />
+
+          {/* Main Content Area */}
+          <div className="flex-1 flex flex-col overflow-hidden">
+
+            <header className="bg-white shadow-sm z-10">
+              <div className="flex items-center h-16 px-4 sm:px-6 lg:px-8">
+                <SidebarTrigger />
+              </div>
+            </header>
+
+            {/* Main content with proper padding */}
+            <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+              <Suspense fallback={<Loader2 className="" />}>
+                {children}
+              </Suspense>
+            </main>
+          </div>
+        </div>
+      </SidebarProvider>
+    )
+  }
+
   return (
     <SubscriptionProvider>
       <SidebarProvider>
@@ -126,7 +162,9 @@ export default function AuthLayout({
           {/* Main Content Area */}
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* Header with sidebar trigger */}
-            <Header />  
+            {user?.role === "student" && (
+              <Header />
+            )}
 
             {/* Main content with proper padding */}
             <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">

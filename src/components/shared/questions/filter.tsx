@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { questionTypes } from "@/enums/questions";
-import { questionStatuses } from "@/enums/questionStatus";
+import { questionTypes } from "@/enums/question-type";
+import { questionStatuses } from "@/enums/question-status";
 import { useGetAllSubjects } from "@/hooks/api/useSubject";
 import { useGetAllSubSubjects } from "@/hooks/api/useSubSubject";
 import { QuestionList } from "@/types/question";

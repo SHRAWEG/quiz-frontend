@@ -1,11 +1,12 @@
 "use client"
 
-import { CheckCircle2, Crown } from "lucide-react";
+import { CheckCircle2, CreditCard, Crown } from "lucide-react";
 import { Button } from "../ui/button";
 import { SidebarTrigger } from "../ui/sidebar";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useRouter } from "next/navigation";
+import { HeaderCredits } from "../shared/header-credit/header-credit";
 
 export function Header() {
   const router = useRouter();
@@ -37,6 +38,10 @@ export function Header() {
               </div>
             ))
           }
+
+          {user?.role === 'student' && (
+            <HeaderCredits />
+          )}
         </div>
       </div>
     </header>

@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { QUESTION_TYPES } from "@/constants/questions"
-import { questionTypes } from "@/enums/questions"
+import { questionTypes } from "@/enums/question-type"
 import { QuestionAttempt } from "@/types/question-set-attempt"
 import { ChevronLeft, ChevronRight, Eye, LoaderPinwheel, Pencil, Upload } from "lucide-react"
 

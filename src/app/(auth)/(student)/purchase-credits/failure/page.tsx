@@ -59,7 +59,7 @@ export default function FailurePage() {
                 onClick={() => router.push('/pricings')}
                 className="w-full mt-4"
               >
-                Back to Pricings
+                Back to Pricing
               </Button>
             </div>
           )}

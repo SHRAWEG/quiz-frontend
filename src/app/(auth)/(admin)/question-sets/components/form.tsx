@@ -8,6 +8,7 @@ import { UseFormReturn } from "react-hook-form";
 import { CardFooter } from "@/components/ui/card";
 import { Clock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { questionSetAccessType } from "@/enums/question-set-access-type";
 
 interface FormProps {
   onSubmit: (data: QuestionSetReqDto) => void;
@@ -20,6 +21,7 @@ interface FormProps {
 export function QuestionSetForm({ onSubmit, isPending, categories, form, isUpdate }: FormProps) {
   const isTimeLimited = form.watch("isTimeLimited");
   const categoryId = form.watch("categoryId");
+  const accessType = form.watch("accessType");
 
   const secondsToTime = (seconds: number) => ({
     hours: Math.floor(seconds / 3600),
@@ -29,6 +31,13 @@ export function QuestionSetForm({ onSubmit, isPending, categories, form, isUpdat
 
   const timeToSeconds = (hours: number, minutes: number, seconds: number) =>
     (hours * 3600) + (minutes * 60) + seconds;
+
+  const shouldShowError = (fieldName: keyof QuestionSetReqDto) => {
+    return (
+      form.formState.touchedFields[fieldName] &&
+      form.formState.errors[fieldName]
+    );
+  };
 
   return (
     <Form {...form}>
@@ -85,33 +94,84 @@ export function QuestionSetForm({ onSubmit, isPending, categories, form, isUpdat
             )}
           />
 
-          {/* Is Free Field */}
-          <FormField
-            control={form.control}
-            name="isFree"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Access Type</FormLabel>
-                <FormControl>
-                  <div className="flex items-center gap-3 h-10 p-2">
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={field.value}
-                        onChange={field.onChange}
-                        className="sr-only peer"
+          {/* Access Type field */}
+          {
+            accessType && (
+              <FormField
+                control={form.control}
+                name="accessType"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex items-center gap-2">
+                      <FormLabel className="text-sm font-medium">Access Type</FormLabel>
+                    </div>
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        if (value !== "exclusive") {
+                          form.setValue("creditCost", undefined)
+                        }
+                      }}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className={`h-11 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 ${shouldShowError("accessType")
+                          ? "border-destructive focus-visible:ring-destructive"
+                          : "border-gray-300 focus-visible:ring-primary"
+                          }`}>
+                          <SelectValue placeholder="Select access type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {questionSetAccessType.map((type) => (
+                          <SelectItem key={type.value} value={type.value}>
+                            {type.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                    {shouldShowError("accessType") && (
+                      <FormMessage className="text-red-500">
+                        {form.formState.errors.accessType?.message}
+                      </FormMessage>
+                    )}
+                  </FormItem>
+                )}
+              />
+            )
+          }
+
+          {/* Credit Cost Field */}
+          {
+            form.watch('accessType') === 'exclusive' && (
+              <FormField
+                control={form.control}
+                name="creditCost"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Credit Cost</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="number"  // Important for numeric input
+                        disabled={isPending}
+                        placeholder="Enter credit cost"
+                        className="w-full"
+                        onChange={(e) => {
+                          // Convert string input to number (or undefined if empty)
+                          const value = e.target.value === "" ? undefined : Number(e.target.value);
+                          field.onChange(value);
+                        }}
+                        value={field.value ?? ""}  // Handle undefined/null cases
                       />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                    </label>
-                    <span className="text-sm font-medium">
-                      {field.value ? "Free for everyone" : "Paid access"}
-                    </span>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )
+          }
 
           {/* Timer Toggle */}
           <FormField
