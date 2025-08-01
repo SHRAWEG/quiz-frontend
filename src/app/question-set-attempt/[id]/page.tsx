@@ -204,7 +204,7 @@ export default function QuestionSetAttemptPage() {
             answeredQuestions={answeredQuestions}
           />
         ) : (
-          <div className="flex flex-1 overflow-scroll">
+          <div className="flex flex-1 gap-2 overflow-scroll pr-2">
             <QuestionNavigation
               questions={questions}
               currentQuestionId={currentQuestionId}

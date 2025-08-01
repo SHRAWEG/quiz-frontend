@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
 import { QuestionAttempt } from "@/types/question-set-attempt"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { PanelLeftIcon } from "lucide-react"
 import { useState } from "react"
 
 interface QuestionNavigationProps {
@@ -33,7 +33,8 @@ export function QuestionNavigation({
           className="border rounded-full w-8 h-8 bg-background"
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
-          {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          <PanelLeftIcon className="h-4 w-4" />
+          {/* {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />} */}
         </Button>
       </div>
 
@@ -72,7 +73,7 @@ export function QuestionNavigation({
                 className={`w-10 h-10 ${isAnswered && "ring-1 ring-green-400"}`}
                 onClick={() => onQuestionSelect(q.id)}
               >
-                {i}
+                {i + 1}
               </Button>
             )
           })}
