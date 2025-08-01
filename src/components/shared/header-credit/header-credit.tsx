@@ -1,6 +1,6 @@
 "use client";
 
-import { CreditCard, Plus } from "lucide-react";
+import { Plus, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -24,7 +24,7 @@ export function HeaderCredits() {
           size="sm"
           className="flex items-center gap-1.5 px-3 hover:bg-accent"
         >
-          <CreditCard className="h-4 w-4" />
+          <Wallet size="lg" />
           <span className="font-medium">
             {isLoading ? "..." : balance ?? 0}
           </span>

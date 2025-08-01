@@ -69,7 +69,7 @@ export default function HomePage() {
                 </CardHeader>
                 <CardFooter>
                   <Button asChild className="w-full">
-                    <Link href="/quizzes/general">Explore</Link>
+                    {/* <Link href="/quizzes/general">Explore</Link> */}
                   </Button>
                 </CardFooter>
               </Card>
@@ -87,7 +87,7 @@ export default function HomePage() {
                 </CardHeader>
                 <CardFooter>
                   <Button asChild variant="secondary" className="w-full">
-                    <Link href="/quizzes/science">Explore</Link>
+                    {/* <Link href="/quizzes/science">Explore</Link> */}
                   </Button>
                 </CardFooter>
               </Card>
@@ -105,7 +105,7 @@ export default function HomePage() {
                 </CardHeader>
                 <CardFooter>
                   <Button asChild variant="outline" className="w-full">
-                    <Link href="/quizzes/literature">Explore</Link>
+                    {/* <Link href="/quizzes/literature">Explore</Link> */}
                   </Button>
                 </CardFooter>
               </Card>

@@ -1,8 +1,8 @@
 // app/subscription/page.tsx
 "use client";
 
-import { useState } from 'react';
-import { ShoppingBasket } from 'lucide-react';
+// import { useState } from 'react';
+// import { ShoppingBasket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 export default function SubscriptionPage() {
   const router = useRouter();
 
-  const [selectedPlan, setSelectedPlan] = useState<string>("");
+  // const [selectedPlan, setSelectedPlan] = useState<string>("");
   const { data: subscriptionPlans } = useGetActiveSubscriptionPlans();
 
   return (
@@ -24,12 +24,13 @@ export default function SubscriptionPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8">
         {subscriptionPlans?.data.map((plan) => (
           <Card
             key={plan.id}
-            className={`relative transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${selectedPlan === plan.id ? "ring-2 ring-primary" : ""
-              }`}
+            // className={`relative transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${selectedPlan === plan.id ? "ring-2 ring-primary" : ""
+            //   }`}
+            className={`relative transition-all duration-300 hover:scale-[1.02] hover:shadow-xl`}
           >
             <CardHeader className="pb-4 h-24">
               <div className="flex items-center gap-3">
@@ -54,8 +55,9 @@ export default function SubscriptionPage() {
               <Button
                 size="lg"
                 className="w-full"
-                variant={selectedPlan === plan.id ? "default" : "outline"}
-                onClick={() => setSelectedPlan(plan.id)}
+                variant={"default"}
+                onClick={() =>
+                  router.push(`payment/${plan.id}`)}
               >
                 Select
               </Button>
@@ -63,8 +65,7 @@ export default function SubscriptionPage() {
           </Card>
         ))}
       </div>
-      <CardFooter className="mt-8 justify-end">
-        {/* Payment Button */}
+      {/* <CardFooter className="mt-8 justify-end">
         <Button
           variant="default"
           disabled={!selectedPlan}
@@ -77,7 +78,7 @@ export default function SubscriptionPage() {
           <ShoppingBasket className="mr-2" />
           Proceed to checkout
         </Button>
-      </CardFooter>
+      </CardFooter> */}
     </Card >
   );
 }

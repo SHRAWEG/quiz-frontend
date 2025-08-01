@@ -34,6 +34,15 @@ export default function StudentDashboard() {
 
     const { data: questionSetAttempts } = useGetQuestionSetAttempts(params);
 
+    function formatTime(rawSeconds: number) {
+        const seconds = Math.floor(rawSeconds);
+        const hrs = Math.floor(seconds / 3600).toString().padStart(2, '0');
+        const mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+        const secs = (seconds % 60).toString().padStart(2, '0');
+
+        return `${hrs} : ${mins} : ${secs}`;
+    }
+
     return (
         <div className="p-6 space-y-6">
             <h1 className="text-3xl font-bold">Student Dashboard</h1>
@@ -69,7 +78,7 @@ export default function StudentDashboard() {
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-muted-foreground">Total question Sets Attempted</p>
-                                <h3 className="text-2xl font-bold">{data?.totalQuestionSetsAttempted} days</h3>
+                                <h3 className="text-2xl font-bold">{data?.totalQuestionSetsAttempted}</h3>
                             </div>
                             <TrendingUp className="h-8 w-8 text-yellow-500" />
                         </div>
@@ -81,7 +90,7 @@ export default function StudentDashboard() {
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-muted-foreground">Total Time Spent</p>
-                                <h3 className="text-2xl font-bold">{data?.timeSpentInSeconds ? data?.timeSpentInSeconds / (60 * 60) : 0}</h3>
+                                <h3 className="text-2xl font-bold">{data?.timeSpentInSeconds ? formatTime(data?.timeSpentInSeconds) : 0}</h3>
                             </div>
                             <Clock className="h-8 w-8 text-purple-500" />
                         </div>
