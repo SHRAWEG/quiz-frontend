@@ -1,18 +1,20 @@
-"use client"
+"use client";
 
-import { useEffect, useMemo, useState } from "react"
-import { redirect, useParams, useRouter } from "next/navigation"
-import { QuizHeader } from "../components/header"
-import { QuestionNavigation } from "../components/question-nav"
-import { useAnswerQuestion, useFinishQuestionSetAttempt, useGetQuestionSetAttemptDetail } from "@/hooks/api/useQuestionSetAttempt"
-import { AnswerReqDto, QuestionAttempt } from "@/types/question-set-attempt"
-import { Skeleton } from "@/components/ui/skeleton"
-import { QuestionContent } from "../components/question-content"
-import { toast } from "sonner"
-import { QUESTION_TYPES } from "@/constants/questions"
-import { useTimer } from "@/hooks/api/useTimer"
-import { ApiError } from "@/lib/axios"
-import ReviewAnswers from "../components/review-answers"
+import { useEffect, useMemo, useState } from "react";
+import { redirect, useParams, useRouter } from "next/navigation";
+import { QuestionSetLayout } from "../components/layout";
+import {
+  useAnswerQuestion,
+  useFinishQuestionSetAttempt,
+  useGetQuestionSetAttemptDetail,
+} from "@/hooks/api/useQuestionSetAttempt";
+import { AnswerReqDto } from "@/types/question-set-attempt";
+import { Skeleton } from "@/components/ui/skeleton";
+import { QuestionContent } from "../components/question-content";
+import { toast } from "sonner";
+import { QUESTION_TYPES } from "@/constants/questions";
+import { useTimer } from "@/hooks/api/useTimer";
+import { ApiError } from "@/lib/axios";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,129 +23,177 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import ReviewAnswers from "../components/review-answers";
 
 export default function QuestionSetAttemptPage() {
-  const { id } = useParams()
-  const router = useRouter()
+  const { id } = useParams();
+  const router = useRouter();
+  const [currentQuestionId, setCurrentQuestionId] = useState<string>("");
+  const [selectedValue, setSelectedValue] = useState<string | undefined>();
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [submitConfirmation, setSubmitConfirmation] = useState(false);
 
-  // State management
-  const [questions, setQuestions] = useState<QuestionAttempt[]>([])
-  const [currentQuestionId, setCurrentQuestionId] = useState<string>("")
-  const [selectedValue, setSelectedValue] = useState<string | undefined>()
-  const [answeredQuestions, setAnsweredQuestions] = useState<number>(0)
-  const [showReviewModal, setShowReviewModal] = useState<boolean>(false)
-  const [submitConfirmation, setSubmitConfirmation] = useState<boolean>(false)
-  const [answeredAll, setAnsweredAll] = useState(false);
-
-  const { data: questionSetAttempt, isLoading, refetch } = useGetQuestionSetAttemptDetail(id as string)
-  const { mutate: answerQuestion, isPending } = useAnswerQuestion()
-  const { mutate: finishQuestionSet, isPending: submitPending } = useFinishQuestionSetAttempt()
-
+  const {
+    data: questionSetAttempt,
+    isLoading,
+    refetch,
+  } = useGetQuestionSetAttemptDetail(id as string);
+  const { mutate: answerQuestion, isPending } = useAnswerQuestion();
+  const { mutate: finishQuestionSet, isPending: submitPending } =
+    useFinishQuestionSetAttempt();
   const { formattedTime, isExpired, isTimeCritical } = useTimer(id as string);
-
-  console.log(formattedTime, isExpired)
-
-  useEffect(() => {
-    if (questionSetAttempt?.questionAttempts) {
-      const allAnswered = questionSetAttempt.questionAttempts.every(q =>
-        q.selectedBooleanAnswer !== null || q.selectedOptionId || q.selectedTextAnswer
-      );
-      setAnsweredAll(allAnswered);
-    }
-  }, [questionSetAttempt]);
 
   // Initialize questions and current question
   useEffect(() => {
-    if (questionSetAttempt?.questionAttempts) {
-      setQuestions(questionSetAttempt.questionAttempts)
-      if (currentQuestionId === "") {
-        setCurrentQuestionId(questionSetAttempt.questionAttempts[0].id || "")
-      }
-      setAnsweredQuestions(questionSetAttempt.questionAttempts.filter(q => q.selectedBooleanAnswer !== null || q.selectedOptionId || q.selectedTextAnswer).length)
+    if (questionSetAttempt?.questionAttempts && currentQuestionId === "") {
+      setCurrentQuestionId(questionSetAttempt.questionAttempts[0]?.id || "");
     }
-  }, [questionSetAttempt, currentQuestionId])
+  }, [questionSetAttempt, currentQuestionId]);
 
   // Derived values
-  const currentQuestion = useMemo(() => (
-    questions.find(q => q.id === currentQuestionId)
-  ), [questions, currentQuestionId])
+  const questions = questionSetAttempt?.questionAttempts || [];
+  const currentQuestion = useMemo(
+    () => questions.find((q) => q.id === currentQuestionId),
+    [currentQuestionId]
+  );
 
-  const currentIndex = useMemo(() => (
-    questions.findIndex(q => q.id === currentQuestionId)
-  ), [questions, currentQuestionId])
+  const currentIndex = useMemo(
+    () => questions.findIndex((q) => q.id === currentQuestionId),
+    [currentQuestionId]
+  );
+
+  const answeredQuestions = useMemo(
+    () =>
+      questions.filter(
+        (q) =>
+          q.selectedBooleanAnswer !== null ||
+          q.selectedOptionId ||
+          q.selectedTextAnswer
+      ).length,
+    []
+  );
+
+  const answeredAll = useMemo(
+    () =>
+      questions.every(
+        (q) =>
+          q.selectedBooleanAnswer !== null ||
+          q.selectedOptionId ||
+          q.selectedTextAnswer
+      ),
+    []
+  );
 
   const selectedVal = useMemo(() => {
-    if (currentQuestion?.question.type === QUESTION_TYPES.MCQ) {
-      return currentQuestion.selectedOptionId
-    } else if (currentQuestion?.question.type === QUESTION_TYPES.TRUE_FALSE) {
-      if (currentQuestion.selectedBooleanAnswer === null) return null
-      return currentQuestion.selectedBooleanAnswer ? "true" : "false"
-    } else if (currentQuestion?.question.type === QUESTION_TYPES.FILL_IN_THE_BLANKS || currentQuestion?.question.type === QUESTION_TYPES.SHORT || currentQuestion?.question.type === QUESTION_TYPES.LONG) {
-      return currentQuestion.selectedTextAnswer
+    if (!currentQuestion) return null;
+    switch (currentQuestion.question.type) {
+      case QUESTION_TYPES.MCQ:
+        return currentQuestion.selectedOptionId;
+      case QUESTION_TYPES.TRUE_FALSE:
+        return currentQuestion.selectedBooleanAnswer === null
+          ? null
+          : currentQuestion.selectedBooleanAnswer
+          ? "true"
+          : "false";
+      case QUESTION_TYPES.FILL_IN_THE_BLANKS:
+      case QUESTION_TYPES.SHORT:
+      case QUESTION_TYPES.LONG:
+        return currentQuestion.selectedTextAnswer;
+      default:
+        return null;
     }
-    return null
-  }, [currentQuestion])
+  }, [currentQuestion]);
 
-  // Navigation handler
-  const handleNavigate = (direction: "prev" | "next", selectedValue?: string) => {
-    if (selectedValue) {
-      const answerData: AnswerReqDto = {
-        questionAttemptId: currentQuestionId,
-        selectedOptionId: currentQuestion?.question.type === QUESTION_TYPES.MCQ ? selectedValue : null,
-        selectedBooleanAnswer: currentQuestion?.question.type === QUESTION_TYPES.TRUE_FALSE ? (selectedValue == "true" ? true : selectedValue == "false" ? false : null) : null,
-        selectedTextAnswer: (currentQuestion?.question.type === QUESTION_TYPES.FILL_IN_THE_BLANKS
-          || currentQuestion?.question.type === QUESTION_TYPES.LONG
-          || currentQuestion?.question.type === QUESTION_TYPES.SHORT) ? selectedValue : null
-      }
+  // Handlers
+  const handleNavigate = (
+    direction: "prev" | "next",
+    selectedValue?: string
+  ) => {
+    if (direction === "next") {
+      if (selectedValue) {
+        const answerData: AnswerReqDto = {
+          questionAttemptId: currentQuestionId,
+          selectedOptionId:
+            currentQuestion?.question.type === QUESTION_TYPES.MCQ
+              ? selectedValue
+              : null,
+          selectedBooleanAnswer:
+            currentQuestion?.question.type === QUESTION_TYPES.TRUE_FALSE
+              ? selectedValue === "true"
+                ? true
+                : selectedValue === "false"
+                ? false
+                : null
+              : null,
+          selectedTextAnswer: [
+            QUESTION_TYPES.FILL_IN_THE_BLANKS,
+            QUESTION_TYPES.LONG,
+            QUESTION_TYPES.SHORT,
+          ].includes(currentQuestion?.question.type as any)
+            ? selectedValue
+            : null,
+        };
 
-      answerQuestion({ questionSetAttemptId: id as string, data: answerData }, {
-        onSuccess: () => {
-          const newIndex = direction === "prev" ? currentIndex - 1 : currentIndex + 1
-          if (newIndex >= 0 && newIndex < questions.length) {
-            setCurrentQuestionId(questions[newIndex].id)
+        answerQuestion(
+          { questionSetAttemptId: id as string, data: answerData },
+          {
+            onSuccess: () => {
+              const newIndex = currentIndex + 1;
+              if (newIndex >= 0 && newIndex < questions.length) {
+                setCurrentQuestionId(questions[newIndex].id);
+              }
+              setSelectedValue("");
+              refetch();
+            },
+            onError: (error: ApiError) => {
+              toast.error("Error submitting answer: " + error.data.message);
+            },
           }
-          setSelectedValue("")
-
-          refetch();
-        },
-        onError: (error: ApiError) => {
-          toast.error("Error submitting answer: " + error.data.message)
+        );
+      } else {
+        const newIndex = currentIndex + 1;
+        if (newIndex >= 0 && newIndex < questions.length) {
+          setCurrentQuestionId(questions[newIndex].id);
         }
-      })
-    } else {
-      const newIndex = direction === "prev" ? currentIndex - 1 : currentIndex + 1
-      if (newIndex >= 0 && newIndex < questions.length) {
-        setCurrentQuestionId(questions[newIndex].id)
+        setSelectedValue("");
       }
-      setSelectedValue("")
+    } else {
+      const newIndex = currentIndex - 1;
+      if (newIndex >= 0) {
+        setCurrentQuestionId(questions[newIndex].id);
+      }
+      setSelectedValue("");
     }
-  }
+  };
 
   const handleQuestionSelect = (questionId: string) => {
-    setCurrentQuestionId(questionId)
-    setSelectedValue("")
-  }
+    setCurrentQuestionId(questionId);
+    setSelectedValue("");
+    setShowReviewModal(false);
+  };
 
   const onSubmit = () => {
-    finishQuestionSet({ questionSetAttemptId: id as string }, {
-      onSuccess: (res) => {
-        router.push(`/question-set-attempt/${id}/results`)
-
-        toast.success(res.message)
-      },
-      onError: () => {
-        refetch()
+    finishQuestionSet(
+      { questionSetAttemptId: id as string },
+      {
+        onSuccess: (res) => {
+          router.push(`/question-set-attempt/${id}/results`);
+          toast.success(res.message);
+        },
+        onError: () => {
+          refetch();
+        },
       }
-    })
-  }
+    );
+  };
 
   useEffect(() => {
     if (questionSetAttempt?.questionSet.isTimeLimited && isExpired) {
       onSubmit();
     }
-  }, [isExpired, questionSetAttempt?.questionSet.isTimeLimited, onSubmit]);
+  }, [isExpired, questionSetAttempt?.questionSet.isTimeLimited]);
 
   // Loading state
   if (isLoading || !questionSetAttempt) {
@@ -159,10 +209,10 @@ export default function QuestionSetAttemptPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
-  // Error state (if needed)
+  // Error state
   if (!questions.length) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -173,72 +223,69 @@ export default function QuestionSetAttemptPage() {
           </p>
         </div>
       </div>
-    )
+    );
   }
 
   if (questionSetAttempt.isCompleted) {
-    redirect(`/question-set-attempt/${id}/results`)
+    redirect(`/question-set-attempt/${id}/results`);
   }
 
   return (
-    <div className="flex flex-col min-h-screen h-full bg-muted">
-      <QuizHeader
-        name={questionSetAttempt.questionSet.name}
-        attemptNumber={questionSetAttempt.attemptNumber}
-        currentQuestion={currentIndex + 1}
-        totalQuestions={questions.length}
-        formattedTime={formattedTime}
-        isExpired={isExpired}
-        isTimeCritical={questionSetAttempt.questionSet.isTimeLimited ? isTimeCritical : false}
-      />
+    <QuestionSetLayout
+      questions={questions}
+      currentQuestionId={currentQuestionId}
+      onQuestionSelect={handleQuestionSelect}
+      headerProps={{
+        name: questionSetAttempt.questionSet.name,
+        attemptNumber: questionSetAttempt.attemptNumber,
+        currentQuestion: currentIndex + 1,
+        totalQuestions: questions.length,
+        formattedTime,
+        isExpired,
+        isTimeCritical: questionSetAttempt.questionSet.isTimeLimited
+          ? isTimeCritical
+          : false,
+      }}
+    >
+      {showReviewModal ? (
+        <ReviewAnswers
+          questions={questions}
+          setCurrentQuestionId={setCurrentQuestionId}
+          setShowReviewModal={setShowReviewModal}
+          onSubmit={onSubmit}
+          submitPending={submitPending}
+          answeredAll={answeredAll}
+          answeredQuestions={answeredQuestions}
+        />
+      ) : currentQuestion ? (
+        <QuestionContent
+          questionAttempt={currentQuestion}
+          questionNumber={currentIndex + 1}
+          totalQuestions={questions.length}
+          answeredQuestions={answeredQuestions}
+          selectedValue={selectedValue || selectedVal || ""}
+          setSelectedValue={setSelectedValue}
+          setShowReviewModal={setShowReviewModal}
+          onNavigate={handleNavigate}
+          isPending={isPending}
+          setSubmitConfirmation={setSubmitConfirmation}
+          submitPending={submitPending}
+        />
+      ) : null}
 
-      {
-        showReviewModal ? (
-          <ReviewAnswers
-            questions={questions}
-            setCurrentQuestionId={setCurrentQuestionId}
-            setShowReviewModal={setShowReviewModal}
-            onSubmit={onSubmit}
-            submitPending={submitPending}
-            answeredAll={answeredAll}
-            answeredQuestions={answeredQuestions}
-          />
-        ) : (
-          <div className="flex flex-1 gap-2 overflow-scroll pr-2">
-            <QuestionNavigation
-              questions={questions}
-              currentQuestionId={currentQuestionId}
-              onQuestionSelect={handleQuestionSelect}
-            />
-
-            {currentQuestion && (
-              <QuestionContent
-                questionAttempt={currentQuestion}
-                questionNumber={currentIndex + 1}
-                totalQuestions={questions.length}
-                answeredQuestions={answeredQuestions}
-                selectedValue={selectedValue || selectedVal || ""}
-                setSelectedValue={setSelectedValue}
-                setShowReviewModal={setShowReviewModal}
-                onNavigate={handleNavigate}
-                isPending={isPending}
-                setSubmitConfirmation={setSubmitConfirmation}
-                submitPending={submitPending}
-              />
-            )}
-          </div>
-        )
-      }
-
-      <AlertDialog open={submitConfirmation} onOpenChange={setSubmitConfirmation}>
+      <AlertDialog
+        open={submitConfirmation}
+        onOpenChange={setSubmitConfirmation}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to submit?</AlertDialogTitle>
+            <AlertDialogTitle>
+              Are you sure you want to submit?
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {answeredAll ?
-                "You've answered all questions. You won't be able to make changes after submission." :
-                "You haven't answered all questions. Are you sure you want to submit anyway?"
-              }
+              {answeredAll
+                ? "You've answered all questions. You won't be able to make changes after submission."
+                : "You haven't answered all questions. Are you sure you want to submit anyway?"}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -252,6 +299,6 @@ export default function QuestionSetAttemptPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
-  )
+    </QuestionSetLayout>
+  );
 }

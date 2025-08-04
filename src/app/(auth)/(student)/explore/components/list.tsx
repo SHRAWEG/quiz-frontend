@@ -208,7 +208,7 @@ export default function QuestionSetList() {
           <Card
             key={`${questionSet.id}-${index}`}
             ref={index === allQuestionSets.length - 1 ? lastQuizRef : null}
-            className="hover:shadow-lg transition-shadow h-full flex flex-col group"
+            className="h-full flex flex-col group"
           >
             <CardHeader className="pb-3">
               <div className="flex justify-between items-start gap-2">
@@ -262,7 +262,8 @@ export default function QuestionSetList() {
 
             <CardFooter className="flex flex-col gap-2">
               <Button
-                className="w-full group-hover:bg-primary/90 transition-colors"
+                variant="default"
+                className="cursor-pointer hover:bg-gray-600 w-full"
                 onClick={() => handleStartQuiz(questionSet)}
               >
                 Start

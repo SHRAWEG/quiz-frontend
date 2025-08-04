@@ -109,7 +109,7 @@ export default function SubjectPage() {
     }
 
 
-    if (isFetching) {
+    if (isFetching && !data) {
         return <FullPageLoader />
     }
 

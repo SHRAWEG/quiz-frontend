@@ -39,14 +39,6 @@ export default function HomePage() {
               Challenge yourself with thousands of quizzes across various categories.
               Learn, compete, and have fun!
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild>
-                <Link href="/explore">Explore Quizzes</Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="/how-it-works">How It Works</Link>
-              </Button>
-            </div>
           </div>
         </section>
 
@@ -177,11 +169,6 @@ export default function HomePage() {
                 QuizMaster
               </h3>
               <p className="text-muted-foreground mt-2">Test your knowledge, challenge your friends</p>
-            </div>
-            <div className="flex space-x-6">
-              <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors">About</Link>
-              <Link href="/contact" className="text-muted-foreground hover:text-primary transition-colors">Contact</Link>
-              <Link href="/privacy" className="text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
             </div>
           </div>
           <div className="mt-8 text-center text-muted-foreground text-sm">
