@@ -1,7 +1,13 @@
 import { DataTable } from "@/components/shared/server-data-table/data-table";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { QuestionSetParams, useDeleteQuestionSet, useDraftQuestionSet, useGetQuestionSets, usePublishQuestionSet } from "@/hooks/api/useQuestionSet";
+import {
+  QuestionSetParams,
+  useDeleteQuestionSet,
+  useDraftQuestionSet,
+  useGetQuestionSets,
+  usePublishQuestionSet,
+} from "@/hooks/api/useQuestionSet";
 // import { useGetAllCategories } from "@/hooks/api/useCategory";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -21,17 +27,21 @@ export default function UsersPage() {
     page: tableState.pagination.pageIndex + 1,
     limit: tableState.pagination.pageSize,
     search: searchTerm,
-    categoryId: ""
-  }
+    categoryId: "",
+  };
 
   // const { data: categories } = useGetAllCategories();
   const { data, refetch, isFetching } = useGetQuestionSets(params);
   const { mutate: deleteQuestionSet } = useDeleteQuestionSet();
-  const { mutate: publishQuestionSet, isPending: isPublishPending } = usePublishQuestionSet();
-  const { mutate: draftQuestionSet, isPending: isDraftPending } = useDraftQuestionSet();
+  const { mutate: publishQuestionSet, isPending: isPublishPending } =
+    usePublishQuestionSet();
+  const { mutate: draftQuestionSet, isPending: isDraftPending } =
+    useDraftQuestionSet();
   const [pendingId, setPendingId] = useState("");
 
-  useEffect(() => { refetch() }, [refetch, tableState])
+  useEffect(() => {
+    refetch();
+  }, [refetch, tableState]);
 
   // const handleCategoryChange = (value: string) => {
   //   if (value === "all") {
@@ -44,51 +54,66 @@ export default function UsersPage() {
   const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     refetch();
-  }
+  };
 
   const handlePaginationChange = (pagination: any) => {
-    setTableState(prev => ({ ...prev, pagination }));
+    setTableState((prev) => ({ ...prev, pagination }));
   };
 
   const handleDelete = (questionSetId: string) => {
-    deleteQuestionSet({ questionSetId }, {
-      onSuccess: () => {
-        refetch();
-        toast.success("Deleted successfully.");
-      },
-      onError: (error: ApiError) => {
-        toast.error(error.data.message);
+    deleteQuestionSet(
+      { questionSetId },
+      {
+        onSuccess: () => {
+          refetch();
+          toast.success("Deleted successfully.");
+        },
+        onError: (error: ApiError) => {
+          toast.error(error.data.message);
+        },
       }
-    })
-  }
+    );
+  };
 
   const handlePublishQuestionSet = (questionSetId: string) => {
     setPendingId(questionSetId);
-    publishQuestionSet({ questionSetId }, {
-      onSuccess: () => {
-        refetch();
-        toast.success("Question-set published successfully.");
-      },
-      onError: (error: ApiError) => {
-        toast.error(error.message);
+    publishQuestionSet(
+      { questionSetId },
+      {
+        onSuccess: () => {
+          refetch();
+          toast.success("Question-set published successfully.");
+        },
+        onError: (error: ApiError) => {
+          toast.error(error.message);
+        },
       }
-    })
-  }
+    );
+  };
 
   const handleDraftQuestionSet = (questionSetId: string) => {
     setPendingId(questionSetId);
-    draftQuestionSet({ questionSetId }, {
-      onSuccess: () => {
-        refetch();
-        toast.success("Question-set set to draft.");
-      },
-      onError: (error: ApiError) => {
-        toast.error(error.message);
+    draftQuestionSet(
+      { questionSetId },
+      {
+        onSuccess: () => {
+          refetch();
+          toast.success("Question-set set to draft.");
+        },
+        onError: (error: ApiError) => {
+          toast.error(error.message);
+        },
       }
-    })
-  }
+    );
+  };
 
-  const tableColumns = getColumns(handleDelete, handlePublishQuestionSet, handleDraftQuestionSet, isDraftPending || isPublishPending, pendingId)
+  const tableColumns = getColumns(
+    handleDelete,
+    handlePublishQuestionSet,
+    handleDraftQuestionSet,
+    isDraftPending || isPublishPending,
+    pendingId
+  );
 
   return (
     <div className="flex flex-col gap-4">
@@ -114,7 +139,9 @@ export default function UsersPage() {
           </SelectContent>
         </Select> */}
 
-        <Button variant="default" type="submit">Filter</Button>
+        <Button variant="default" type="submit">
+          Filter
+        </Button>
       </form>
       <DataTable
         columns={tableColumns}

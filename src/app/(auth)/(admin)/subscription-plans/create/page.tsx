@@ -3,7 +3,7 @@
 import { subscriptionPlanReqSchema, SubscriptionPlanReqDto } from "@/types/subscription-plan";
 import { useCreateSubscriptionPlan, useGetSubscriptionPlans } from "@/hooks/api/useSubscriptionPlan";
 import { useRouter } from "next/navigation";
-import { CategoryForm } from "../components/form";
+import { SubscriptionPlanForm } from "../components/form";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
@@ -73,7 +73,7 @@ export default function Page() {
                     </Button>
                 }
             />
-            <CategoryForm
+            <SubscriptionPlanForm
                 isPending={isPending}
                 onSubmit={onSubmit}
                 form={form}

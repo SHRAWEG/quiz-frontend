@@ -1,48 +1,48 @@
 // app/history/page.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardFooter,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-} from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useGetQuestionSetAttempts } from '@/hooks/api/useQuestionSetAttempt';
-import { QuestionSetAttempt } from '@/types/question-set-attempt';
-import { formatISODate } from '@/lib/format-date';
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useGetQuestionSetAttempts } from "@/hooks/api/useQuestionSetAttempt";
+import { QuestionSetAttempt } from "@/types/question-set-attempt";
+import { formatISODate } from "@/lib/format-date";
 
 export default function QuestionSetAttemptList() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(6);
   // const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const params = {
     page,
     limit: pageSize,
-    search: '',
-    status: statusFilter === 'all' ? '' : statusFilter,
-  }
+    search: "",
+    status: statusFilter === "all" ? "" : statusFilter,
+  };
 
-  const { data, isLoading, isError } = useGetQuestionSetAttempts(params)
+  const { data, isLoading, isError } = useGetQuestionSetAttempts(params);
 
   // const handleSearch = (e: React.FormEvent) => {
   //   e.preventDefault();
@@ -54,7 +54,11 @@ export default function QuestionSetAttemptList() {
       return <Badge variant="secondary">In Progress</Badge>;
     }
     if (!attempt.isChecked) {
-      return <Badge variant="default" className='bg-amber-500'>Review Pending</Badge>;
+      return (
+        <Badge variant="default" className="bg-amber-500">
+          Review Pending
+        </Badge>
+      );
     }
     if (attempt.isChecked) {
       return <Badge variant="success">Completed</Badge>;
@@ -62,10 +66,10 @@ export default function QuestionSetAttemptList() {
   };
 
   const getPercentageColor = (percentage: number) => {
-    if (percentage >= 80) return 'text-emerald-600';
-    if (percentage >= 60) return 'text-lime-600';
-    if (percentage >= 40) return 'text-amber-600';
-    return 'text-red-600';
+    if (percentage >= 80) return "text-emerald-600";
+    if (percentage >= 60) return "text-lime-600";
+    if (percentage >= 40) return "text-amber-600";
+    return "text-red-600";
   };
 
   return (
@@ -79,10 +83,7 @@ export default function QuestionSetAttemptList() {
             onChange={(e) => setSearch(e.target.value)}
             className="max-w-md"
           /> */}
-          <Select
-            value={statusFilter}
-            onValueChange={setStatusFilter}
-          >
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
@@ -107,13 +108,19 @@ export default function QuestionSetAttemptList() {
           <div className="text-red-500">Error loading attempts</div>
         ) : data?.data.length ? (
           data.data.map((attempt) => (
-            <Card key={attempt.id} className="hover:shadow-lg transition-shadow">
+            <Card
+              key={attempt.id}
+              className="hover:shadow-lg transition-shadow"
+            >
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-lg">{attempt.questionSet.name}</CardTitle>
+                    <CardTitle className="text-lg">
+                      {attempt.questionSet.name}
+                    </CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      Attempt #{attempt.attemptNumber} • {formatISODate(attempt?.startedAt?.toString())}
+                      Attempt #{attempt.attemptNumber} •{" "}
+                      {formatISODate(attempt?.startedAt?.toString())}
                     </p>
                   </div>
                   {getStatusBadge(attempt)}
@@ -123,47 +130,63 @@ export default function QuestionSetAttemptList() {
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Score</p>
-                    <p className={`text-xl font-semibold ${attempt.isChecked ? getPercentageColor(attempt.percentage) : 'text-muted-foreground'}`}>
-                      {attempt.isChecked ? attempt.score : 'Pending'}
+                    <p
+                      className={`text-xl font-semibold ${
+                        attempt.isChecked
+                          ? getPercentageColor(attempt.percentage)
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      {attempt.isChecked ? attempt.score : "Pending"}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Percentage</p>
-                    <p className={`text-xl font-semibold ${attempt.isChecked ? getPercentageColor(attempt.percentage) : 'text-muted-foreground'}`}>
-                      {attempt.isChecked ? `${attempt.percentage.toFixed(1)}%` : 'Pending'}
+                    <p
+                      className={`text-xl font-semibold ${
+                        attempt.isChecked
+                          ? getPercentageColor(attempt.percentage)
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      {attempt.isChecked
+                        ? `${attempt.percentage.toFixed(1)}%`
+                        : "Pending"}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Completion</p>
                     <p className="text-xl font-semibold">
-                      {attempt.completedAt ? (
-                        `${formatISODate(attempt?.completedAt?.toString())}`
-                      ) : (
-                        'Not completed'
-                      )}
+                      {attempt.completedAt
+                        ? `${formatISODate(attempt?.completedAt?.toString())}`
+                        : "Not completed"}
                     </p>
                   </div>
                 </div>
               </CardContent>
               <CardFooter className="flex justify-end border-t pt-4">
-                {
-                  attempt.isCompleted ? (
-                    <Button
-                      variant="default"
-                      disabled={!attempt.isChecked}
-                      onClick={() => window.location.href = `/question-set-attempt/${attempt.id}/results`}
-                    >
-                      View Details
-                    </Button>
-                  ) : (
-                    <Button 
-                      variant="default"
-                      onClick={() => window.location.href = `/question-set-attempt/${attempt.id}`}
-                    >
-                      Continue Attempt
-                    </Button>
-                  )
-                }
+                {attempt.isCompleted ? (
+                  <Button
+                    variant="default"
+                    className="cursor-pointer hover:bg-gray-600"
+                    disabled={!attempt.isChecked}
+                    onClick={() =>
+                      (window.location.href = `/question-set-attempt/${attempt.id}/results`)
+                    }
+                  >
+                    View Details
+                  </Button>
+                ) : (
+                  <Button
+                    variant="default"
+                    className="cursor-pointer hover:bg-gray-600"
+                      onClick={() =>
+                      (window.location.href = `/question-set-attempt/${attempt.id}`)
+                    }
+                  >
+                    Continue Attempt
+                  </Button>
+                )}
               </CardFooter>
             </Card>
           ))

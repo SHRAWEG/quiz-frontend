@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Wallet } from "lucide-react";
+import { DollarSign, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -24,7 +24,7 @@ export function HeaderCredits() {
           size="sm"
           className="flex items-center gap-1.5 px-3 hover:bg-accent"
         >
-          <Wallet size="lg" />
+          <DollarSign />
           <span className="font-medium">
             {isLoading ? "..." : balance ?? 0}
           </span>

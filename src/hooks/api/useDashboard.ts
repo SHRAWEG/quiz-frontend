@@ -2,6 +2,7 @@ import { apiClient, ApiResponse } from "@/lib/axios";
 import { API_URLS } from "@/lib/constants/api-urls";
 import {
   AdminDashboard,
+  LeaderboardList,
   StudentDashboard,
   TeacherDashboard,
 } from "@/types/dashboard";
@@ -35,6 +36,17 @@ export const useStudentsDashboard = () =>
     queryFn: async () => {
       const response = await apiClient.get<ApiResponse<StudentDashboard>>(
         `${API_URLS.dashboard}/student`
+      );
+      return response.data;
+    },
+  });
+
+export const useLeaderBoard = () =>
+  useQuery({
+    queryKey: ["leaderboard"],
+    queryFn: async () => {
+      const response = await apiClient.get<ApiResponse<LeaderboardList>>(
+        `${API_URLS.dashboard}/leaderboard`
       );
       return response.data;
     },

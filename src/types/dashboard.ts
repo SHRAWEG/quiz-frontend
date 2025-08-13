@@ -27,3 +27,17 @@ export const studentDashboardSchema = z.object({
 });
 
 export type StudentDashboard = z.infer<typeof studentDashboardSchema>;
+
+export const leaderBoardSchema = z.object({
+  id: z.string(),
+  rank: z.number(),
+  name: z.string(),
+  score: z.number(),
+  attempts: z.number(),
+  isCurrentUser: z.boolean(),
+});
+
+export const leaderBoardListSchema = z.array(leaderBoardSchema);
+
+export type LeaderboardUser = z.infer<typeof leaderBoardSchema>;
+export type LeaderboardList = z.infer<typeof leaderBoardListSchema>;

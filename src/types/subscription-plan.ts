@@ -10,7 +10,7 @@ export const subscriptionPlanSchema = z.object({
   price: z.number(),
   isActive: z.boolean(),
   createdAt: z.string(),
-  updatedAt: z.string()
+  updatedAt: z.string(),
 });
 
 export const subscriptionPlanListSchema = z.object({
@@ -18,16 +18,25 @@ export const subscriptionPlanListSchema = z.object({
   totalItems: z.number(),
   totalPages: z.number(),
   currentPage: z.number(),
-  pageSize: z.number()
+  pageSize: z.number(),
 });
 
 export const subscriptionPlanReqSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
-  duration: z.enum(subscriptionDuration.map(d => d.value) as [string, ...string[]]),
+  duration: z.enum(
+    subscriptionDuration.map((d) => d.value) as [string, ...string[]]
+  ),
   description: z.string().optional(),
   price: z.number().min(0, { message: "Price must be a positive number" }),
-})
+});
+
+export const updateSubscriptionPlanReqSchema = subscriptionPlanReqSchema
+  .partial()
+  .extend({
+    isActive: z.boolean().optional(),
+  });
 
 export type SubscriptionPlanReqDto = z.infer<typeof subscriptionPlanReqSchema>;
+export type UpdateSubscriptionPlanReqDto = z.infer<typeof updateSubscriptionPlanReqSchema>;
 export type SubscriptionPlan = z.infer<typeof subscriptionPlanSchema>;
 export type SubscriptionPlanList = z.infer<typeof subscriptionPlanListSchema>;
