@@ -10,7 +10,8 @@ import {
   ClipboardList,
   ClipboardCheck,
   CreditCard,
-  Loader2
+  Loader2,
+  User
 } from "lucide-react"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/layout/app-sidebar"
@@ -26,6 +27,18 @@ const items = [
     url: "/dashboard",
     icon: LayoutDashboard, // More specific than Home for admin dashboards
     role: ['admin', 'teacher', 'student']
+  },
+  {
+    title: "Students",
+    url: "/students",
+    icon: User, // Better for subject management
+    role: ["admin"]
+  },
+  {
+    title: "Teachers",
+    url: "/teachers",
+    icon: User, // Better for subject management
+    role: ["admin"]
   },
   {
     title: "Subjects",

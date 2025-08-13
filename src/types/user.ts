@@ -13,17 +13,26 @@ export const userSchema = z.object({
   isEmailVerified: z.boolean(),
   isActive: z.boolean(),
   createdAt: z.date(),
-  updatedAt: z.date()
+  updatedAt: z.date(),
+});
+
+export const userListSchema = z.object({
+  data: z.array(userSchema),
+  totalItems: z.number(),
+  totalPages: z.number(),
+  currentPage: z.number(),
+  pageSize: z.number(),
 });
 
 export const userPreference = z.object({
-  categories: z.array(categorySchema)
-})
+  categories: z.array(categorySchema),
+});
 
 export const setUserPreferenceReq = z.object({
-  categoryIds: z.string().array().min(1)
-})
+  categoryIds: z.string().array().min(1),
+});
 
 export type User = z.infer<typeof userSchema>;
+export type UserList = z.infer<typeof userListSchema>;
 export type UserPreference = z.infer<typeof userPreference>;
 export type SetUserPreference = z.infer<typeof setUserPreferenceReq>;
