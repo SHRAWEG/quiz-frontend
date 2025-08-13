@@ -20,13 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 interface FormProps {
@@ -71,8 +65,6 @@ export function SubscriptionPlanForm({
     if (value === "yearly") return "1 Year";
     return duration.label;
   };
-
-  const duration = form.watch("duration");
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
