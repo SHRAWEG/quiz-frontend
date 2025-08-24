@@ -48,7 +48,7 @@ export default function SubjectPage() {
                 categoryId: data.categoryId,
                 name: data.name,
                 accessType: data.accessType,
-                creditCost: data.creditCost,
+                creditCost: data.creditCost || undefined,
                 isTimeLimited: data.isTimeLimited || false,
                 timeLimitSeconds: data.timeLimitSeconds || undefined,
             });

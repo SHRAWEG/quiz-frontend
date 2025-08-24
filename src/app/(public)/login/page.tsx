@@ -35,13 +35,11 @@ export default function LoginScreen() {
   const [error, setError] = useState("");
   const [resendVerifyLink, setResendVerifyLink] = useState(false);
 
-
-
   const form = useForm<LoginReqDto>({
     resolver: zodResolver(loginReqDto),
     defaultValues: {
       email: "",
-      password: ""
+      password: "",
     },
     mode: "onBlur",
     criteriaMode: "all",
@@ -50,11 +48,22 @@ export default function LoginScreen() {
   function onSubmit(data: LoginReqDto) {
     mutate(data, {
       onSuccess: (data: LoginResDto) => {
-
-        setCookie(COOKIE_KEYS.TOKEN, data.accessToken, { maxAge: 60 * 60 * 24, path: "/" });
-        setCookie(COOKIE_KEYS.EMAIL, data.email, { maxAge: 60 * 60 * 24, path: "/" });
-        setCookie(COOKIE_KEYS.NAME, data.name, { maxAge: 60 * 60 * 24, path: "/" });
-        setCookie(COOKIE_KEYS.ROLE, data.role, { maxAge: 60 * 60 * 24, path: "/" });
+        setCookie(COOKIE_KEYS.TOKEN, data.accessToken, {
+          maxAge: 60 * 60 * 24,
+          path: "/",
+        });
+        setCookie(COOKIE_KEYS.EMAIL, data.email, {
+          maxAge: 60 * 60 * 24,
+          path: "/",
+        });
+        setCookie(COOKIE_KEYS.NAME, data.name, {
+          maxAge: 60 * 60 * 24,
+          path: "/",
+        });
+        setCookie(COOKIE_KEYS.ROLE, data.role, {
+          maxAge: 60 * 60 * 24,
+          path: "/",
+        });
 
         toast.success("Login  successful", {
           description: "You have been logged in successfully.",
@@ -76,18 +85,21 @@ export default function LoginScreen() {
   }
 
   function handleResendVerification() {
-    resendVerify({ email: form.getValues("email") }, {
-      onSuccess: () => {
-        toast("Verification link sent successfully", {
-          description: "Please check your email for the verification link.",
-        });
-      },
-      onError: (error: ApiError) => {
-        toast.error("Error sending verification link", {
-          description: error.data.message,
-        });
-      },
-    });
+    resendVerify(
+      { email: form.getValues("email") },
+      {
+        onSuccess: () => {
+          toast("Verification link sent successfully", {
+            description: "Please check your email for the verification link.",
+          });
+        },
+        onError: (error: ApiError) => {
+          toast.error("Error sending verification link", {
+            description: error.data.message,
+          });
+        },
+      }
+    );
   }
 
   // Helper function to determine if we should show an error
@@ -117,10 +129,11 @@ export default function LoginScreen() {
                 id="email"
                 type="email"
                 placeholder="name@example.com"
-                className={`h-11 ${shouldShowError("email")
-                  ? "border-destructive focus-visible:ring-destructive"
-                  : ""
-                  }`}
+                className={`h-11 ${
+                  shouldShowError("email")
+                    ? "border-destructive focus-visible:ring-destructive"
+                    : ""
+                }`}
                 {...form.register("email")}
                 onChange={(e) => {
                   form.setValue("email", e.target.value.trim());
@@ -143,10 +156,11 @@ export default function LoginScreen() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
-                className={`h-11 pr-10 ${shouldShowError("password")
-                  ? "border-destructive focus-visible:ring-destructive"
-                  : ""
-                  }`}
+                className={`h-11 pr-10 ${
+                  shouldShowError("password")
+                    ? "border-destructive focus-visible:ring-destructive"
+                    : ""
+                }`}
                 {...form.register("password")}
                 onChange={(e) => {
                   form.setValue("password", e.target.value.trim());
@@ -177,48 +191,37 @@ export default function LoginScreen() {
             )}
 
             {error && (
-              <p className="text-sm font-medium text-destructive">
-                {error}
-              </p>
+              <p className="text-sm font-medium text-destructive">{error}</p>
             )}
 
             {resendVerifyLink && (
-              <a onClick={handleResendVerification} className="text-sm font-medium text-muted-foreground cursor-pointer hover:text-primary underline underline-offset-4">
+              <a
+                onClick={handleResendVerification}
+                className="text-sm font-medium text-muted-foreground cursor-pointer hover:text-primary underline underline-offset-4"
+              >
                 Resend verify link to your email address.
               </a>
             )}
 
-            {/* <div className="flex items-center justify-between">
-                <Button
-                  variant="link"
-                  className="h-auto p-0 text-xs font-normal text-muted-foreground"
-                >
-                  Forgot password?
-                </Button>
-              </div>
-
-            <div className="flex items-center space-x-2 pt-2">
-              <Checkbox
-                id="rememberMe"
-                checked={form.watch("rememberMe")}
-                onCheckedChange={(checked) => {
-                  form.setValue("rememberMe", checked === true);
-                }}
-              />
-              <Label htmlFor="rememberMe" className="text-sm font-normal">
-                Remember me
-              </Label>
-            </div> */}
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-4 pt-6">
-            <Button
-              type="submit"
-              className="w-full h-11"
-              disabled={isPending}
-            >
+            <Button type="submit" className="w-full h-11" disabled={isPending}>
               {isPending ? "Signing in..." : "Sign in"}
             </Button>
+
+            <div className="flex items-center justify-center">
+              <Link href="/forgot-password">
+                <Button
+                  variant="link"
+                  className="h-auto p-0 text-xs font-normal text-muted-foreground"
+                  type="button"
+                >
+                  Forgot password?
+                </Button>
+              </Link>
+            </div>
+
             <div className="text-center text-sm text-muted-foreground">
               Don't have an account?{" "}
               <Link

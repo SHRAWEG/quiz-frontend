@@ -1,5 +1,6 @@
 import { LoginReqDto, LoginResDto, ResendVerificationDto } from "@/types/auth/login.dto";
 import { RegisterResDto, RegisterReqDto } from "@/types/auth/register.dto";
+import { ForgotPasswordReqDto, ForgotPasswordResDto, ResetPasswordReqDto, ResetPasswordResDto } from "@/types/auth/forgot-password.dto";
 import { apiClient, ApiError, ApiResponse } from "@/lib/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -41,3 +42,21 @@ export const useVerifyEmail = (params: { token: string }) => useQuery<VerifyResp
     return await apiClient.get<VerifyResponse>("/auth/verify-email", { params })
   }
 })
+
+export const useForgotPassword = () =>
+  useMutation<ForgotPasswordResDto, ApiError, ForgotPasswordReqDto>({
+    mutationKey: ["forgot-password"],
+    mutationFn: async (data: ForgotPasswordReqDto) => {
+      const response = await apiClient.post<ApiResponse<ForgotPasswordResDto>, ForgotPasswordReqDto>("/auth/forgot-password", data)
+      return response.data;
+    }
+  });
+
+export const useResetPassword = () =>
+  useMutation<ResetPasswordResDto, ApiError, ResetPasswordReqDto>({
+    mutationKey: ["reset-password"],
+    mutationFn: async (data: ResetPasswordReqDto) => {
+      const response = await apiClient.post<ApiResponse<ResetPasswordResDto>, ResetPasswordReqDto>("/auth/reset-password", data)
+      return response.data;
+    }
+  });

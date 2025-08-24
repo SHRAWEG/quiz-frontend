@@ -155,21 +155,51 @@ export default function QuizResultsPage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      {/* Header Section */}
-      <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold mb-2">Results</h1>
-        <p className="text-muted-foreground">{data.questionSet.name}</p>
-        <p className="text-blue-400">Attempt: {data.attemptNumber} of {data.reportStatistics.totalUserAttempts} </p>
-        <div className="flex justify-center mt-2">
-          <Badge variant={data.questionSet.accessType === "free" ? "secondary" : "premium"} className="mr-2">
-            {questionSetAccessType.find(x => x.value === data.questionSet.accessType)?.label}
-          </Badge>
-          <Badge variant="outline">
-            {data.questionSet.category?.name}
-          </Badge>
+    <div className="min-h-screen bg-gray-50/30">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push('/dashboard')}
+                className="gap-2 hover:bg-gray-100 transition-colors"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Dashboard
+              </Button>
+              <div className="h-4 w-px bg-gray-300" />
+              <div className="flex items-center space-x-2">
+                <BookOpen className="h-4 w-4 text-gray-500" />
+                <span className="text-sm font-medium text-gray-700">Quiz Results</span>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Badge variant={data.questionSet.accessType === "free" ? "secondary" : "default"} className="text-xs">
+                {questionSetAccessType.find(x => x.value === data.questionSet.accessType)?.label}
+              </Badge>
+            </div>
+          </div>
         </div>
       </div>
+
+      <div className="container mx-auto py-8">
+        {/* Header Section */}
+        <div className="text-center mb-10">
+          <h1 className="text-3xl font-bold mb-2">Results</h1>
+          <p className="text-muted-foreground">{data.questionSet.name}</p>
+          <p className="text-blue-400">Attempt: {data.attemptNumber} of {data.reportStatistics.totalUserAttempts} </p>
+          <div className="flex justify-center mt-2">
+            <Badge variant={data.questionSet.accessType === "free" ? "secondary" : "premium"} className="mr-2">
+              {questionSetAccessType.find(x => x.value === data.questionSet.accessType)?.label}
+            </Badge>
+            <Badge variant="outline">
+              {data.questionSet.category?.name}
+            </Badge>
+          </div>
+        </div>
 
       {/* Score Summary */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
@@ -469,6 +499,7 @@ export default function QuizResultsPage() {
           </div>
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   )
 }

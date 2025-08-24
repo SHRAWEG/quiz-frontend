@@ -1,9 +1,10 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { User } from "@/types/user";
-import { Check, X } from "lucide-react";
+import { Check, X, Eye } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const getColumns = (
-  // handleDelete: (id: string) => void
+  onViewProfile?: (user: User) => void
 ): ColumnDef<User>[] => [
     {
       accessorKey: "firstName",
@@ -60,5 +61,25 @@ export const getColumns = (
       accessorKey: "updatedAt",
       header: "Updated At",
       enableSorting: false,
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      enableSorting: false,
+      cell: ({ row }) => {
+        const user = row.original;
+        return (
+          <div className="flex justify-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onViewProfile?.(user)}
+              className="h-8 w-8 p-0"
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+          </div>
+        );
+      },
     },
   ];
