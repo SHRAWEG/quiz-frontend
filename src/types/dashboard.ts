@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { noticeSchema } from "./notice";
 
 export const adminDashboardSchema = z.object({
   totalStudents: z.number(),
@@ -24,6 +25,7 @@ export const studentDashboardSchema = z.object({
   completedQuestionSets: z.number(),
   incompleteQuestionSets: z.number(),
   timeSpentInSeconds: z.number(),
+  activeNotices: z.array(noticeSchema),
 });
 
 export type StudentDashboard = z.infer<typeof studentDashboardSchema>;

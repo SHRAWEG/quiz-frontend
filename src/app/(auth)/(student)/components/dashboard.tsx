@@ -6,7 +6,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { BookOpen, Clock, Award, TrendingUp } from "lucide-react";
+import { BookOpen, Clock, Award, TrendingUp, Bell } from "lucide-react";
 import { useGetQuestionSetAttempts } from "@/hooks/api/useQuestionSetAttempt";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -46,6 +46,28 @@ export default function StudentDashboard() {
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-3xl font-bold">Student Dashboard</h1>
+
+      {/* Notices */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Bell className="h-8 w-8 text-blue-500" />
+            Active Notices
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-2">
+            {data?.activeNotices.map((notice) => (
+              <div key={notice.id} className="flex flex-col">
+                <h3 className="text-lg font-bold">{notice.title}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {notice.content}
+                </p>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

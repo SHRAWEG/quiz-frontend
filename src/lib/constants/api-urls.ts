@@ -12,5 +12,6 @@ export const API_URLS = {
   userSubscription: "/user-subscriptions",
   user: "/users",
   credit: "/credits",
-  creditPurchase: '/credit-purchases',
+  creditPurchase: "/credit-purchases",
+  notice: "/notices",
 };

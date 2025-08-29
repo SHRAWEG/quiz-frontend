@@ -12,6 +12,7 @@ import {
   CreditCard,
   Loader2,
   User,
+  Bell,
 } from "lucide-react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/app-sidebar";
@@ -86,6 +87,12 @@ const items = [
     title: "Subscription Plans", // More descriptive than "Payments"
     url: "/subscription-plans",
     icon: CreditCard, // Standard for payment/subscriptions
+    role: ["admin"],
+  },
+  {
+    title: "Notices",
+    url: "/notices",
+    icon: Bell,
     role: ["admin"],
   },
 ];
