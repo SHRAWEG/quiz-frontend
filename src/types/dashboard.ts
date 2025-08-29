@@ -35,6 +35,7 @@ export const leaderBoardSchema = z.object({
   score: z.number(),
   attempts: z.number(),
   isCurrentUser: z.boolean(),
+  profilePicture: z.string(),
 });
 
 export const leaderBoardListSchema = z.array(leaderBoardSchema);

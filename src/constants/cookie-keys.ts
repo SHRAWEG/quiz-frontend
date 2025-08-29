@@ -2,7 +2,8 @@ export const COOKIE_KEYS = {
   USER: "user",
   TOKEN: "token",
   EMAIL: "email",
-  NAME: "name", 
+  NAME: "name",
   ROLE: "role",
-  HASPREFERENCE: "hasPreference"
+  HASPREFERENCE: "hasPreference",
+  PROFILE_PICTURE: "profilePicture",
 };

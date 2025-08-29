@@ -1,7 +1,7 @@
 // components/leaderboard.tsx
 "use client";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -69,6 +69,10 @@ export function Leaderboard() {
               >
                 <div className="relative mb-2">
                   <Avatar className="w-16 h-16">
+                    <AvatarImage
+                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${user.profilePicture}`}
+                      alt={user.name}
+                    />
                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div
@@ -86,7 +90,7 @@ export function Leaderboard() {
                 </div>
                 <h3 className="font-semibold">{user.name}</h3>
                 <div className="text-2xl font-bold text-primary">
-                  {user.score}
+                  {user.score} / {user.attempts} attempts
                 </div>
               </div>
             ))}
@@ -129,6 +133,10 @@ export function Leaderboard() {
                         <TableCell>
                           <div className="flex items-center space-x-3">
                             <Avatar className="h-8 w-8">
+                              <AvatarImage
+                                src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${user.profilePicture}`}
+                                alt={user.name}
+                              />
                               <AvatarFallback>
                                 {user.name.charAt(0)}
                               </AvatarFallback>

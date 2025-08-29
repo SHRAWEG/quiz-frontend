@@ -27,6 +27,15 @@ export function UploadQuestion() {
     }
   };
 
+  const handleRemoveFile = () => {
+    setFile(null);
+    // Reset the file input value to allow re-uploading the same file
+    const fileInput = document.getElementById('csv-upload') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  };
+
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
@@ -58,6 +67,11 @@ export function UploadQuestion() {
         onSuccess: (response: ApiResponse<UploadQuestionResDto>) => {
           if (response.success) {
             setFile(null);
+            // Reset the file input value after successful upload
+            const fileInput = document.getElementById('csv-upload') as HTMLInputElement;
+            if (fileInput) {
+              fileInput.value = '';
+            }
 
             router.push('/questions');
 
@@ -133,7 +147,7 @@ export function UploadQuestion() {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={() => setFile(null)}
+                  onClick={handleRemoveFile}
                 >
                   Remove
                 </Button>

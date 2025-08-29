@@ -1,6 +1,7 @@
 import { LoginReqDto, LoginResDto, ResendVerificationDto } from "@/types/auth/login.dto";
 import { RegisterResDto, RegisterReqDto } from "@/types/auth/register.dto";
 import { ForgotPasswordReqDto, ForgotPasswordResDto, ResetPasswordReqDto, ResetPasswordResDto } from "@/types/auth/forgot-password.dto";
+import { ChangePasswordReqDto, ChangePasswordResDto } from "@/types/auth/change-password.dto";
 import { apiClient, ApiError, ApiResponse } from "@/lib/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -57,6 +58,15 @@ export const useResetPassword = () =>
     mutationKey: ["reset-password"],
     mutationFn: async (data: ResetPasswordReqDto) => {
       const response = await apiClient.post<ApiResponse<ResetPasswordResDto>, ResetPasswordReqDto>("/auth/reset-password", data)
+      return response.data;
+    }
+  });
+
+export const useChangePassword = () =>
+  useMutation<ChangePasswordResDto, ApiError, ChangePasswordReqDto>({
+    mutationKey: ["change-password"],
+    mutationFn: async (data: ChangePasswordReqDto) => {
+      const response = await apiClient.patch<ApiResponse<ChangePasswordResDto>, ChangePasswordReqDto>("/users/change-password", data)
       return response.data;
     }
   });

@@ -12,6 +12,7 @@ export const userSchema = z.object({
   role: z.string(),
   isEmailVerified: z.boolean(),
   isActive: z.boolean(),
+  profilePicture: z.string().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });

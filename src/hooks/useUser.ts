@@ -1,58 +1,58 @@
 "use client";
 
-import { COOKIE_KEYS } from '@/constants/cookie-keys';
-import { deleteCookie, getCookie } from 'cookies-next';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { COOKIE_KEYS } from "@/constants/cookie-keys";
+import { deleteCookie, getCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export function useUser(requiredRole?: string) {
-    const router = useRouter();
-    const [authState, setAuthState] = useState<{
-        name: string | null
-        role: string | null
-        email: string | null
-        isLoading: boolean
-    }>({
-        name: null,
-        role: null,
-        email: null,
-        isLoading: true
-    })
+  const router = useRouter();
+  const [authState, setAuthState] = useState<{
+    name: string | null;
+    role: string | null;
+    email: string | null;
+    isLoading: boolean;
+  }>({
+    name: null,
+    role: null,
+    email: null,
+    isLoading: true,
+  });
 
-    useEffect(() => {
-        const token = getCookie(COOKIE_KEYS.TOKEN) as string | null
-        const role = getCookie(COOKIE_KEYS.ROLE) as string | null
-        const name = getCookie(COOKIE_KEYS.NAME) as string | null
-        const email = getCookie(COOKIE_KEYS.EMAIL) as string | null
-        const isValidRole = role && ['admin', 'teacher', 'student'].includes(role)
+  useEffect(() => {
+    const token = getCookie(COOKIE_KEYS.TOKEN) as string | null;
+    const role = getCookie(COOKIE_KEYS.ROLE) as string | null;
+    const name = getCookie(COOKIE_KEYS.NAME) as string | null;
+    const email = getCookie(COOKIE_KEYS.EMAIL) as string | null;
+    const isValidRole = role && ["admin", "teacher", "student"].includes(role);
 
-        setAuthState({
-            name: name,
-            email: email,
-            role: isValidRole ? role : null,
-            isLoading: false
-        })
+    setAuthState({
+      name: name,
+      email: email,
+      role: isValidRole ? role : null,
+      isLoading: false,
+    });
 
-        if (!token || !isValidRole) { 
-            router.push('/login')
-        }
+    if (!token || !isValidRole) {
+      router.push("/login");
+    }
 
-        if (!isValidRole || (requiredRole && role !== requiredRole)) {
-            router.push('/unauthorized')
-        }
-    }, [router, requiredRole]);
+    if (token && (!isValidRole || (requiredRole && role !== requiredRole))) {
+      router.push("/unauthorized");
+    }
+  }, [router, requiredRole]);
 
-    return authState;
+  return authState;
 }
 
-export function useLogout(){
-    const router = useRouter();
-    const logout = () => {
-        deleteCookie(COOKIE_KEYS.TOKEN);
-        deleteCookie(COOKIE_KEYS.NAME);
-        deleteCookie(COOKIE_KEYS.EMAIL);
-        deleteCookie(COOKIE_KEYS.ROLE);
-        router.push('/login');
-    }
-    return logout;
+export function useLogout() {
+  const router = useRouter();
+  const logout = () => {
+    deleteCookie(COOKIE_KEYS.TOKEN);
+    deleteCookie(COOKIE_KEYS.NAME);
+    deleteCookie(COOKIE_KEYS.EMAIL);
+    deleteCookie(COOKIE_KEYS.ROLE);
+    router.push("/login");
+  };
+  return logout;
 }

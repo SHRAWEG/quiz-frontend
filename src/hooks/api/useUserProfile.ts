@@ -25,3 +25,23 @@ export const useSetUserPreference = () =>
     mutationKey: ["updateSubSubject"],
     mutationFn: async ({ data }) => await apiClient.patch<Category[], SetUserPreference>(`${API_URLS.user}/preferences`, data)
   });
+
+export const useUpdateProfilePicture = () =>
+  useMutation<User, ApiError, { profilePicture: File }>({
+    mutationKey: ["updateProfilePicture"],
+    mutationFn: async ({ profilePicture }) => {
+      const formData = new FormData();
+      formData.append('profilePicture', profilePicture);
+      
+      const response = await apiClient.patch<ApiResponse<User>>(
+        `${API_URLS.user}/profile-picture`, 
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      return response.data;
+    }
+  });

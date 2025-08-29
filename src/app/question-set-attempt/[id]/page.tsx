@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { redirect, useParams, useRouter } from "next/navigation";
 import { QuestionSetLayout } from "../components/layout";
 import {
@@ -53,15 +53,18 @@ export default function QuestionSetAttemptPage() {
   }, [questionSetAttempt, currentQuestionId]);
 
   // Derived values
-  const questions = questionSetAttempt?.questionAttempts || [];
+  const questions = useMemo(
+    () => questionSetAttempt?.questionAttempts || [],
+    [questionSetAttempt?.questionAttempts]
+  );
   const currentQuestion = useMemo(
     () => questions.find((q) => q.id === currentQuestionId),
-    [currentQuestionId]
+    [currentQuestionId, questions]
   );
 
   const currentIndex = useMemo(
     () => questions.findIndex((q) => q.id === currentQuestionId),
-    [currentQuestionId]
+    [currentQuestionId, questions]
   );
 
   const answeredQuestions = useMemo(
@@ -72,7 +75,7 @@ export default function QuestionSetAttemptPage() {
           q.selectedOptionId ||
           q.selectedTextAnswer
       ).length,
-    []
+    [questions]
   );
 
   const answeredAll = useMemo(
@@ -83,7 +86,7 @@ export default function QuestionSetAttemptPage() {
           q.selectedOptionId ||
           q.selectedTextAnswer
       ),
-    []
+    [questions]
   );
 
   const selectedVal = useMemo(() => {
@@ -174,7 +177,7 @@ export default function QuestionSetAttemptPage() {
     setShowReviewModal(false);
   };
 
-  const onSubmit = () => {
+  const onSubmit = useCallback(() => {
     finishQuestionSet(
       { questionSetAttemptId: id as string },
       {
@@ -187,13 +190,13 @@ export default function QuestionSetAttemptPage() {
         },
       }
     );
-  };
+  }, [finishQuestionSet, id, router, refetch]);
 
   useEffect(() => {
     if (questionSetAttempt?.questionSet.isTimeLimited && isExpired) {
       onSubmit();
     }
-  }, [isExpired, questionSetAttempt?.questionSet.isTimeLimited]);
+  }, [isExpired, questionSetAttempt?.questionSet.isTimeLimited, onSubmit]);
 
   // Loading state
   if (isLoading || !questionSetAttempt) {

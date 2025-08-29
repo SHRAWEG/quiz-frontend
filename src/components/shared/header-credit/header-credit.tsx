@@ -1,6 +1,6 @@
 "use client";
 
-import { DollarSign, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -24,7 +24,7 @@ export function HeaderCredits() {
           size="sm"
           className="flex items-center gap-1.5 px-3 hover:bg-accent"
         >
-          <DollarSign />
+          <span className="text-sm font-semibold text-muted-foreground">NPR</span>
           <span className="font-medium">
             {isLoading ? "..." : balance ?? 0}
           </span>
