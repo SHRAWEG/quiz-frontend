@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,12 +21,13 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { useLogin, useResendVerification } from "@/hooks/api/useAuth";
 import { COOKIE_KEYS } from "@/constants/cookie-keys";
-import { setCookie } from "cookies-next/client";
+import { setCookie, getCookie } from "cookies-next/client";
 import { ApiError } from "@/lib/axios";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useSearchParams } from "next/navigation";
 
-export default function LoginScreen() {
-  const { login } = useAuthContext();
+function LoginScreen() {
+  const { login, isAuthenticated, token, isLoading } = useAuthContext();
 
   const { mutate, isPending } = useLogin();
   const { mutate: resendVerify } = useResendVerification();
@@ -34,6 +35,7 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [resendVerifyLink, setResendVerifyLink] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const form = useForm<LoginReqDto>({
     resolver: zodResolver(loginReqDto),
@@ -45,31 +47,89 @@ export default function LoginScreen() {
     criteriaMode: "all",
   });
 
+  // Extract OAuth params from URL
+  const searchParams = useSearchParams(); // or useRouter().query
+  const oauthParams = useMemo(
+    () => ({
+      response_type: searchParams.get("response_type"),
+      client_id: searchParams.get("client_id"),
+      redirect_uri: searchParams.get("redirect_uri"),
+      scope: searchParams.get("scope"),
+      state: searchParams.get("state"),
+    }),
+    [searchParams]
+  );
+
+  const hasOAuthParams = oauthParams.client_id && oauthParams.redirect_uri;
+
+  // Redirect if user is already logged in and has OAuth params
+  useEffect(() => {
+    // Wait for auth context to finish loading
+    if (isLoading) return;
+
+    if (isAuthenticated && hasOAuthParams) {
+      const accessToken =
+        token || (getCookie(COOKIE_KEYS.TOKEN) as string | null);
+      if (accessToken) {
+        setIsRedirecting(true);
+        const oauthUrl = new URL(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/oauth/authorize-with-token`
+        );
+        oauthUrl.searchParams.set("token", accessToken);
+        Object.entries(oauthParams).forEach(([key, value]) => {
+          if (value) oauthUrl.searchParams.set(key, value);
+        });
+
+        // Redirect to OAuth endpoint (will redirect to forum)
+        window.location.href = oauthUrl.toString();
+      }
+    }
+  }, [isAuthenticated, hasOAuthParams, token, oauthParams, isLoading]);
+
   function onSubmit(data: LoginReqDto) {
     mutate(data, {
       onSuccess: (data: LoginResDto) => {
-        setCookie(COOKIE_KEYS.TOKEN, data.accessToken, {
-          maxAge: 60 * 60 * 24,
-          path: "/",
-        });
-        setCookie(COOKIE_KEYS.EMAIL, data.email, {
-          maxAge: 60 * 60 * 24,
-          path: "/",
-        });
-        setCookie(COOKIE_KEYS.NAME, data.name, {
-          maxAge: 60 * 60 * 24,
-          path: "/",
-        });
-        setCookie(COOKIE_KEYS.ROLE, data.role, {
-          maxAge: 60 * 60 * 24,
-          path: "/",
-        });
+        const token = data.accessToken;
 
-        toast.success("Login  successful", {
-          description: "You have been logged in successfully.",
-        });
+        // Step 2: If OAuth flow, complete it
+        if (hasOAuthParams) {
+          setIsRedirecting(true);
+          const oauthUrl = new URL(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/oauth/authorize-with-token`
+          );
+          oauthUrl.searchParams.set("token", token);
+          Object.entries(oauthParams).forEach(([key, value]) => {
+            if (value) oauthUrl.searchParams.set(key, value);
+          });
 
-        login(data);
+          // Redirect to OAuth endpoint (will redirect to forum)
+          window.location.href = oauthUrl.toString();
+          // Note: You can't set Authorization header with window.location
+          // So you need to use authorize-with-token endpoint instead
+        } else {
+          setCookie(COOKIE_KEYS.TOKEN, data.accessToken, {
+            maxAge: 60 * 60 * 24,
+            path: "/",
+          });
+          setCookie(COOKIE_KEYS.EMAIL, data.email, {
+            maxAge: 60 * 60 * 24,
+            path: "/",
+          });
+          setCookie(COOKIE_KEYS.NAME, data.name, {
+            maxAge: 60 * 60 * 24,
+            path: "/",
+          });
+          setCookie(COOKIE_KEYS.ROLE, data.role, {
+            maxAge: 60 * 60 * 24,
+            path: "/",
+          });
+
+          toast.success("Login  successful", {
+            description: "You have been logged in successfully.",
+          });
+
+          login(data);
+        }
       },
       onError: (error: ApiError) => {
         if (error.status === 401) {
@@ -109,6 +169,28 @@ export default function LoginScreen() {
       form.formState.errors[fieldName]
     );
   };
+
+  // Show loading overlay when redirecting
+  if (isRedirecting) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+        <Card className="w-full max-w-md shadow-lg">
+          <CardContent className="flex flex-col items-center justify-center py-12 space-y-4">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+            <div className="text-center space-y-2">
+              <CardTitle className="text-xl font-semibold">
+                Redirecting to Forum
+              </CardTitle>
+              <CardDescription>
+                Please wait while we log you in to the forum...
+              </CardDescription>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
       <Card className="w-full max-w-md shadow-lg">
@@ -202,7 +284,6 @@ export default function LoginScreen() {
                 Resend verify link to your email address.
               </a>
             )}
-
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-4 pt-6">
@@ -235,5 +316,26 @@ export default function LoginScreen() {
         </form>
       </Card>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+          <Card className="w-full max-w-md shadow-lg">
+            <CardContent className="flex flex-col items-center justify-center py-12 space-y-4">
+              <Loader2 className="h-12 w-12 animate-spin text-primary" />
+              <div className="text-center space-y-2">
+                <CardTitle className="text-xl font-semibold">Loading...</CardTitle>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      }
+    >
+      <LoginScreen />
+    </Suspense>
   );
 }

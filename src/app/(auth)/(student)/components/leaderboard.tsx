@@ -53,12 +53,12 @@ export function Leaderboard() {
       <CardContent className="px-0">
         <div className="space-y-6">
           {/* Top 3 podium */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
             {leaderboardData.slice(0, 3).map((user) => (
               <div
                 key={user.id}
                 className={cn(
-                  "flex flex-col items-center p-4 rounded-lg border",
+                  "flex flex-col lg:grid-cols-3 items-center p-4 rounded-lg border",
                   user.rank === 1
                     ? "bg-gradient-to-b from-amber-100 to-amber-50 border-amber-200"
                     : user.rank === 2
