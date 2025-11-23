@@ -73,7 +73,7 @@ function LoginScreen() {
       if (accessToken) {
         setIsRedirecting(true);
         const oauthUrl = new URL(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/oauth/authorize-with-token`
+          `${process.env.NEXT_PUBLIC_API_URL}/oauth/authorize-with-token`
         );
         oauthUrl.searchParams.set("token", accessToken);
         Object.entries(oauthParams).forEach(([key, value]) => {
@@ -95,7 +95,7 @@ function LoginScreen() {
         if (hasOAuthParams) {
           setIsRedirecting(true);
           const oauthUrl = new URL(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/oauth/authorize-with-token`
+            `${process.env.NEXT_PUBLIC_API_URL}/oauth/authorize-with-token`
           );
           oauthUrl.searchParams.set("token", token);
           Object.entries(oauthParams).forEach(([key, value]) => {
@@ -328,7 +328,9 @@ export default function LoginPage() {
             <CardContent className="flex flex-col items-center justify-center py-12 space-y-4">
               <Loader2 className="h-12 w-12 animate-spin text-primary" />
               <div className="text-center space-y-2">
-                <CardTitle className="text-xl font-semibold">Loading...</CardTitle>
+                <CardTitle className="text-xl font-semibold">
+                  Loading...
+                </CardTitle>
               </div>
             </CardContent>
           </Card>
