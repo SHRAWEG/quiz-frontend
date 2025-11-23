@@ -5,6 +5,7 @@ import QuestionContent from "./content";
 import QuestionFooter from ".//footer";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { questionTypes } from "@/enums/question-type";
+import EditorPreview from "@/components/ck-editor/editor-preview";
 
 interface QuestionAccordionItemProps {
   question: Question;
@@ -29,18 +30,23 @@ export function QuestionAccordionItem({
         className="w-full p-4 text-left hover:bg-gray-100 flex justify-between items-center"
         aria-expanded={isExpanded}
       >
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 w-full">
           {isExpanded ? (
             <ChevronDown className="h-5 w-5 text-muted-foreground" />
           ) : (
             <ChevronRight className="h-5 w-5 text-muted-foreground" />
           )}
-          <div className="text-left">
+          <div className="text-left w-full">
             {/* <span className="text-sm text-muted-foreground mr-3">#{question.id}</span> */}
             <span className="font-medium">
               {question.subject.name} → {question.subSubject.name} →
             </span>
-            <span className="ml-3 ">Q: {question.questionText}</span>
+            {/* <span className="ml-3 ">Q: {question.questionText}</span> */}
+
+            <EditorPreview
+              className="max-h-[400px] overflow-y-auto w-full"
+              data={question.questionText}
+            />
             <div className="flex gap-2 mt-1">
               <Badge variant="outline">{questionTypes.find(x => x.value == question.type)?.label}</Badge>
               {/* <DifficultyStars difficulty={question.difficulty} /> */}

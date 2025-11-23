@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import { useGetAllSubjects } from "@/hooks/api/useSubject";
 import { useRouter } from "next/navigation";
@@ -19,105 +19,105 @@ import { ApiError } from "@/lib/axios";
 
 // Create a schema for the subjectId field
 const subjectIdSchema = z.object({
-    subjectId: z.string().min(1, "Subject is required"),
+  subjectId: z.string().min(1, "Subject is required"),
 });
 
 // Merge the original schema with our new field
 const formSchema = z.intersection(
-    questionReqDto,
-    subjectIdSchema
+  questionReqDto,
+  subjectIdSchema
 );
 
 // Define the type for our form data
 export type QuestionFormData = QuestionReqDto & { subjectId: string };
 
 export default function Page() {
-    const router = useRouter();
-    const { mutate: createQuestion, isPending } = useCreateQuestion();
-    const { refetch } = useGetQuestions();
-    const { data: subjects = [] } = useGetAllSubjects();
-    const [subSubjectId, setSubSubjectId] = useState<string>();
-    const { data: subSubjects = [] } = useGetAllSubSubjects(subSubjectId);
+  const router = useRouter();
+  const { mutate: createQuestion, isPending } = useCreateQuestion();
+  const { refetch } = useGetQuestions();
+  const { data: subjects = [] } = useGetAllSubjects();
+  const [subSubjectId, setSubSubjectId] = useState<string>();
+  const { data: subSubjects = [] } = useGetAllSubSubjects(subSubjectId);
 
-    const form = useForm<QuestionFormData>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            type: "mcq",
-            subjectId: "",
-            subSubjectId: "",
-            questionText: "",
-            options: [
-                { optionText: "", isCorrect: false },
-                { optionText: "", isCorrect: false },
-                { optionText: "", isCorrect: false },
-                { optionText: "", isCorrect: false }
-            ],
-            correctAnswerBoolean: undefined,
-            correctAnswerText: "",
-            difficulty: 3,
-        },
-        mode: "onBlur",
-    });
+  const form = useForm<QuestionFormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      type: "mcq",
+      subjectId: "",
+      subSubjectId: "",
+      questionText: "",
+      options: [
+        { optionText: "", isCorrect: false },
+        { optionText: "", isCorrect: false },
+        { optionText: "", isCorrect: false },
+        { optionText: "", isCorrect: false }
+      ],
+      correctAnswerBoolean: undefined,
+      correctAnswerText: "",
+      difficulty: 3,
+    },
+    mode: "onBlur",
+  });
 
-    const onSubmit = (data: QuestionReqDto, redirect: boolean, callback?: () => void) => {
-        createQuestion(data, {
-            onSuccess: () => {
-                refetch();
+  const onSubmit = (data: QuestionReqDto, redirect: boolean, callback?: () => void) => {
+    createQuestion(data, {
+      onSuccess: () => {
+        refetch();
 
-                toast.success("Question created successfully");
+        toast.success("Question created successfully");
 
-                if (redirect) {
-                    router.push("/questions");
-                }
+        if (redirect) {
+          router.push("/questions");
+        }
 
-                if(callback) {
-                    callback()
-                }
-            },
+        if (callback) {
+          callback()
+        }
+      },
 
-            onError: (error: ApiError) => {
-                if (error.status === 400 && error.data.errors) {
-                    Object.entries(error.data.errors).forEach(([field, messages]) => {
-                        form.setError(field as keyof QuestionReqDto, {
-                            type: "manual",
-                            message: (messages as string[]).join(", "),
-                        });
-                    })
-                }
-            }
-        })
-    }
+      onError: (error: ApiError) => {
+        if (error.status === 400 && error.data.errors) {
+          Object.entries(error.data.errors).forEach(([field, messages]) => {
+            form.setError(field as keyof QuestionReqDto, {
+              type: "manual",
+              message: (messages as string[]).join(", "),
+            });
+          })
+        }
+      }
+    })
+  }
 
-    const subjectChange = (subjectId: string) => {
-        setSubSubjectId(subjectId);
-    }
+  const subjectChange = (subjectId: string) => {
+    setSubSubjectId(subjectId);
+  }
 
-    return (
-        <Card className="p-4">
-            <PageHeader
-                title="Create Question"
-                description="Create your questions here"
-                breadcrumbs={[
-                    { label: "Dashboard", href: "/" },
-                    { label: "Questions", href: "/questions" },
-                    { label: "Create" }
-                ]}
-                actions={
-                    <Button onClick={() => router.push("/questions")}>
-                        <ChevronLeft className="mr-2 h-4 w-4" />
-                        Back
-                    </Button>
-                }
-            />
-            <QuestionForm
-                isPending={isPending}
-                onSubmit={onSubmit}
-                subjects={subjects}
-                subSubjects={subSubjects}
-                subjectChange={subjectChange}
-                form={form}
-            />
-        </Card>
+  return (
+    <Card className="p-4">
+      <PageHeader
+        title="Create Question"
+        description="Create your questions here"
+        breadcrumbs={[
+          { label: "Dashboard", href: "/" },
+          { label: "Questions", href: "/questions" },
+          { label: "Create" }
+        ]}
+        actions={
+          <Button onClick={() => router.push("/questions")}>
+            <ChevronLeft className="mr-2 h-4 w-4" />
+            Back
+          </Button>
+        }
+      />
+      <QuestionForm
+        isPending={isPending}
+        onSubmit={onSubmit}
+        subjects={subjects}
+        subSubjects={subSubjects}
+        subjectChange={subjectChange}
+        form={form}
+      />
+    </Card>
 
-    );
+  );
 }

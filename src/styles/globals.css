@@ -163,3 +163,50 @@
     @apply bg-gray-100 text-gray-800;
   }
 }
+
+/* Remove wrapper borders */
+.ck.ck-editor,
+.ck.ck-editor * {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Round the top corners of the Toolbar */
+.ck.ck-editor__top .ck-sticky-panel .ck-toolbar {
+  position: relative !important; 
+  border-top:1px solid hsl(20, 5.9%, 90%)!important;;
+  border-right:1px solid hsl(20, 5.9%, 90%)!important;;
+  border-left:1px solid hsl(20, 5.9%, 90%)!important;;
+  border-bottom:0.5px solid hsl(20, 5.9%, 90%)!important;;
+  border-top-left-radius: 12px !important;
+  border-top-right-radius: 12px !important;
+}
+
+/* 2. Round the bottom corners of the Editable Area */
+.ck.ck-editor__main > .ck-editor__editable {
+  border: 1px solid hsl(20, 5.9%, 90%)!important;;
+  border-top: none !important;
+  border-bottom-left-radius: 12px !important;
+  border-bottom-right-radius: 12px !important;
+}
+
+/* 2. Editable area scrollable */
+.ck-editor__editable_inline {
+  min-height:100px !important; 
+  max-height: 400px !important;   /* ensure it does not exceed container */
+  overflow-y: auto; 
+}
+
+/* Reset any inline styles CKEditor might try to add */
+.ck.ck-sticky-panel .ck-sticky-panel__content_sticky {
+    position: static !important;
+    top: auto !important;
+    bottom: auto !important;
+}
+
+.ck.ck-editor__top {
+    position: sticky !important;
+    top: 0;
+    z-index: 10; /* Ensures it sits above the content */
+}
+
