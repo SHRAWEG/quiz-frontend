@@ -73,7 +73,7 @@ function LoginScreen() {
       if (accessToken) {
         setIsRedirecting(true);
         const oauthUrl = new URL(
-          `${process.env.NEXT_PUBLIC_API_URL}/oauth/authorize-with-token`
+          `${process.env.NEXT_PUBLIC_API_URL}oauth/authorize-with-token`
         );
         oauthUrl.searchParams.set("token", accessToken);
         Object.entries(oauthParams).forEach(([key, value]) => {
@@ -95,7 +95,7 @@ function LoginScreen() {
         if (hasOAuthParams) {
           setIsRedirecting(true);
           const oauthUrl = new URL(
-            `${process.env.NEXT_PUBLIC_API_URL}/oauth/authorize-with-token`
+            `${process.env.NEXT_PUBLIC_API_URL}oauth/authorize-with-token`
           );
           oauthUrl.searchParams.set("token", token);
           Object.entries(oauthParams).forEach(([key, value]) => {
