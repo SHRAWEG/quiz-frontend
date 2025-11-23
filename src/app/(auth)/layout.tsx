@@ -13,14 +13,17 @@ import {
   Loader2,
   User,
   Bell,
+  MessageSquare,
 } from "lucide-react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, useCallback } from "react";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { PreferencesModal } from "./(student)/components/preferences-modal";
 import { Header } from "@/components/layout/app-header";
+import { Button } from "@/components/ui/button";
+import { redirectToForum } from "@/lib/forum-redirect";
 
 const items = [
   {
@@ -105,6 +108,10 @@ export default function AuthLayout({
   const { user, isAuthenticated, isLoading, logout } = useAuthContext();
   const [showPreferences, setShowPreferences] = useState(false);
 
+  const handleForumRedirect = useCallback(() => {
+    redirectToForum();
+  }, []);
+
   useEffect(() => {
     if (isLoading) return;
     if (!isAuthenticated) {
@@ -155,6 +162,18 @@ export default function AuthLayout({
             <header className="bg-white shadow-sm z-10">
               <div className="flex items-center h-16 px-4 sm:px-6 lg:px-8">
                 <SidebarTrigger />
+                <div className="ml-auto">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                    onClick={handleForumRedirect}
+                    type="button"
+                  >
+                    <MessageSquare className="h-4 w-4" />
+                    <span className="hidden sm:inline">Explore Forum</span>
+                  </Button>
+                </div>
               </div>
             </header>
 

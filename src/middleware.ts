@@ -7,7 +7,13 @@ export function middleware(req: NextRequest) {
   const isAuthPage = ["/login", "/register", "/"].includes(req.nextUrl.pathname);
   const isProtectedPage = ["/dashboard"].includes(req.nextUrl.pathname);
 
-  if (isAuthPage && token) {
+  // Check for OAuth params
+  const hasOAuthParams =
+    req.nextUrl.searchParams.get("client_id") &&
+    req.nextUrl.searchParams.get("redirect_uri");
+
+  // Allow OAuth flows to proceed even if user is logged in
+  if (isAuthPage && token && !hasOAuthParams) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
